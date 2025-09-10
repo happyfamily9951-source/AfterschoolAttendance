@@ -61,6 +61,47 @@
       .then(data => alert(`Saved: ${status}`))
       .catch(err => alert("Error: " + err));
     }
+
+    
+function doGet(e) {
+  var output = ContentService.createTextOutput();
+  output.setMimeType(ContentService.MimeType.JSON);
+
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Students");
+
+    // 如果 URL 参数里传了 className，就只取该班学生
+    var className = e.parameter.className;
+    var data = sheet.getDataRange().getValues(); // 获取所有行
+    var header = data[0];
+    var rows = data.slice(1);
+
+    var students = rows.map(function(r) {
+      return {
+        id: r[0],
+        name: r[1],
+        className: r[2],
+        guardianName: r[3],
+        guardianPhone: r[4]
+      };
+    });
+
+    if (className) {
+      students = students.filter(function(s) {
+        return s.className === className;
+      });
+    }
+
+    output.setContent(JSON.stringify({ ok: true, students: students }));
+    return output;
+
+  } catch (err) {
+    output.setContent(JSON.stringify({ ok: false, error: err.message }));
+    return output;
+  }
+}
+    
   </script>
 </body>
 </html>
