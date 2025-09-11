@@ -31,87 +31,54 @@
   <script>
     // 你的 Google Apps Script 部署 URL
     const API_URL = "https://script.google.com/macros/s/AKfycbw27tmi3WW73NK6XoBEiU6n09bFiSrhrq2EAQrCViI6RlOIBotAS-rmdDFUKpN2HGwI/exec";
+    const classSelect = document.getElementById("classSelect");
+const studentsContainer = document.getElementById("students");
 
-    // 示例学生名单（可从 Google Sheets Students 表导入）
-    const students = [
-      { id: "S2025001", name: "Alice Wang" },
-      { id: "S2025002", name: "Bob Li" },
-      { id: "S2025003", name: "Charlie Chen" }
-    ];
-
-    const container = document.getElementById("students");
-
-    students.forEach(s => {
-      const div = document.createElement("div");
-      div.className = "student";
-      div.innerHTML = `
-        <strong>${s.name}</strong>
-        <button class="present">Present</button>
-        <button class="leave">Leave</button>
-        <button class="absent">Absent</button>
-      `;
-      container.appendChild(div);
-
-      // 事件绑定
-      div.querySelector(".present").onclick = () => markAttendance(s.id, "Present");
-      div.querySelector(".leave").onclick = () => markAttendance(s.id, "Leave");
-      div.querySelector(".absent").onclick = () => markAttendance(s.id, "Absent");
-    });
-
-    function markAttendance(studentId, status) {
-      fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          className: "Class A",
-          studentId: studentId,
-          status: status
-        })
-      })
-      .then(res => res.json())
-      .then(data => alert(`Saved: ${status}`))
-      .catch(err => alert("Error: " + err));
-    }
-
-    
-function doGet(e) {
-  var output = ContentService.createTextOutput();
-  output.setMimeType(ContentService.MimeType.JSON);
-
-  try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName("Students");
-
-    // 如果 URL 参数里传了 className，就只取该班学生
-    var className = e.parameter.className;
-    var data = sheet.getDataRange().getValues(); // 获取所有行
-    var header = data[0];
-    var rows = data.slice(1);
-
-    var students = rows.map(function(r) {
-      return {
-        id: r[0],
-        name: r[1],
-        className: r[2],
-        guardianName: r[3],
-        guardianPhone: r[4]
-      };
-    });
-
-    if (className) {
-      students = students.filter(function(s) {
-        return s.className === className;
-      });
-    }
-
-    output.setContent(JSON.stringify({ ok: true, students: students }));
-    return output;
-
-  } catch (err) {
-    output.setContent(JSON.stringify({ ok: false, error: err.message }));
-    return output;
+classSelect.onchange = () => {
+  const className = classSelect.value;
+  if (!className) {
+    studentsContainer.innerHTML = "";
+    return;
   }
+  fetch(API_URL + "?className=" + encodeURIComponent(className))
+    .then(res => res.json())
+    .then(data => {
+      if (!data.ok) {
+        alert("加载学生失败: " + data.error);
+        return;
+      }
+      studentsContainer.innerHTML = "";
+      data.students.forEach(s => {
+        const div = document.createElement("div");
+        div.className = "student";
+        div.innerHTML = `
+          <strong>${s.name}</strong>
+          <button class="present">Present</button>
+          <button class="leave">Leave</button>
+          <button class="absent">Absent</button>
+        `;
+        studentsContainer.appendChild(div);
+
+        div.querySelector(".present").onclick = () => markAttendance(className, s.id, "Present");
+        div.querySelector(".leave").onclick = () => markAttendance(className, s.id, "Leave");
+        div.querySelector(".absent").onclick = () => markAttendance(className, s.id, "Absent");
+      });
+    });
+};
+
+function markAttendance(className, studentId, status) {
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      className: className,
+      studentId: studentId,
+      status: status
+    })
+  })
+  .then(res => res.json())
+  .then(data => alert("Saved: " + status))
+  .catch(err => alert("Error: " + err));
 }
-    
-  </script>
+</script>  </script>
 </body>
 </html>
