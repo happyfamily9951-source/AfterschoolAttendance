@@ -57,19 +57,31 @@ classSelect.onchange = () => {
         div.className = "student";
         div.dataset.id = s.id; // ← 关键：给每个学生行一个唯一标识
 
+        //format phone number, removing space 
+        const phone = (s.guardianPhone || "").replace(/\s+/g, "");
+
         // 显示学生姓名 + 家长信息 + 打卡按钮 + 联系方式
         div.innerHTML = `
           <strong>${s.name}</strong><br>
           <span style="font-size: 0.9em; color: gray;">
             Guardian: ${s.guardianName || "-"} 
-            <span class="contact">(${s.guardianPhone || "-"})</span>
+            <span class="contact">(${phone || "-"})</span>
           </span><br>
           <button class="present">Present</button>
           <button class="leave">Leave</button>
           <button class="absent">Absent</button>
-          <a class="call" href="tel:${s.guardianPhone || ''}">📞 Call</a>
-          <a class="sms" href="sms:${s.guardianPhone || ''}">💬 SMS</a>
+          <a class="call" href="tel:${phone || ''}"> 📞 Call</a>
+          <a class="sms" href="sms:${phone || ''}">💬 SMS</a>
         `;
+
+        // If the student is already applied in leave, save the status
+        if (s.status === "Leave") {
+          div.style.backgroudColor = "#fff3cd"; // Yellow background
+          div.innerHTML += `<br><em style="color:#b76e00;">Already on leave / 已请假 </em>`;
+          // disable the buttons to avoid miss-operation
+          div.querySelectorAll("button").foreach(btn => btn.disabled = true);
+        }
+          
 
         // 加到页面里
         studentsContainer.appendChild(div);
