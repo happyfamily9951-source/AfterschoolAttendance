@@ -52,15 +52,30 @@ classSelect.onchange = () => {
       studentsContainer.innerHTML = "";
       data.students.forEach(s => {
         const div = document.createElement("div");
+
+        //  添加 class 和唯一标识        
         div.className = "student";
+        div.dataset.id = s.id; // ← 关键：给每个学生行一个唯一标识
+
+        // 显示学生姓名 + 家长信息 + 打卡按钮 + 联系方式
         div.innerHTML = `
-          <strong>${s.name}</strong>
+          <strong>${s.name}</strong><br>
+          <span style="font-size: 0.9em; color: gray;">
+            Guardian: ${s.guardianName || "-"} 
+            <span class="contact">(${s.guardianPhone || "-"})</span>
+          </span><br>
           <button class="present">Present</button>
           <button class="leave">Leave</button>
           <button class="absent">Absent</button>
+          <a class="call" href="tel:${s.guardianPhone || ''}">📞 Call</a>
+          <a class="sms" href="sms:${s.guardianPhone || ''}">💬 SMS</a>
         `;
+
+        // 加到页面里
         studentsContainer.appendChild(div);
 
+        
+        // 给按钮绑定事件
         div.querySelector(".present").onclick = () => markAttendance(className, s.id, "Present");
         div.querySelector(".leave").onclick = () => markAttendance(className, s.id, "Leave");
         div.querySelector(".absent").onclick = () => markAttendance(className, s.id, "Absent");
@@ -78,9 +93,24 @@ function markAttendance(className, studentId, status) {
     })
   })
   .then(res => res.json())
-  .then(data => alert("Saved: " + status))
+  .then(data => {
+    alert("Saved: " + status);
+
+    // 更新界面样式
+    const row = document.querySelector(`[data-id="${studentId}"]`);
+    if (row) {
+      row.dataset.status = status;
+      if (status === "Absent") {
+        row.style.border = "2px solid red";
+        row.querySelector(".contact").style.color = "red";
+      } else {
+        row.style.border = "1px solid #ddd";
+        row.querySelector(".contact").style.color = "inherit";
+      }
+    }
+  })
   .catch(err => alert("Error: " + err));
 }
-</script>  </script>
+</script>
 </body>
 </html>
