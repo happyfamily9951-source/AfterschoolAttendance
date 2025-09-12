@@ -25,6 +25,9 @@
     <option value="2025Q3-FriSports">2025 Q3 Friday Sports</option>
 </select>
 
+<button onclick="showReport()">📊 Report</button>
+<div id="report"></div>
+  
 <div id="students"></div>
   
   <h1>Class Attendance / 班级打卡</h1>
@@ -102,6 +105,39 @@ classSelect.onchange = () => {
     });
 };
 
+// Reports
+    function showReport() {
+      const className = document.getElementById("classSelect").value;
+      if (!className) {
+        alert("请先选择班级");
+        return;
+      }
+      
+      const today = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+      const fromDate = "2025-09-01"; // 先写死学期开始日，可以之后改成动态配置
+      
+      fetch(`${API_URL}?function=getReport&className=${encodeURIComponent(className)}&fromDate=${fromDate}&toDate=${today}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.ok) {
+            alert("报表生成失败");
+            return;
+          }
+          
+          const stats = data.stats;
+          document.getElementById("report").innerHTML = `
+          <h3>出勤报表 (${className})</h3>
+          出勤: ${stats.Present || 0} <br>
+          缺勤: ${stats.Absent || 0} <br>
+          请假: ${stats.Leave || 0} <br>
+          `;
+        })
+        
+        .catch(err => alert("Error: " + err));
+    }
+
+
+// markAttendance
 function markAttendance(className, studentId, status) {
   fetch(API_URL, {
     method: "POST",
