@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>班级按钮测试</title>
+<style>
+  body { font-family: sans-serif; margin: 20px; }
+  .classbar button {
+    margin: 5px;
+    padding: 10px 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f3f4f6;
+    cursor: pointer;
+  }
+  .classbar button:hover {
+    background: #dbeafe;
+  }
+</style>
+</head>
+<body>
+
+<h2>动态班级按钮测试</h2>
+<div class="classbar" id="classButtons">加载中...</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwe4H7BiSRk2Tf7C7Kt5dRPxRbGj54ARsuoExkd89kOcY4Nzuhlr3JRT1JDqfme3YpK/exec";
+
+function loadClasses() {
+  fetch(`${API_URL}?function=getClasses`)
+    .then(r => r.json())
+    .then(data => {
+      const div = document.getElementById("classButtons");
+      div.innerHTML = ""; // 清空“加载中...”
+      if (data.ok && data.classes.length > 0) {
+        data.classes.forEach(cls => {
+          const btn = document.createElement("button");
+          btn.textContent = cls;
+          btn.onclick = () => alert("你点击了：" + cls);
+          div.appendChild(btn);
+        });
+      } else {
+        div.textContent = "没有班级数据";
+      }
+    })
+    .catch(err => {
+      document.getElementById("classButtons").textContent = "加载失败: " + err;
+    });
+}
+
+// 初始化
+loadClasses();
+</script>
+
+</body>
+</html>
