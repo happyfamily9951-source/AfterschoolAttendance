@@ -150,7 +150,14 @@ function markAttendance(student, status, btn, row){
   const notes=row.querySelector("input").value;
   const studentName=row.querySelector("b").textContent;
   const genderIcon=studentName.includes("🚹")?"M":"F";
-  attendanceMap[student]={status,notes,studentName:studentName.replace("🚹","").replace("🚺","").trim(),gender:genderIcon,className:selectedClass};
+  
+  attendanceMap[student]={
+    status,
+    notes,
+    studentName:studentName.replace("🚹","").replace("🚺","").trim(),
+    gender:genderIcon,
+    className:selectedClass
+  };
   row.querySelectorAll("button").forEach(b=>{
     if(b.textContent!=="Reset") b.disabled=(b!==btn);
   });
