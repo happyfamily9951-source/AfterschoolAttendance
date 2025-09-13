@@ -58,7 +58,7 @@ let selectedClass="";
 let attendanceMap={}; // {studentId:{status,notes,studentName,gender}}
 
 function loadClasses() {
-  fetch(`${API_URL}?function=getClasses`)
+  fetch(`${API_URL}?function=getClass`)
     .then(r=>r.json())
     .then(data=>{
       if(data.ok){
