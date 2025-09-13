@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -52,10 +51,10 @@
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwe4H7BiSRk2Tf7C7Kt5dRPxRbGj54ARsuoExkd89kOcY4Nzuhlr3JRT1JDqfme3YpK/exec";
+const API_URL = "https://script.google.com/macros/s/你的部署ID/exec";
 let classList = [];
 let selectedClass="";
-let attendanceMap={}; // {studentId:{status,notes,studentName,gender}}
+let attendanceMap={}; // {studentId:{status,notes,studentName,gender,className}}
 
 function loadClasses() {
   fetch(`${API_URL}?function=getClasses`)
@@ -119,7 +118,7 @@ function renderStudents(students){
         const td=document.createElement("td");
         const btn=document.createElement("button");
         btn.textContent=status;
-        btn.onclick=()=>markAttendance(s,status,btn,tr);
+        btn.onclick=()=>markAttendance(s.id,status,btn,tr);
         if(s.status==="Leave" && status!=="Leave"){btn.disabled=true;}
         td.appendChild(btn);
         tr.appendChild(td);
@@ -150,17 +149,20 @@ function markAttendance(student, status, btn, row){
   const notes=row.querySelector("input").value;
   const studentName=row.querySelector("b").textContent;
   const genderIcon=studentName.includes("🚹")?"M":"F";
-  
-  attendanceMap[student]={
+
+  // ✅ 修复：只更新当前学生，不清空整个对象
+  attendanceMap[student] = {
     status,
     notes,
-    studentName:studentName.replace("🚹","").replace("🚺","").trim(),
-    gender:genderIcon,
-    className:selectedClass
+    studentName: studentName.replace("🚹","").replace("🚺","").trim(),
+    gender: genderIcon,
+    className: selectedClass
   };
+
   row.querySelectorAll("button").forEach(b=>{
     if(b.textContent!=="Reset") b.disabled=(b!==btn);
   });
+
   updateSummary();
 }
 
@@ -176,9 +178,9 @@ function resetRow(student,row){
 function updateSummary(){
   let p=0,l=0,a=0;
   Object.values(attendanceMap).forEach(r=>{
-    if(r.status==="Present")p++;
-    if(r.status==="Leave")l++;
-    if(r.status==="Absent")a++;
+    if(r.status==="Present") p++;
+    if(r.status==="Leave") l++;
+    if(r.status==="Absent") a++;
   });
   document.getElementById("summary").textContent=`Present:${p} | Leave:${l} | Absent:${a}`;
 }
