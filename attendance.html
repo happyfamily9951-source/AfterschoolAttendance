@@ -145,13 +145,13 @@ function renderStudents(students){
   updateSummary();
 }
 
-function markAttendance(student, status, btn, row){
+function markAttendance(studentId, status, btn, row){
   const notes=row.querySelector("input").value;
   const studentName=row.querySelector("b").textContent;
   const genderIcon=studentName.includes("🚹")?"M":"F";
 
   // ✅ 修复：只更新当前学生，不清空整个对象
-  attendanceMap[student] = {
+  attendanceMap[studentId] = {
     status,
     notes,
     studentName: studentName.replace("🚹","").replace("🚺","").trim(),
@@ -166,12 +166,18 @@ function markAttendance(student, status, btn, row){
   updateSummary();
 }
 
-function resetRow(student,row){
-  delete attendanceMap[student];
+function resetRow(studentId,row){
+  // Remove the student attendance record
+  delete attendanceMap[studentId];
+
+  // Unlock the button
   row.querySelectorAll("button").forEach(b=>{
     if(b.textContent!=="Reset") b.disabled=false;
   });
+
+  // Clear Notes
   row.querySelector("input").value="";
+  
   updateSummary();
 }
 
