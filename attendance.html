@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -51,12 +52,23 @@
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwe4H7BiSRk2Tf7C7Kt5dRPxRbGj54ARsuoExkd89kOcY4Nzuhlr3JRT1JDqfme3YpK/exec";
-const classList = ["Class A","Class B"];
+const API_URL = "https://script.google.com/macros/s/你的部署ID/exec";
+let classList = [];
 let selectedClass="";
 let attendanceMap={}; // {studentId:{status,notes,studentName,gender}}
 
-function loadClasses(){
+function loadClasses() {
+  fetch(`${API_URL}?function=getClasses`)
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.ok){
+        classList=data.classes;
+        renderClassButtons();
+      }
+    });
+}
+
+function renderClassButtons(){
   const div=document.getElementById("classButtons");
   div.innerHTML="";
   classList.forEach(cls=>{
@@ -66,6 +78,7 @@ function loadClasses(){
     div.appendChild(b);
   });
 }
+
 function selectClass(cls,btn){
   selectedClass=cls;
   Array.from(document.getElementById("classButtons").children).forEach(b=>b.disabled=true);
@@ -76,6 +89,7 @@ function selectClass(cls,btn){
       if(data.ok) renderStudents(data.students);
     });
 }
+
 function resetClass(){
   selectedClass="";
   loadClasses();
@@ -84,6 +98,7 @@ function resetClass(){
   attendanceMap={};
   updateSummary();
 }
+
 function renderStudents(students){
   const tbody=document.getElementById("studentsBody");
   tbody.innerHTML="";
@@ -141,6 +156,7 @@ function markAttendance(student, status, btn, row){
   });
   updateSummary();
 }
+
 function resetRow(student,row){
   delete attendanceMap[student];
   row.querySelectorAll("button").forEach(b=>{
@@ -149,6 +165,7 @@ function resetRow(student,row){
   row.querySelector("input").value="";
   updateSummary();
 }
+
 function updateSummary(){
   let p=0,l=0,a=0;
   Object.values(attendanceMap).forEach(r=>{
@@ -158,6 +175,7 @@ function updateSummary(){
   });
   document.getElementById("summary").textContent=`Present:${p} | Leave:${l} | Absent:${a}`;
 }
+
 function openPreview(){
   const list=document.getElementById("previewList");
   list.innerHTML="";
@@ -168,6 +186,7 @@ function openPreview(){
 }
 function closePreview(){document.getElementById("previewModal").style.display="none";}
 function confirmSubmit(){submitAttendance();closePreview();}
+
 function submitAttendance(){
   const records=Object.entries(attendanceMap).map(([id,r])=>({
     studentId:id,
@@ -184,6 +203,8 @@ function submitAttendance(){
       else alert("失败:"+data.error);
     }).catch(err=>alert("网络错误:"+err));
 }
+
+// 初始化
 loadClasses();
 </script>
 </body>
