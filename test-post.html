@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POST 测试</title>
+</head>
+<body>
+<h3>POST 测试页面</h3>
+<button onclick="sendTest()">发送一条测试记录</button>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwe4H7BiSRk2Tf7C7Kt5dRPxRbGj54ARsuoExkd89kOcY4Nzuhlr3JRT1JDqfme3YpK/exec";
+
+function sendTest(){
+  const testRecord = {
+    records: [
+      {
+        studentId: "S999",
+        studentName: "Test Student",
+        gender: "M",
+        className: "2025Q3-TuesWriting",
+        status: "Present",
+        notes: "这是测试记录"
+      }
+    ]
+  };
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(testRecord),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    alert("返回结果: " + JSON.stringify(data));
+  })
+  .catch(err=>{
+    alert("网络错误: " + err);
+  });
+}
+</script>
+</body>
+</html>
