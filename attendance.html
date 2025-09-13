@@ -19,17 +19,17 @@
 </head>
 <body>
 
-<div class="summary" id="summary">Present:0 | Leave:0 | Absent:0</div>
+<!-- <div class="summary" id="summary">Present:0 | Leave:0 | Absent:0</div> -->
 <div class="classbar" id="classButtons"></div>
 <button id="resetClass" onclick="resetClass()" style="display:none;">Reset Class</button>
 
 <table>
   <thead>
     <tr>
-      <th>Student / Guardian</th>
-      <th>Present</th>
-      <th>Leave</th>
-      <th>Absent</th>
+      <th id="studentHeader">Student / Guardian</th>
+      <th id="presentHeader">Present: 0</th>
+      <th id="leaveHeader">Leave: 0</th>
+      <th id="absentHeader">Absent: 0</th>
       <th>Notes</th>
       <th>Reset</th>
     </tr>
@@ -143,6 +143,8 @@ function renderStudents(students){
     tbody.appendChild(tr);
   }
   updateSummary();
+
+  document.getElementById("studentHeader").textContent = `Student / Guardian ( ${students.length} )`;
 }
 
 function markAttendance(studentId, status, btn, row){
@@ -188,7 +190,9 @@ function updateSummary(){
     if(r.status==="Leave") l++;
     if(r.status==="Absent") a++;
   });
-  document.getElementById("summary").textContent=`Present:${p} | Leave:${l} | Absent:${a}`;
+  document.getElementById("presentHeader").textContent = `Present: ${p}`;
+  document.getElementById("leaveHeader").textContent = `Leave: ${l}`;
+  document.getElementById("absentHeader").textContent = `Absent: ${a}`;
 }
 
 function openPreview(){
