@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance</title>
+<style>
+  body{font-family:sans-serif; margin:12px;}
+  .summary{font-weight:bold; margin-bottom:8px;}
+  .classbar button{margin-right:6px;}
+  table{width:100%; border-collapse:collapse; margin-top:10px;}
+  th, td{border:1px solid #ddd; padding:6px; text-align:center;}
+  tr.band-a{background:#fafafa;}
+  tr.band-b{background:#ffffff;}
+  .notes{width:100%;}
+  .modal{position:fixed;top:0;left:0;right:0;bottom:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4);}
+  .modal .box{background:#fff;padding:16px;max-width:600px;width:100%;border-radius:8px;}
+</style>
+</head>
+<body>
+
+<div class="summary" id="summary">Present:0 | Leave:0 | Absent:0</div>
+<div class="classbar" id="classButtons"></div>
+<button id="resetClass" onclick="resetClass()" style="display:none;">Reset Class</button>
+
+<table>
+  <thead>
+    <tr>
+      <th>Student / Guardian</th>
+      <th>Present</th>
+      <th>Leave</th>
+      <th>Absent</th>
+      <th>Notes</th>
+      <th>Reset</th>
+    </tr>
+  </thead>
+  <tbody id="studentsBody"></tbody>
+</table>
+
+<button onclick="openPreview()">提交前预览</button>
+<button onclick="submitAttendance()">提交全班打卡</button>
+
+<!-- 提交预览弹窗 -->
+<div class="modal" id="previewModal">
+  <div class="box">
+    <h3>提交前预览</h3>
+    <div id="previewList"></div>
+    <button onclick="closePreview()">取消</button>
+    <button onclick="confirmSubmit()">确认提交</button>
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwe4H7BiSRk2Tf7C7Kt5dRPxRbGj54ARsuoExkd89kOcY4Nzuhlr3JRT1JDqfme3YpK/exec";
+const classList = ["Class A","Class B"];
+let selectedClass="";
+let attendanceMap={}; // {studentId:{status,notes,studentName,gender}}
+
+function loadClasses(){
+  const div=document.getElementById("classButtons");
+  div.innerHTML="";
+  classList.forEach(cls=>{
+    const b=document.createElement("button");
+    b.textContent=cls;
+    b.onclick=()=>selectClass(cls,b);
+    div.appendChild(b);
+  });
+}
+function selectClass(cls,btn){
+  selectedClass=cls;
+  Array.from(document.getElementById("classButtons").children).forEach(b=>b.disabled=true);
+  btn.disabled=false;
+  document.getElementById("resetClass").style.display="inline";
+  fetch(`${API_URL}?className=${encodeURIComponent(cls)}`)
+    .then(r=>r.json()).then(data=>{
+      if(data.ok) renderStudents(data.students);
+    });
+}
+function resetClass(){
+  selectedClass="";
+  loadClasses();
+  document.getElementById("studentsBody").innerHTML="";
+  document.getElementById("resetClass").style.display="none";
+  attendanceMap={};
+  updateSummary();
+}
+function renderStudents(students){
+  const tbody=document.getElementById("studentsBody");
+  tbody.innerHTML="";
+  for(let i=0;i<15;i++){
+    const s=students[i];
+    const tr=document.createElement("tr");
+    tr.className=(Math.floor(i/5)%2===0)?"band-a":"band-b";
+    if(s){
+      const info=document.createElement("td");
+      const genderIcon = s.gender==="M"?"🚹":"🚺";
+      info.innerHTML=`<b>${s.name} ${genderIcon}</b><br>
+        Guardian:${s.guardianName} (${s.guardianPhone})<br>
+        <a href="tel:${s.guardianPhone}">📞</a>
+        <a href="sms:${s.guardianPhone}">💬</a>`;
+      tr.appendChild(info);
+
+      ["Present","Leave","Absent"].forEach(status=>{
+        const td=document.createElement("td");
+        const btn=document.createElement("button");
+        btn.textContent=status;
+        btn.onclick=()=>markAttendance(s,status,btn,tr);
+        if(s.status==="Leave" && status!=="Leave"){btn.disabled=true;}
+        td.appendChild(btn);
+        tr.appendChild(td);
+      });
+
+      const notesTd=document.createElement("td");
+      const input=document.createElement("input");
+      input.type="text"; input.className="notes"; input.placeholder="Notes...";
+      input.value=s.leaveNotes||"";
+      notesTd.appendChild(input);
+      tr.appendChild(notesTd);
+
+      const resetTd=document.createElement("td");
+      const resetBtn=document.createElement("button");
+      resetBtn.textContent="Reset";
+      resetBtn.onclick=()=>resetRow(s.id,tr);
+      resetTd.appendChild(resetBtn);
+      tr.appendChild(resetTd);
+    }else{
+      for(let j=0;j<6;j++){const td=document.createElement("td");td.innerHTML="&nbsp;";tr.appendChild(td);}
+    }
+    tbody.appendChild(tr);
+  }
+  updateSummary();
+}
+
+function markAttendance(student, status, btn, row){
+  const notes=row.querySelector("input").value;
+  const studentName=row.querySelector("b").textContent;
+  const genderIcon=studentName.includes("🚹")?"M":"F";
+  attendanceMap[student]={status,notes,studentName:studentName.replace("🚹","").replace("🚺","").trim(),gender:genderIcon,className:selectedClass};
+  row.querySelectorAll("button").forEach(b=>{
+    if(b.textContent!=="Reset") b.disabled=(b!==btn);
+  });
+  updateSummary();
+}
+function resetRow(student,row){
+  delete attendanceMap[student];
+  row.querySelectorAll("button").forEach(b=>{
+    if(b.textContent!=="Reset") b.disabled=false;
+  });
+  row.querySelector("input").value="";
+  updateSummary();
+}
+function updateSummary(){
+  let p=0,l=0,a=0;
+  Object.values(attendanceMap).forEach(r=>{
+    if(r.status==="Present")p++;
+    if(r.status==="Leave")l++;
+    if(r.status==="Absent")a++;
+  });
+  document.getElementById("summary").textContent=`Present:${p} | Leave:${l} | Absent:${a}`;
+}
+function openPreview(){
+  const list=document.getElementById("previewList");
+  list.innerHTML="";
+  Object.entries(attendanceMap).forEach(([id,r])=>{
+    list.innerHTML+=`<div>${r.studentName} (${id}) - ${r.status} - 备注:${r.notes||"-"}</div>`;
+  });
+  document.getElementById("previewModal").style.display="flex";
+}
+function closePreview(){document.getElementById("previewModal").style.display="none";}
+function confirmSubmit(){submitAttendance();closePreview();}
+function submitAttendance(){
+  const records=Object.entries(attendanceMap).map(([id,r])=>({
+    studentId:id,
+    studentName:r.studentName,
+    gender:r.gender,
+    className:r.className,
+    status:r.status,
+    notes:r.notes
+  }));
+  if(records.length===0){alert("请先打卡！");return;}
+  fetch(API_URL,{method:"POST",body:JSON.stringify({records}),headers:{"Content-Type":"application/json"}})
+    .then(r=>r.json()).then(data=>{
+      if(data.ok){alert("提交成功");attendanceMap={};updateSummary();}
+      else alert("失败:"+data.error);
+    }).catch(err=>alert("网络错误:"+err));
+}
+loadClasses();
+</script>
+</body>
+</html>
