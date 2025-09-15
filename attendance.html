@@ -6,59 +6,96 @@
 <title>Attendance</title>
 <style>
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    margin: 8px;
-    font-size: 16px;  /* ✅ 提高基础字体 */
-  }
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 8px;
+  font-size: 16px;
+  background-color: #f3f4f6; /* ✅ 浅灰背景 */
+  color: #111827; /* 深灰文字 */
+}
 
-  button {
-    padding: 10px 14px;
-    font-size: 16px;  /* ✅ 按钮字体更大 */
-    border-radius: 6px;
-    margin: 2px;
-    min-width: 80px;  /* ✅ 按钮不至于太窄 */
-  }
+button {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  margin: 2px;
+  min-width: 80px;
+  border: none;
+  cursor: pointer;
+}
 
-  .classbar button {
-    margin: 4px;
-  }
+.classbar button {
+  background-color: #374151; /* ✅ 深灰主按钮 */
+  color: white;
+}
+.classbar button:disabled {
+  background-color: #9ca3af; /* 中灰，禁用态 */
+}
 
-  .table-wrapper {
-    overflow-x: auto;   /* ✅ 手机上可横向滑动 */
-    -webkit-overflow-scrolling: touch;
-  }
+#resetClass {
+  background-color: #6b7280; /* 深灰 Reset 按钮 */
+  color: white;
+}
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 15px;    /* ✅ 表格字体更大 */
-  }
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;       /* ✅ 触控区域更大 */
-    text-align: center;
-  }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 15px;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
 
-  tr.band-a { background:#fafafa; }
-  tr.band-b { background:#ffffff; }
+th {
+  background-color: #374151; /* ✅ 表头深灰 */
+  color: white;
+  padding: 10px;
+}
 
-  .notes {
-    width: 100%;
-    font-size: 15px;
-    padding: 6px;
-  }
+td {
+  border: 1px solid #d1d5db;
+  padding: 8px;
+  text-align: center;
+}
 
-  .modal {
-    position:fixed;top:0;left:0;right:0;bottom:0;
-    display:none;align-items:center;justify-content:center;
-    background:rgba(0,0,0,.4);
-  }
-  .modal .box {
-    background:#fff;padding:16px;max-width:600px;width:90%;
-    border-radius:8px;font-size:16px;
-  }
+tr.band-a { background:#f9fafb; }
+tr.band-b { background:#ffffff; }
+
+.notes {
+  width: 100%;
+  font-size: 15px;
+  padding: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+/* ✅ 状态按钮颜色 */
+td button {
+  color: white;
+}
+td button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+td button:nth-child(1) { background-color: #0d9488; } /* Present → 蓝绿 */
+td button:nth-child(2) { background-color: #ea580c; } /* Leave → 橙色 */
+td button:nth-child(3) { background-color: #991b1b; } /* Absent → 深红 */
+
+.modal {
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.4);
+}
+.modal .box {
+  background:#fff;padding:16px;max-width:600px;width:90%;
+  border-radius:8px;font-size:16px;
+}
 </style>
 </head>
 <body>
