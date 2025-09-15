@@ -85,8 +85,32 @@
   }
 
   /* 状态按钮统一样式 */
-  .status-btn { color: #fff; }
-  .status-btn:disabled { opacity: .6; cursor: not-allowed; }
+  .status-btn {
+    color: #fff; 
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+  
+  .status-btn:active {
+    transform: scale(0.95);  /* scale when clicking */
+  }
+  
+  .status-btn:disabled {
+    background-color: #d1d5db !important;  /* light grey */
+    color: #374151 !important;  /* dark grey */
+    cursor: not-allowed;
+    transform: none;
+    opacity: 1;
+  }
+
+  /* "reset" button */
+  .row-reset {
+    background-color: #3b82f6; /* blue */
+    color: white;
+  }
+
+  .row-reset:active {
+    background-color: #1d4ed8;  /* dark blue */
+  }
   
   /* 具体配色（方案D 中性灰） */
   .status-btn.present { background-color: #0d9488; } /* Present → 蓝绿 */
@@ -194,6 +218,7 @@ function resetClass(){
 
 function renderStudents(students){
   const tbody=document.getElementById("studentsBody");
+  
   tbody.innerHTML="";
   for(let i=0;i<15;i++){
     const s=students[i];
@@ -231,6 +256,7 @@ function renderStudents(students){
       const resetTd=document.createElement("td");
       const resetBtn=document.createElement("button");
       resetBtn.textContent="Reset";
+      resetBtn.classList.add("row-reset");
       resetBtn.onclick=()=>resetRow(s.id,tr);
       resetTd.appendChild(resetBtn);
       tr.appendChild(resetTd);
