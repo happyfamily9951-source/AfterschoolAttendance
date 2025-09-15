@@ -75,45 +75,33 @@
     border-radius: 4px;
   }
 
-  /* ✅ 状态按钮颜色 */
-  td button {
-    color: white;
-  }
-  td button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  /* 状态按钮统一样式 */
+  /* ✅ 状态按钮样式 */
   .status-btn {
-    color: #fff; 
+    color: #fff;
     transition: background-color 0.2s ease, transform 0.1s ease;
   }
-  
   .status-btn:active {
-    transform: scale(0.95);  /* scale when clicking */
+    transform: scale(0.95);
   }
-  
+  .status-btn.present { background-color: #0d9488; } /* Present → 蓝绿 */
+  .status-btn.leave   { background-color: #ea580c; } /* Leave → 橙色 */
+  .status-btn.absent  { background-color: #991b1b; } /* Absent → 深红 */
+
+  /* ✅ 禁用态保留原色，只半透明 */
   .status-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
   }
 
-  /* "reset" button */
+  /* ✅ 行内 Reset 按钮 */
   .row-reset {
-    background-color: #3b82f6; /* blue */
+    background-color: #3b82f6;  /* 蓝色 */
     color: white;
   }
-
   .row-reset:active {
-    background-color: #1d4ed8;  /* dark blue */
+    background-color: #1d4ed8;  /* 深蓝 */
   }
-  
-  /* 具体配色（方案D 中性灰） */
-  .status-btn.present { background-color: #0d9488; } /* Present → 蓝绿 */
-  .status-btn.leave   { background-color: #ea580c; } /* Leave → 橙色 */、
-  .status-btn.absent  { background-color: #991b1b; } /* Absent → 深红 */
 
   .modal {
     position:fixed;top:0;left:0;right:0;bottom:0;
@@ -216,7 +204,6 @@ function resetClass(){
 
 function renderStudents(students){
   const tbody=document.getElementById("studentsBody");
-  
   tbody.innerHTML="";
   for(let i=0;i<15;i++){
     const s=students[i];
@@ -235,9 +222,7 @@ function renderStudents(students){
         const td=document.createElement("td");
         const btn=document.createElement("button");
         btn.textContent=status;
-
-        // Add comments
-        btn.classList.add("status-btn",status.toLowerCase());
+        btn.classList.add("status-btn", status.toLowerCase()); // ✅ 添加语义类名
         btn.onclick=()=>markAttendance(s.id,status,btn,tr);
         if(s.status==="Leave" && status!=="Leave"){btn.disabled=true;}
         td.appendChild(btn);
@@ -254,7 +239,7 @@ function renderStudents(students){
       const resetTd=document.createElement("td");
       const resetBtn=document.createElement("button");
       resetBtn.textContent="Reset";
-      resetBtn.classList.add("row-reset");
+      resetBtn.classList.add("row-reset"); // ✅ 新样式类
       resetBtn.onclick=()=>resetRow(s.id,tr);
       resetTd.appendChild(resetBtn);
       tr.appendChild(resetTd);
