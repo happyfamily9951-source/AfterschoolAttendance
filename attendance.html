@@ -5,102 +5,101 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Attendance</title>
 <style>
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  margin: 8px;
-  font-size: 16px;
-  background-color: #f3f4f6; /* ✅ 浅灰背景 */
-  color: #111827; /* 深灰文字 */
-}
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 8px;
+    font-size: 16px;
+    background-color: #f3f4f6; /* ✅ 浅灰背景 */
+    color: #111827; /* 深灰文字 */
+  }
 
-button {
-  padding: 10px 14px;
-  font-size: 16px;
-  border-radius: 6px;
-  margin: 2px;
-  min-width: 80px;
-  border: none;
-  cursor: pointer;
-}
+  button {
+    padding: 10px 14px;
+    font-size: 16px;
+    border-radius: 6px;
+    margin: 2px;
+    min-width: 80px;
+    border: none;
+    cursor: pointer;
+  }
 
-.classbar button {
-  background-color: #374151; /* ✅ 深灰主按钮 */
-  color: white;
-}
-.classbar button:disabled {
-  background-color: #9ca3af; /* 中灰，禁用态 */
-}
+  .classbar button {
+    background-color: #374151; /* ✅ 深灰主按钮 */
+    color: white;
+  }
+  .classbar button:disabled {
+    background-color: #9ca3af; /* 中灰，禁用态 */
+  }
 
-#resetClass {
-  background-color: #6b7280; /* 深灰 Reset 按钮 */
-  color: white;
-}
+  #resetClass {
+    background-color: #6b7280; /* 深灰 Reset 按钮 */
+    color: white;
+  }
 
-.table-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  font-size: 15px;
-  background: white;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  border-radius: 8px;
-  overflow: hidden;
-}
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 15px;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+  }
 
-th {
-  background-color: #374151; /* ✅ 表头深灰 */
-  color: white;
-  padding: 10px;
-}
+  th {
+    background-color: #374151; /* ✅ 表头深灰 */
+    color: white;
+    padding: 10px;
+  }
 
-td {
-  border: 1px solid #d1d5db;
-  padding: 8px;
-  text-align: center;
-}
+  td {
+    border: 1px solid #d1d5db;
+    padding: 8px;
+    text-align: center;
+  }
 
-tr.band-a { background:#f9fafb; }
-tr.band-b { background:#ffffff; }
+  tr.band-a { background:#f9fafb; }
+  tr.band-b { background:#ffffff; }
 
-.notes {
-  width: 100%;
-  font-size: 15px;
-  padding: 6px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-}
+  .notes {
+    width: 100%;
+    font-size: 15px;
+    padding: 6px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+  }
 
-/* ✅ 状态按钮颜色 */
-td button {
-  color: white;
-}
-td button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-td button:nth-child(1) { background-color: #0d9488; } /* Present → 蓝绿 */
-td button:nth-child(2) { background-color: #ea580c; } /* Leave → 橙色 */
-td button:nth-child(3) { background-color: #991b1b; } /* Absent → 深红 */
+  /* ✅ 状态按钮颜色 */
+  td button {
+    color: white;
+  }
+  td button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  td button:nth-child(1) { background-color: #0d9488; } /* Present → 蓝绿 */
+  td button:nth-child(2) { background-color: #ea580c; } /* Leave → 橙色 */
+  td button:nth-child(3) { background-color: #991b1b; } /* Absent → 深红 */
 
-.modal {
-  position:fixed;top:0;left:0;right:0;bottom:0;
-  display:none;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.4);
-}
-.modal .box {
-  background:#fff;padding:16px;max-width:600px;width:90%;
-  border-radius:8px;font-size:16px;
-}
+  .modal {
+    position:fixed;top:0;left:0;right:0;bottom:0;
+    display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.4);
+  }
+  .modal .box {
+    background:#fff;padding:16px;max-width:600px;width:90%;
+    border-radius:8px;font-size:16px;
+  }
 </style>
 </head>
 <body>
 
-<!-- <div class="summary" id="summary">Present:0 | Leave:0 | Absent:0</div> -->
 <div class="classbar" id="classButtons"></div>
 <button id="resetClass" onclick="resetClass()" style="display:none;">Reset Class</button>
 
@@ -128,7 +127,6 @@ td button:nth-child(3) { background-color: #991b1b; } /* Absent → 深红 */
   <div class="box">
     <h3>提交前预览</h3>
     <div id="previewList"></div>
-    <br>
     <button onclick="closePreview()">取消</button>
     <button onclick="confirmSubmit()">确认提交</button>
   </div>
@@ -180,7 +178,12 @@ function resetClass(){
   document.getElementById("resetClass").style.display="none";
   attendanceMap={};
   updateSummary();
+
+  // ✅ 重置表头
   document.getElementById("studentHeader").textContent = "Student / Guardian";
+  document.getElementById("presentHeader").textContent = "Present:0";
+  document.getElementById("leaveHeader").textContent = "Leave:0";
+  document.getElementById("absentHeader").textContent = "Absent:0";
 }
 
 function renderStudents(students){
@@ -227,9 +230,9 @@ function renderStudents(students){
     }
     tbody.appendChild(tr);
   }
+  document.getElementById("studentHeader").textContent =
+    `Student / Guardian (共 ${students.length} 人)`;
   updateSummary();
-
-  document.getElementById("studentHeader").textContent = `Student / Guardian (${students.length})`;
 }
 
 function markAttendance(studentId, status, btn, row){
@@ -237,7 +240,6 @@ function markAttendance(studentId, status, btn, row){
   const studentName=row.querySelector("b").textContent;
   const genderIcon=studentName.includes("🚹")?"M":"F";
 
-  // ✅ 修复：只更新当前学生，不清空整个对象
   attendanceMap[studentId] = {
     status,
     notes,
@@ -254,17 +256,11 @@ function markAttendance(studentId, status, btn, row){
 }
 
 function resetRow(studentId,row){
-  // Remove the student attendance record
   delete attendanceMap[studentId];
-
-  // Unlock the button
   row.querySelectorAll("button").forEach(b=>{
     if(b.textContent!=="Reset") b.disabled=false;
   });
-
-  // Clear Notes
   row.querySelector("input").value="";
-  
   updateSummary();
 }
 
@@ -275,9 +271,9 @@ function updateSummary(){
     if(r.status==="Leave") l++;
     if(r.status==="Absent") a++;
   });
-  document.getElementById("presentHeader").textContent = `Present: ${p}`;
-  document.getElementById("leaveHeader").textContent = `Leave: ${l}`;
-  document.getElementById("absentHeader").textContent = `Absent: ${a}`;
+  document.getElementById("presentHeader").textContent = `Present:${p}`;
+  document.getElementById("leaveHeader").textContent = `Leave:${l}`;
+  document.getElementById("absentHeader").textContent = `Absent:${a}`;
 }
 
 function openPreview(){
@@ -301,11 +297,7 @@ function submitAttendance(){
     notes:r.notes
   }));
   if(records.length===0){alert("请先打卡！");return;}
-  fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({records}),
-    headers:{"Content-Type":"application/json"}
-  })
+  fetch(API_URL,{method:"POST",body:JSON.stringify({records}),headers:{"Content-Type":"application/json"}})
     .then(r=>r.json()).then(data=>{
       if(data.ok){alert("提交成功");attendanceMap={};updateSummary();}
       else alert("失败:"+data.error);
