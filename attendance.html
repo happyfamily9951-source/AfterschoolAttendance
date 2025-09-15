@@ -306,6 +306,7 @@ function openPreview(){
   Object.entries(attendanceMap).forEach(([id,r])=>{
     list.innerHTML+=`<div>${r.studentName} (${id}) - ${r.status} - 备注:${r.notes||"-"}</div>`;
   });
+  <br>
   document.getElementById("previewModal").style.display="flex";
 }
 function closePreview(){document.getElementById("previewModal").style.display="none";}
