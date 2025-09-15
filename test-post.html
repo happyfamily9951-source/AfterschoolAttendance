@@ -3,41 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POST 测试</title>
+<title>Test doPost</title>
 </head>
 <body>
-<h3>POST 测试页面 v1</h3>
-<button onclick="sendTest()">发送一条测试记录 v1</button>
+<h2>Test doPost → Attendance v1 </h2>
+<button onclick="sendTest()">发送测试数据</button>
+
+<pre id="result"></pre>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwe4H7BiSRk2Tf7C7Kt5dRPxRbGj54ARsuoExkd89kOcY4Nzuhlr3JRT1JDqfme3YpK/exec;
+const API_URL = "https://script.google.com/macros/s/AKfycbwe4H7BiSRk2Tf7C7Kt5dRPxRbGj54ARsuoExkd89kOcY4Nzuhlr3JRT1JDqfme3YpK/exec";
 
-function sendTest(){
-  const testRecord = {
-    records: [
-      {
-        studentId: "S999",
-        studentName: "Test Student",
-        gender: "M",
-        className: "2025Q3-TuesWriting",
-        status: "Present",
-        notes: "这是测试记录"
-      }
-    ]
-  };
+function sendTest() {
+  const testRecords = [
+    {
+      studentId: "stu001",
+      studentName: "Tom",
+      gender: "M",
+      className: "2025Q3-TestClass",
+      status: "Present",
+      notes: "Test record from HTML"
+    },
+    {
+      studentId: "stu002",
+      studentName: "Alice",
+      gender: "F",
+      className: "2025Q3-TestClass",
+      status: "Leave",
+      notes: "Doctor appointment"
+    }
+  ];
 
   fetch(API_URL, {
     method: "POST",
-    body: JSON.stringify(testRecord),
+    body: JSON.stringify({ records: testRecords }),
     headers: { "Content-Type": "application/json" }
   })
-  .then(r=>r.json())
-  .then(data=>{
-    alert("返回结果: " + JSON.stringify(data));
-  })
-  .catch(err=>{
-    alert("网络错误: " + err);
-  });
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+    })
+    .catch(err => {
+      document.getElementById("result").textContent = "Error: " + err;
+    });
 }
 </script>
 </body>
