@@ -83,9 +83,15 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
-  td button:nth-child(1) { background-color: #0d9488; } /* Present → 蓝绿 */
-  td button:nth-child(2) { background-color: #ea580c; } /* Leave → 橙色 */
-  td button:nth-child(3) { background-color: #991b1b; } /* Absent → 深红 */
+
+  /* 状态按钮统一样式 */
+  .status-btn { color: #fff; }
+  .status-btn:disabled { opacity: .6; cursor: not-allowed; }
+  
+  /* 具体配色（方案D 中性灰） */
+  .status-btn.present { background-color: #0d9488; } /* Present → 蓝绿 */
+  .status-btn.leave   { background-color: #ea580c; } /* Leave → 橙色 */、
+  .status-btn.absent  { background-color: #991b1b; } /* Absent → 深红 */
 
   .modal {
     position:fixed;top:0;left:0;right:0;bottom:0;
@@ -206,6 +212,9 @@ function renderStudents(students){
         const td=document.createElement("td");
         const btn=document.createElement("button");
         btn.textContent=status;
+
+        // Add comments
+        btn.classList.add("status-btn",status.toLowerCase());
         btn.onclick=()=>markAttendance(s.id,status,btn,tr);
         if(s.status==="Leave" && status!=="Leave"){btn.disabled=true;}
         td.appendChild(btn);
