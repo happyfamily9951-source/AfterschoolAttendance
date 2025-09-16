@@ -3,333 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Attendance</title>
+<title>班级打卡 Attendance</title>
 <style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    margin: 8px;
-    font-size: 16px;
-    background-color: #f3f4f6; /* ✅ 浅灰背景 */
-    color: #111827; /* 深灰文字 */
-  }
-
-  button {
-    padding: 10px 14px;
-    font-size: 16px;
-    border-radius: 6px;
-    margin: 2px;
-    min-width: 80px;
-    border: none;
-    cursor: pointer;
-  }
-
-  .classbar button {
-    background-color: #374151; /* ✅ 深灰主按钮 */
-    color: white;
-  }
-  .classbar button:disabled {
-    background-color: #9ca3af; /* 中灰，禁用态 */
-  }
-
-  #resetClass {
-    background-color: #6b7280; /* 深灰 Reset 按钮 */
-    color: white;
-  }
-
-  .table-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 15px;
-    background: white;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  th {
-    background-color: #374151; /* ✅ 表头深灰 */
-    color: white;
-    padding: 10px;
-  }
-
-  td {
-    border: 1px solid #d1d5db;
-    padding: 8px;
-    text-align: center;
-  }
-
-  tr.band-a { background:#f9fafb; }
-  tr.band-b { background:#ffffff; }
-
-  .notes {
-    width: 100%;
-    font-size: 15px;
-    padding: 6px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-  }
-
-  /* ✅ 状态按钮样式 */
-  .status-btn {
-    color: #fff;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-  }
-  .status-btn:active {
-    transform: scale(0.95);
-  }
-  .status-btn.present { background-color: #0d9488} /* Present → 蓝绿 */
-  .status-btn.leave   { background-color: #f97316} /* Leave → 橙色 */
-  .status-btn.absent  { background-color: #dc2626} /* Absent → 深红 */
-
-  .status-btn.present:disabled { background-color: #0d9488; opacity: 0.5;}
-  .status-btn.leave:disabled { background-color: #f97316; opacity: 0.5;}
-  .status-btn.absent:disabled { background-color: #dc2626; opacity: 0.5;}
-
-  /* ✅ 禁用态保留原色，只半透明 */
-  /*
-  .status-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
-  */
-
-  /* ✅ 行内 Reset 按钮 */
-  .row-reset {
-    background-color: #3b82f6;  /* 蓝色 */
-    color: white;
-  }
-  .row-reset:active {
-    background-color: #1d4ed8;  /* 深蓝 */
-  }
-
-  .modal {
-    position:fixed;top:0;left:0;right:0;bottom:0;
-    display:none;align-items:center;justify-content:center;
-    background:rgba(0,0,0,.4);
-  }
-  .modal .box {
-    background:#fff;padding:16px;max-width:600px;width:90%;
-    border-radius:8px;font-size:16px;
-  }
+  body { font-family: Arial, "STSong-Light", sans-serif; margin: 10px; background: #f8f9fa; }
+  h2 { color: #0d47a1; }
+  .class-buttons { margin: 10px 0; }
+  button { margin: 3px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; }
+  .btn-present { background: #0d9488; color: white; }
+  .btn-leave { background: #f97316; color: white; }
+  .btn-absent { background: #dc2626; color: white; }
+  .btn-reset { background: #6b7280; color: white; }
+  .disabled { opacity: 0.5; cursor: not-allowed; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+  th { background: #e3f2fd; }
+  tr:nth-child(odd) { background: #f9f9f9; }
 </style>
 </head>
 <body>
 
-<div class="classbar" id="classButtons"></div>
-<button id="resetClass" onclick="resetClass()" style="display:none;">Reset Class</button>
+<h2>班级打卡 Attendance</h2>
 
-<div class="table-wrapper">
-  <table>
-    <thead>
-      <tr>
-        <th id="studentHeader">Student / Guardian 08:59</th>
-        <th id="presentHeader">Present:0</th>
-        <th id="leaveHeader">Leave:0</th>
-        <th id="absentHeader">Absent:0</th>
-        <th>Notes</th>
-        <th>Reset</th>
-      </tr>
-    </thead>
-    <tbody id="studentsBody"></tbody>
-  </table>
-</div>
+<div class="class-buttons" id="classButtons"></div>
 
-<button onclick="openPreview()">提交前预览</button>
-<button onclick="submitAttendance()">提交全班打卡</button>
+<table id="attendanceTable">
+  <thead>
+    <tr>
+      <th id="tableHeader">Student / Guardian</th>
+      <th>Present</th>
+      <th>Leave</th>
+      <th>Absent</th>
+      <th>Notes</th>
+      <th>Reset</th>
+    </tr>
+  </thead>
+  <tbody id="studentRows"></tbody>
+</table>
 
-<!-- 提交预览弹窗 -->
-<div class="modal" id="previewModal">
-  <div class="box">
-    <h3>提交前预览</h3>
-    <div id="previewList"></div>
-    <button onclick="closePreview()">取消</button>
-    <button onclick="confirmSubmit()">确认提交</button>
-  </div>
-</div>
+<button class="btn-reset" onclick="submitAttendance()">提交全班打卡</button>
+
+<pre id="result"></pre>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
-let classList = [];
-let selectedClass="";
-let attendanceMap={}; // {studentId:{status,notes,studentName,gender,className}}
+const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec"; // ⚠️ 改成你的 Apps Script URL
 
-function loadClasses() {
-  fetch(`${API_URL}?function=getClasses`)
-    .then(r=>r.json())
-    .then(data=>{
-      if(data.ok){
-        classList=data.classes;
-        renderClassButtons();
-      }
+let currentClass = null;
+let studentsData = [];
+let attendanceMap = {};
+let totals = { present: 0, leave: 0, absent: 0 };
+
+async function loadClasses() {
+  const res = await fetch(API_URL + "?action=getClasses");
+  const data = await res.json();
+  if (data.ok) {
+    const container = document.getElementById("classButtons");
+    container.innerHTML = "";
+    data.classes.forEach(cls => {
+      const btn = document.createElement("button");
+      btn.textContent = cls;
+      btn.onclick = () => selectClass(cls, btn);
+      container.appendChild(btn);
     });
-}
-
-function renderClassButtons(){
-  const div=document.getElementById("classButtons");
-  div.innerHTML="";
-  classList.forEach(cls=>{
-    const b=document.createElement("button");
-    b.textContent=cls;
-    b.onclick=()=>selectClass(cls,b);
-    div.appendChild(b);
-  });
-}
-
-function selectClass(cls,btn){
-  selectedClass=cls;
-  Array.from(document.getElementById("classButtons").children).forEach(b=>b.disabled=true);
-  btn.disabled=false;
-  document.getElementById("resetClass").style.display="inline";
-  fetch(`${API_URL}?className=${encodeURIComponent(cls)}`)
-    .then(r=>r.json()).then(data=>{
-      if(data.ok) renderStudents(data.students);
-    });
-}
-
-function resetClass(){
-  selectedClass="";
-  loadClasses();
-  document.getElementById("studentsBody").innerHTML="";
-  document.getElementById("resetClass").style.display="none";
-  attendanceMap={};
-  updateSummary();
-
-  // ✅ 重置表头
-  document.getElementById("studentHeader").textContent = "Student / Guardian";
-  document.getElementById("presentHeader").textContent = "Present:0";
-  document.getElementById("leaveHeader").textContent = "Leave:0";
-  document.getElementById("absentHeader").textContent = "Absent:0";
-}
-
-function renderStudents(students){
-  const tbody=document.getElementById("studentsBody");
-  tbody.innerHTML="";
-  for(let i=0;i<15;i++){
-    const s=students[i];
-    const tr=document.createElement("tr");
-    tr.className=(Math.floor(i/5)%2===0)?"band-a":"band-b";
-    if(s){
-      const info=document.createElement("td");
-      const genderIcon = s.gender==="M"?"🚹":"🚺";
-      info.innerHTML=`<b>${s.name} ${genderIcon}</b><br>
-        Guardian:${s.guardianName} (${s.guardianPhone})<br>
-        <a href="tel:${s.guardianPhone}">📞</a>
-        <a href="sms:${s.guardianPhone}">💬</a>`;
-      tr.appendChild(info);
-
-      ["Present","Leave","Absent"].forEach(status=>{
-        const td=document.createElement("td");
-        const btn=document.createElement("button");
-        btn.textContent=status;
-        btn.classList.add("status-btn", status.toLowerCase()); // ✅ 添加语义类名
-        btn.onclick=()=>markAttendance(s.id,status,btn,tr);
-        if(s.status==="Leave" && status!=="Leave"){btn.disabled=true;}
-        td.appendChild(btn);
-        tr.appendChild(td);
-      });
-
-      const notesTd=document.createElement("td");
-      const input=document.createElement("input");
-      input.type="text"; input.className="notes"; input.placeholder="Notes...";
-      input.value=s.leaveNotes||"";
-      notesTd.appendChild(input);
-      tr.appendChild(notesTd);
-
-      const resetTd=document.createElement("td");
-      const resetBtn=document.createElement("button");
-      resetBtn.textContent="Reset";
-      resetBtn.classList.add("row-reset"); // ✅ 新样式类
-      resetBtn.onclick=()=>resetRow(s.id,tr);
-      resetTd.appendChild(resetBtn);
-      tr.appendChild(resetTd);
-    }else{
-      for(let j=0;j<6;j++){const td=document.createElement("td");td.innerHTML="&nbsp;";tr.appendChild(td);}
-    }
-    tbody.appendChild(tr);
+    const resetBtn = document.createElement("button");
+    resetBtn.textContent = "Reset Class";
+    resetBtn.className = "btn-reset";
+    resetBtn.onclick = resetClass;
+    container.appendChild(resetBtn);
   }
-  document.getElementById("studentHeader").textContent =
-    `Student / Guardian (共 ${students.length} 人)`;
-  updateSummary();
 }
 
-function markAttendance(studentId, status, btn, row){
-  const notes=row.querySelector("input").value;
-  const studentName=row.querySelector("b").textContent;
-  const genderIcon=studentName.includes("🚹")?"M":"F";
+async function selectClass(cls, btn) {
+  currentClass = cls;
+  document.querySelectorAll("#classButtons button").forEach(b => {
+    if (b.textContent !== "Reset Class") { b.disabled = true; b.classList.add("disabled"); }
+  });
+  btn.disabled = false;
+  btn.classList.remove("disabled");
+  const res = await fetch(API_URL + "?action=getStudents&className=" + encodeURIComponent(cls));
+  const data = await res.json();
+  if (data.ok) {
+    studentsData = data.students;
+    renderTable();
+  }
+}
 
-  attendanceMap[studentId] = {
-    status,
-    notes,
-    studentName: studentName.replace("🚹","").replace("🚺","").trim(),
-    gender: genderIcon,
-    className: selectedClass
+function resetClass() {
+  currentClass = null;
+  document.getElementById("studentRows").innerHTML = "";
+  document.querySelector("#tableHeader").textContent = "Student / Guardian";
+  document.querySelectorAll("#classButtons button").forEach(b => { b.disabled = false; b.classList.remove("disabled"); });
+  attendanceMap = {};
+  updateHeaderStats();
+}
+
+function renderTable() {
+  const tbody = document.getElementById("studentRows");
+  tbody.innerHTML = "";
+  attendanceMap = {};
+  totals = { present: 0, leave: 0, absent: 0 };
+
+  studentsData.forEach((stu, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${stu.studentName} (${stu.gender})<br>${stu.guardianName} ${stu.guardianPhone}</td>
+      <td><button class="btn-present" onclick="markAttendance(${i}, 'Present')">Present</button></td>
+      <td><button class="btn-leave" ${stu.leave ? "" : ""} onclick="markAttendance(${i}, 'Leave')">Leave</button></td>
+      <td><button class="btn-absent" onclick="markAttendance(${i}, 'Absent')">Absent</button></td>
+      <td><input type="text" id="note-${i}" placeholder="Notes"></td>
+      <td><button class="btn-reset" onclick="resetRow(${i})">Reset</button></td>
+    `;
+    tbody.appendChild(tr);
+
+    // 如果有请假覆盖
+    if (stu.leave) {
+      markAttendance(i, "Leave");
+    }
+  });
+
+  updateHeaderStats();
+}
+
+function markAttendance(index, status) {
+  const row = document.getElementById("studentRows").children[index];
+  const buttons = row.querySelectorAll("button");
+  buttons.forEach(b => { b.disabled = true; b.classList.add("disabled"); });
+  row.querySelector(`.btn-${status.toLowerCase()}`).disabled = false;
+  row.querySelector(`.btn-${status.toLowerCase()}`).classList.remove("disabled");
+
+  const stu = studentsData[index];
+  const note = document.getElementById(`note-${index}`).value;
+
+  if (attendanceMap[index]) { totals[attendanceMap[index].status.toLowerCase()]--; }
+  attendanceMap[index] = {
+    studentId: stu.studentId,
+    studentName: stu.studentName,
+    gender: stu.gender,
+    className: currentClass,
+    status: status,
+    notes: note
   };
+  totals[status.toLowerCase()]++;
+  updateHeaderStats();
+}
 
-  row.querySelectorAll("button").forEach(b=>{
-    if(b.textContent!=="Reset") b.disabled=(b!==btn);
+function resetRow(index) {
+  const row = document.getElementById("studentRows").children[index];
+  const buttons = row.querySelectorAll("button");
+  buttons.forEach(b => { b.disabled = false; b.classList.remove("disabled"); });
+  if (attendanceMap[index]) {
+    totals[attendanceMap[index].status.toLowerCase()]--;
+    delete attendanceMap[index];
+  }
+  updateHeaderStats();
+}
+
+function updateHeaderStats() {
+  const total = studentsData.length;
+  document.getElementById("tableHeader").textContent =
+    `Student / Guardian (共 ${total} 人) | Present: ${totals.present} | Leave: ${totals.leave} | Absent: ${totals.absent}`;
+}
+
+async function submitAttendance() {
+  const records = Object.values(attendanceMap);
+  if (!records.length) { alert("没有考勤记录"); return; }
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ records }),
+    headers: { "Content-Type": "application/json" }
   });
-
-  updateSummary();
+  const data = await res.json();
+  document.getElementById("result").textContent = JSON.stringify(data, null, 2);
 }
-
-function resetRow(studentId,row){
-  delete attendanceMap[studentId];
-  row.querySelectorAll("button").forEach(b=>{
-    if(b.textContent!=="Reset") b.disabled=false;
-  });
-  row.querySelector("input").value="";
-  updateSummary();
-}
-
-function updateSummary(){
-  let p=0,l=0,a=0;
-  Object.values(attendanceMap).forEach(r=>{
-    if(r.status==="Present") p++;
-    if(r.status==="Leave") l++;
-    if(r.status==="Absent") a++;
-  });
-  document.getElementById("presentHeader").textContent = `Present:${p}`;
-  document.getElementById("leaveHeader").textContent = `Leave:${l}`;
-  document.getElementById("absentHeader").textContent = `Absent:${a}`;
-}
-
-function openPreview(){
-  const list=document.getElementById("previewList");
-  list.innerHTML="";
-  Object.entries(attendanceMap).forEach(([id,r])=>{
-    list.innerHTML+=`<div>${r.studentName} (${id}) - ${r.status} - 备注:${r.notes||"-"}</div>`;
-  });
-  <br>
-  document.getElementById("previewModal").style.display="flex";
-}
-function closePreview(){document.getElementById("previewModal").style.display="none";}
-function confirmSubmit(){submitAttendance();closePreview();}
-
-function submitAttendance(){
-  const records=Object.entries(attendanceMap).map(([id,r])=>({
-    studentId:id,
-    studentName:r.studentName,
-    gender:r.gender,
-    className:r.className,
-    status:r.status,
-    notes:r.notes
-  }));
-  if(records.length===0){alert("请先打卡！");return;}
-  fetch(API_URL,{method:"POST",body:JSON.stringify({records}),headers:{"Content-Type":"application/json"}})
-    .then(r=>r.json()).then(data=>{
-      if(data.ok){alert("提交成功");attendanceMap={};updateSummary();}
-      else alert("失败:"+data.error);
-    }).catch(err=>alert("网络错误:"+err));
-}
-
-// 初始化
 loadClasses();
 </script>
 </body>
