@@ -175,6 +175,9 @@ async function submitAttendance() {
   const data = await res.json();
   document.getElementById("result").textContent = JSON.stringify(data, null, 2);
 }
+  catch (err) {
+    document.getElementById("result").textContent = "Error: " + err;
+  }
 loadClasses();
 </script>
 </body>
