@@ -6,7 +6,7 @@
 <title>Test doPost</title>
 </head>
 <body>
-<h2>Test doPost → Attendance 08:50PM </h2>
+<h2>Test doPost → Attendance 08:52PM </h2>
 <button onclick="sendTest()">发送测试数据</button>
 
 <pre id="result"></pre>
@@ -36,7 +36,7 @@ function sendTest() {
 
   fetch(API_URL, {
     method: "POST",
-    body: JSON.stringify({ records: testRecords }),
+    body: JSON.stringify({ "records": testRecords }),
     headers: { "Content-Type": "application/json" }
   })
     .then(r => r.json())
