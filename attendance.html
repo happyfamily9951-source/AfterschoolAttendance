@@ -117,6 +117,8 @@ function renderTable() {
     // 如果有请假覆盖
     if (stu.leave) {
       markAttendance(i, "Leave");
+      if （stu.notes) {
+        document.getElementById('note-${i}').value = stu.notes;
     }
   });
 
