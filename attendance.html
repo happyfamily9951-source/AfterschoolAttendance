@@ -22,7 +22,7 @@
 </head>
 <body>
 
-<h2>班级打卡 Attendance 07:20 </h2>
+<h2>班级打卡 Attendance 09:20 </h2>
 
 <div class="class-buttons" id="classButtons"></div>
 
@@ -53,7 +53,7 @@ let attendanceMap = {};
 let totals = { present: 0, leave: 0, absent: 0 };
 
 async function loadClasses() {
-  const res = await fetch(API_URL + "?action=getClasses");
+  const res = await fetch('${API_URL}?action=getClasses');
   const data = await res.json();
   if (data.ok) {
     const container = document.getElementById("classButtons");
