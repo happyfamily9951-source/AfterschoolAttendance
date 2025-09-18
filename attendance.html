@@ -1,210 +1,191 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>班级打卡 Attendance</title>
-<style>
-  body { font-family: Arial, "STSong-Light", sans-serif; margin: 10px; background: #f8f9fa; }
-  h2 { color: #0d47a1; }
-  .class-buttons { margin: 10px 0; }
-  button { margin: 3px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; }
-  .btn-present { background: #0d9488; color: white; }
-  .btn-leave { background: #f97316; color: white; }
-  .btn-absent { background: #dc2626; color: white; }
-  .btn-reset { background: #6b7280; color: white; }
-  .disabled { opacity: 0.5; cursor: not-allowed; }
-  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
-  th { background: #e3f2fd; }
-  tr:nth-child(odd) { background: #f9f9f9; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 10px; }
+    h2 { color: #002060; }
+    button { margin: 3px; padding: 6px 12px; font-size: 14px; border-radius: 6px; cursor: pointer; }
+    table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+    th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    .present { background-color: #28a745; color: white; }
+    .leave { background-color: #ff9800; color: white; }
+    .absent { background-color: #dc3545; color: white; }
+    .disabled { background-color: #ccc; color: #666; pointer-events: none; }
+    .reset { background-color: #6c757d; color: white; }
+    #stats { margin-top: 15px; font-weight: bold; color: #002060; }
+  </style>
 </head>
+
+/* This is the baseline version 
+  Check list before commiting changes to github
+  1. API_URL is updated?
+  2. Fix the found bugs? */
+  
 <body>
+  <h2>选择班级 / Select Class</h2>
+  <div id="classButtons">Loading...</div>
 
-<h2> 选择班级 / Select Classes 09:20 </h2>
-<div class="class-buttons" id="classButtons">Loading ...</div>
-  
-<div id="stats">Student / Guardian </div>
-  
-<table id="attendanceTable">
-  <thead>
-    <tr>
-      <th id="tableHeader">Student / Guardian</th>
-      <th>Present</th>
-      <th>Leave</th>
-      <th>Absent</th>
-      <th>Notes</th>
-      <th>Reset</th>
-    </tr>
-  </thead>
-  <tbody id="studentRows"></tbody>
-</table>
+  <div id="stats">Student / Guardian</div>
 
-<button class="btn-reset" onclick="submitAttendance()">提交全班打卡</button>
+  <table id="attendanceTable">
+    <thead>
+      <tr>
+        <th>Student / Guardian</th>
+        <th>Present</th>
+        <th>Leave</th>
+        <th>Absent</th>
+        <th>Notes</th>
+        <th>Reset</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-<pre id="result"></pre>
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
 
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec"; // ⚠️ 改成你的 Apps Script URL
+    let currentClass = null;
+    let students = [];
+    let stats = { present: 0, leave: 0, absent: 0 };
 
-let currentClass = null;
-let studentsData = [];
-let attendanceMap = {};
-let totals = { present: 0, leave: 0, absent: 0 };
+    async function loadClasses() {
+      try {
+        const res = await fetch(`${API_URL}?action=getClasses`);
+        const data = await res.json();
+        if (data.ok) {
+          const container = document.getElementById("classButtons");
+          container.innerHTML = "";
+          data.classes.forEach(cls => {
+            const btn = document.createElement("button");
+            btn.textContent = cls;
+            btn.onclick = () => selectClass(cls);
+            container.appendChild(btn);
+          });
+        }
+      } catch (err) {
+        document.getElementById("classButtons").textContent = "加载失败: " + err;
+      }
+    }
 
-async function loadClasses() {
-  try {
-    const res = await fetch('${API_URL}?action=getClasses');
-    const data = await res.json();
-    if (data.ok) {
-      const container = document.getElementById("classButtons");
-      container.innerHTML = "";
-      data.classes.forEach(cls => {
-        const btn = document.createElement("button");
-        btn.textContent = cls;
-        btn.onclick = () => selectClass(cls, btn);
-        container.appendChild(btn);
+    async function selectClass(cls) {
+      currentClass = cls;
+      stats = { present: 0, leave: 0, absent: 0 };
+      document.getElementById("stats").textContent = "Student / Guardian";
+      try {
+        const res = await fetch(`${API_URL}?action=getStudents&className=${encodeURIComponent(cls)}`);
+        const data = await res.json();
+        if (data.ok) {
+          students = data.students;
+          renderTable();
+        }
+      } catch (err) {
+        alert("加载学生失败: " + err);
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector("#attendanceTable tbody");
+      tbody.innerHTML = "";
+
+      students.forEach((stu, i) => {
+        const tr = document.createElement("tr");
+
+        const td1 = document.createElement("td");
+        td1.textContent = `${stu.studentName} (${stu.guardianName} ${stu.guardianPhone})`;
+        tr.appendChild(td1);
+
+        const td2 = document.createElement("td");
+        const btnP = document.createElement("button");
+        btnP.textContent = "Present";
+        btnP.classList.add("present");
+        btnP.onclick = () => markAttendance(i, "Present");
+        td2.appendChild(btnP);
+        tr.appendChild(td2);
+
+        const td3 = document.createElement("td");
+        const btnL = document.createElement("button");
+        btnL.textContent = "Leave";
+        btnL.classList.add("leave");
+        btnL.onclick = () => markAttendance(i, "Leave");
+        td3.appendChild(btnL);
+        tr.appendChild(td3);
+
+        const td4 = document.createElement("td");
+        const btnA = document.createElement("button");
+        btnA.textContent = "Absent";
+        btnA.classList.add("absent");
+        btnA.onclick = () => markAttendance(i, "Absent");
+        td4.appendChild(btnA);
+        tr.appendChild(td4);
+
+        const td5 = document.createElement("td");
+        const noteInput = document.createElement("input");
+        noteInput.type = "text";
+        noteInput.id = `note-${i}`;
+        noteInput.value = stu.notes || "";
+        td5.appendChild(noteInput);
+        tr.appendChild(td5);
+
+        const td6 = document.createElement("td");
+        const btnR = document.createElement("button");
+        btnR.textContent = "Reset";
+        btnR.classList.add("reset");
+        btnR.onclick = () => resetRow(i);
+        td6.appendChild(btnR);
+        tr.appendChild(td6);
+
+        tbody.appendChild(tr);
+
+        // 如果有请假覆盖
+        if (stu.leave) {
+          markAttendance(i, "Leave");
+          if (stu.notes) document.getElementById(`note-${i}`).value = stu.notes;
+        }
       });
-      
-      const resetBtn = document.createElement("button");
-      resetBtn.textContent = "Reset Class";
-      resetBtn.className = "btn-reset";
-      resetBtn.onclick = resetClass;
-      container.appendChild(resetBtn);
+
+      updateStats();
     }
-  } catch (err) {
-    document.getElementById("classButtons").textContent = "加载失败: " + err;
-  }
-}
-  
-async function selectClass(cls) {
-  
-  currentClass = cls;
-  status = { present: 0, leave: 0, absent: 0};
-  document.getElementById("stats").textContent = "Student / Guardian";
 
-  try {
-    const res = await fetch('${API_URL}?action=getStudents&className=${encodeURIComponent(cls)}');
-    const data = await res.json();
+    function markAttendance(i, status) {
+      const row = document.querySelector("#attendanceTable tbody").rows[i];
+      ["present", "leave", "absent"].forEach((cls, idx) => {
+        const btn = row.cells[idx+1].querySelector("button");
+        btn.classList.remove("disabled");
+      });
 
-    if (data.ok) {
-      students = data.students;
-      renderTable();
+      const btn = row.querySelector(`.${status.toLowerCase()}`);
+      btn.classList.add("disabled");
+
+      students[i].status = status;
+      updateStats();
     }
-  } catch (err) {
-    alert("加载学生失败: " + err);
-  }
-}
 
-function resetClass() {  
-  currentClass = null;
-  document.getElementById("studentRows").innerHTML = "";
-  document.querySelector("#tableHeader").textContent = "Student / Guardian";
-  document.querySelectorAll("#classButtons button").forEach(b => { b.disabled = false; b.classList.remove("disabled"); });
-  attendanceMap = {};
-  updateHeaderStats();
-}
-
-function renderTable() {
-  const tbody = document.getElementById("studentRows");
-  tbody.innerHTML = "";
-  attendanceMap = {};
-  totals = { present: 0, leave: 0, absent: 0 };
-
-  studentsData.forEach((stu, i) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${stu.studentName} (${stu.gender})<br>${stu.guardianName} ${stu.guardianPhone}</td>
-      <td><button class="btn-present" onclick="markAttendance(${i}, 'Present')">Present</button></td>
-      <td><button class="btn-leave" ${stu.leave ? "" : ""} onclick="markAttendance(${i}, 'Leave')">Leave</button></td>
-      <td><button class="btn-absent" onclick="markAttendance(${i}, 'Absent')">Absent</button></td>
-      <td><input type="text" id="note-${i}" placeholder="Notes"></td>
-      <td><button class="btn-reset" onclick="resetRow(${i})">Reset</button></td>
-    `;
-    tbody.appendChild(tr);
-
-    // 如果有请假覆盖
-    if (stu.leave) {
-      markAttendance(i, "Leave");
-      if （stu.notes) {
-        document.getElementById('note-${i}').value = stu.notes;
+    function resetRow(i) {
+      students[i].status = "";
+      const row = document.querySelector("#attendanceTable tbody").rows[i];
+      ["present", "leave", "absent"].forEach((cls, idx) => {
+        const btn = row.cells[idx+1].querySelector("button");
+        btn.classList.remove("disabled");
+      });
+      updateStats();
     }
-  });
 
-  updateHeaderStats();
-}
+    function updateStats() {
+      stats = { present: 0, leave: 0, absent: 0 };
+      students.forEach(s => {
+        if (s.status === "Present") stats.present++;
+        if (s.status === "Leave") stats.leave++;
+        if (s.status === "Absent") stats.absent++;
+      });
+      document.getElementById("stats").textContent =
+        `Student / Guardian (共 ${students.length} 人) | Present: ${stats.present} | Leave: ${stats.leave} | Absent: ${stats.absent}`;
+    }
 
-function markAttendance(index, status) {
-  const row = document.getElementById("studentRows").children[index];
-  const buttons = row.querySelectorAll("button");
-  buttons.forEach(b => { b.disabled = true; b.classList.add("disabled"); });
-  row.querySelector(`.btn-${status.toLowerCase()}`).disabled = false;
-  row.querySelector(`.btn-${status.toLowerCase()}`).classList.remove("disabled");
-
-  const stu = studentsData[index];
-  const note = document.getElementById(`note-${index}`).value;
-
-  if (attendanceMap[index]) { totals[attendanceMap[index].status.toLowerCase()]--; }
-  attendanceMap[index] = {
-    studentId: stu.studentId,
-    studentName: stu.studentName,
-    gender: stu.gender,
-    className: currentClass,
-    status: status,
-    notes: note
-  };
-  totals[status.toLowerCase()]++;
-  updateHeaderStats();
-}
-
-function resetRow(index) {
-  const row = document.getElementById("studentRows").children[index];
-  const buttons = row.querySelectorAll("button");
-  buttons.forEach(b => { b.disabled = false; b.classList.remove("disabled"); });
-  if (attendanceMap[index]) {
-    totals[attendanceMap[index].status.toLowerCase()]--;
-    delete attendanceMap[index];
-  }
-  updateHeaderStats();
-}
-
-function updateHeaderStats() {
-  const total = studentsData.length;
-  document.getElementById("tableHeader").textContent =
-    `Student / Guardian (共 ${total} 人) | Present: ${totals.present} | Leave: ${totals.leave} | Absent: ${totals.absent}`;
-}
-
-async function submitAttendance() {
-  const records = Object.values(attendanceMap);
-  if (!records.length) { alert("没有考勤记录"); return; }
-
-  const payload = JSON.stringify({records});
-  console.log(" Submit payload:" , payload); // Debug
-
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers:{"Content-Type":"application/json"),
-      body: payload
-    
-  });
-
-  const data = await res.json();
-  console.log("Server return:",text);
-  document.getElementById("result").textContent = text;
-
-  const data = JSON.parse(text);
-  if (data.ok) {
-    alert('✅ 提交成功，写入 ${data.count} 条记录');
-  } else {
-    alert('❌ 提交失败: ${data.error}');
-  }
-  catch (err) {
-    console.log("Submit error:",err);
-    document.getElementById("result").textContent = "Error: " + err;
-  }
-loadClasses();
-</script>
+    window.onload = loadClasses;
+  </script>
 </body>
 </html>
