@@ -22,10 +22,11 @@
 </head>
 <body>
 
-<h2>班级打卡 Attendance 09:20 </h2>
-
-<div class="class-buttons" id="classButtons"></div>
-
+<h2> 选择班级 / Select Classes 09:20 </h2>
+<div class="class-buttons" id="classButtons">Loading ...</div>
+  
+<div id="stats">Student / Guardian </div>
+  
 <table id="attendanceTable">
   <thead>
     <tr>
@@ -53,41 +54,50 @@ let attendanceMap = {};
 let totals = { present: 0, leave: 0, absent: 0 };
 
 async function loadClasses() {
-  const res = await fetch('${API_URL}?action=getClasses');
-  const data = await res.json();
-  if (data.ok) {
-    const container = document.getElementById("classButtons");
-    container.innerHTML = "";
-    data.classes.forEach(cls => {
-      const btn = document.createElement("button");
-      btn.textContent = cls;
-      btn.onclick = () => selectClass(cls, btn);
-      container.appendChild(btn);
-    });
-    const resetBtn = document.createElement("button");
-    resetBtn.textContent = "Reset Class";
-    resetBtn.className = "btn-reset";
-    resetBtn.onclick = resetClass;
-    container.appendChild(resetBtn);
+  try {
+    const res = await fetch('${API_URL}?action=getClasses');
+    const data = await res.json();
+    if (data.ok) {
+      const container = document.getElementById("classButtons");
+      container.innerHTML = "";
+      data.classes.forEach(cls => {
+        const btn = document.createElement("button");
+        btn.textContent = cls;
+        btn.onclick = () => selectClass(cls, btn);
+        container.appendChild(btn);
+      });
+      
+      const resetBtn = document.createElement("button");
+      resetBtn.textContent = "Reset Class";
+      resetBtn.className = "btn-reset";
+      resetBtn.onclick = resetClass;
+      container.appendChild(resetBtn);
+    }
+  } catch (err) {
+    document.getElementById("classButtons").textContent = "加载失败: " + err;
   }
 }
-
-async function selectClass(cls, btn) {
+  
+async function selectClass(cls) {
+  
   currentClass = cls;
-  document.querySelectorAll("#classButtons button").forEach(b => {
-    if (b.textContent !== "Reset Class") { b.disabled = true; b.classList.add("disabled"); }
-  });
-  btn.disabled = false;
-  btn.classList.remove("disabled");
-  const res = await fetch(API_URL + "?action=getStudents&className=" + encodeURIComponent(cls));
-  const data = await res.json();
-  if (data.ok) {
-    studentsData = data.students;
-    renderTable();
+  status = { present: 0, leave: 0, absent: 0};
+  document.getElementById("stats").textContent = "Student / Guardian";
+
+  try {
+    const res = await fetch('${API_URL}?action=getStudents&className=${encodeURIComponent(cls)}');
+    const data = await res.json();
+
+    if (data.ok) {
+      students = data.students;
+      renderTable();
+    }
+  } catch (err) {
+    alert("加载学生失败: " + err);
   }
 }
 
-function resetClass() {
+function resetClass() {  
   currentClass = null;
   document.getElementById("studentRows").innerHTML = "";
   document.querySelector("#tableHeader").textContent = "Student / Guardian";
