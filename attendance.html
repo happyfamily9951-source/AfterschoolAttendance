@@ -227,7 +227,7 @@
       currentClass = null;
       document.querySelectorAll("#classButtons button").forEach( b=> {
         b.disabled = false;
-        b.classList.Remove("disabled", "present");
+        b.classList.remove("disabled", "present");
       });
 
       document.getElementById("attendanceTable").querySelector("tbody").innerHTML = "";
