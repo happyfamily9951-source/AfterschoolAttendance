@@ -103,7 +103,7 @@
     }
 
     // ===== 选择某个班级后加载学生名单 =====
-    async function selectClass(cls) {
+    async function selectClass(cls, clickedBtn) {
       currentClass = cls;
       stats = { present: 0, leave: 0, absent: 0 };
       document.getElementById("stats").textContent = "Student / Guardian";
