@@ -82,12 +82,20 @@
         if (data.ok) {
           const container = document.getElementById("classButtons");
           container.innerHTML = ""; // 清空原有内容
+
           data.classes.forEach(cls => {
             const btn = document.createElement("button");
             btn.textContent = cls;
-            btn.onclick = () => selectClass(cls);
-            container.appendChild(btn);
+            btn.onclick = () => selectClass(cls, btn);
+            container.appendChild(btn);            
           });
+
+          // Add reset button
+          const resetBtn = document.createElement("button");
+          resetBtn.textContent = "Reset";
+          resetBtn.classList.add("reset");
+          resetBtn.onclick = resetClassSelection;
+          container.appendChild(resetBtn);
         }
       } catch (err) {
         document.getElementById("classButtons").textContent = "加载失败: " + err;
@@ -100,12 +108,26 @@
       stats = { present: 0, leave: 0, absent: 0 };
       document.getElementById("stats").textContent = "Student / Guardian";
 
+      // Disable all the classes button
+      document.querySelectorAll("#classButtons button").forEach(b=> {
+        if (b !== clickedBtn && b.textContent !== "Reset") {
+          b.disabled = true;
+          b.classList.add("disabled");
+        } else if ( b === clickedBtn) {
+          b.classList.add("present");  // Highlight the selected button
+        }
+      });
+
       try {
         const res = await fetch(`${API_URL}?action=getStudents&className=${encodeURIComponent(cls)}`);
         const data = await res.json();
         if (data.ok) {
           students = data.students; // 保存学生数组
           renderTable(); // 渲染表格
+
+          // Update statistics
+          document.getElementById("stats").textContent =
+            `Class: ${cls} | Student / Guardian (共 ${json.students.length} 人 | Present: 0 | Leave: 0 | Absent: 0`;
         }
       } catch (err) {
         alert("加载学生失败: " + err);
@@ -199,6 +221,19 @@
       students[i].status = status;
       updateStats();
     }
+
+    // Reset all the classes
+    function resetClassSelection() {
+      currentClass = null;
+      document.querySelectorAll("#classButtons button").forEach( b=> {
+        b.disabled = false;
+        b.classList.Remove("disabled", "present");
+      });
+
+      document.getElementById("attendanceTable").querySelector("tbody").innerHTML = "";
+      document.getElementById("stats").textContent = "Student / Guardian";
+    }
+        
 
     // ===== 重置某一行 =====
     function resetRow(i) {
