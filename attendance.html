@@ -77,7 +77,7 @@
     // ===== 载入班级按钮 =====
     async function loadClasses() {
       try {
-        const res = await fetch('${API_URL}?action=getClasses');
+        const res = await fetch(`${API_URL}?action=getClasses`);
         const data = await res.json();
         if (data.ok) {
           const container = document.getElementById("classButtons");
@@ -101,7 +101,7 @@
       document.getElementById("stats").textContent = "Student / Guardian";
 
       try {
-        const res = await fetch('${API_URL}?action=getStudents&className=${encodeURIComponent(cls)}');
+        const res = await fetch(`${API_URL}?action=getStudents&className=${encodeURIComponent(cls)}`);
         const data = await res.json();
         if (data.ok) {
           students = data.students; // 保存学生数组
@@ -175,7 +175,7 @@
         // 如果该学生在请假列表 → 自动设置 Leave 状态并填入 notes
         if (stu.leave) {
           markAttendance(i, "Leave");
-          if (stu.notes) document.getElementById('note-${i}').value = stu.notes;
+          if (stu.notes) document.getElementById(`note-${i}`).value = stu.notes;
         }
       });
 
@@ -220,7 +220,7 @@
         if (s.status === "Absent") stats.absent++;
       });
       document.getElementById("stats").textContent =
-        'Student / Guardian (共 ${students.length} 人) | Present: ${stats.present} | Leave: ${stats.leave} | Absent: ${stats.absent}';
+        `Student / Guardian (共 ${students.length} 人) | Present: ${stats.present} | Leave: ${stats.leave} | Absent: ${stats.absent}`;
     }
 
     // 页面加载时，自动执行 loadClasses()
