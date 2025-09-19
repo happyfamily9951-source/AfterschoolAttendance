@@ -123,7 +123,7 @@
         const data = await res.json();
         if (data.ok) {
           students = data.students; // 保存学生数组
-          renderTable(); // 渲染表格
+          renderTable(json.students); // 渲染表格
 
           // Update statistics
           document.getElementById("stats").textContent =
