@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 15px; }
+    h2 { color: #002060; }
+    label { margin-right: 10px; }
+    button { padding: 6px 12px; margin-top: 10px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
+    th { background: #f2f2f2; }
+  </style>
+</head>
+<body>
+  <h2>出勤统计 / Attendance Report</h2>
+
+  <div>
+    <label>选择班级:</label>
+    <select id="classSelect"></select>
+    <br><br>
+    <label>开始日期:</label>
+    <input type="date" id="fromDate">
+    <label>结束日期:</label>
+    <input type="date" id="toDate">
+    <br><br>
+    <button onclick="getReport()">生成报表 / Generate Report</button>
+  </div>
+
+  <div id="reportArea"></div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
+
+    async function loadClasses() {
+      const res = await fetch(`${API_URL}?action=getClasses`);
+      const json = await res.json();
+      const sel = document.getElementById("classSelect");
+      json.classes.forEach(cls => {
+        let opt = document.createElement("option");
+        opt.value = cls;
+        opt.textContent = cls;
+        sel.appendChild(opt);
+      });
+    }
+
+    async function getReport() {
+      const cls = document.getElementById("classSelect").value;
+      const from = document.getElementById("fromDate").value;
+      const to = document.getElementById("toDate").value;
+
+      const res = await fetch(`${API_URL}?action=getReport&className=${encodeURIComponent(cls)}&from=${from}&to=${to}`);
+      const json = await res.json();
+
+      if (!json.ok) {
+        document.getElementById("reportArea").textContent = "生成失败: " + json.error;
+        return;
+      }
+
+      const s = json.stats;
+      document.getElementById("reportArea").innerHTML = `
+        <table>
+          <tr><th>班级</th><th>总记录</th><th>出勤</th><th>请假</th><th>缺勤</th></tr>
+          <tr>
+            <td>${cls}</td>
+            <td>${s.total}</td>
+            <td>${s.present}</td>
+            <td>${s.leave}</td>
+            <td>${s.absent}</td>
+          </tr>
+        </table>
+        <p>出勤率: ${(s.present / (s.total || 1) * 100).toFixed(1)}%</p>
+      `;
+    }
+
+    window.onload = loadClasses;
+  </script>
+</body>
+</html>
