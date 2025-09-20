@@ -239,9 +239,12 @@
       students = [];
       stats = { present: 0, leave: 0, absent: 0 };
 
+      // Loop all the buttons
       document.querySelectorAll("#classButtons button").forEach(b => {
-        b.disabled = false;
-        b.classList.remove("disabled", "present");
+        if (b.textContent !== "Reset") {
+          b.disabled = false;
+          b.classList.remove("disabled", "present");
+        }
       });
 
       document.getElementById("attendanceTable").querySelector("tbody").innerHTML = "";
