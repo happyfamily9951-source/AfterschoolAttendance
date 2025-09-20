@@ -5,49 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Attendance</title>
   <style>
-    /* 页面全局字体和基础排版 */
     body { font-family: Arial, sans-serif; padding: 10px; }
     h2 { color: #002060; }
-
-    /* 所有按钮的通用样式 */
-    button { 
-      margin: 3px; padding: 6px 12px; 
-      font-size: 14px; border-radius: 6px; 
-      cursor: pointer; 
+    button {
+      margin: 3px;
+      padding: 6px 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
     }
 
-    /* 表格样式：100% 宽度，边框合并 */
     table { border-collapse: collapse; width: 100%; margin-top: 15px; }
     th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
     th { background-color: #f2f2f2; }
+    
+    .present { background-color: #28a745; color: white; }
+    .leave { background-color: #ff9800; color: white; }
+    .absent { background-color: #dc3545; color: white; }
+    .disabled { background-color: #ccc; color: #666; pointer-events: none; }
+    .reset { background-color: #6c757d; color: white; }
 
-    /* 出勤状态按钮颜色 */
-    .present { background-color: #28a745; color: white; } /* 绿色：已到 */
-    .leave { background-color: #ff9800; color: white; }   /* 橙色：请假 */
-    .absent { background-color: #dc3545; color: white; }  /* 红色：缺勤 */
-    .disabled { background-color: #ccc; color: #666; pointer-events: none; } /* 灰色：禁用 */
-    .reset { background-color: #6c757d; color: white; }   /* 深灰：重置 */
-
-    /* 顶部统计信息样式 */
     #stats { margin-top: 15px; font-weight: bold; color: #002060; }
+
+    #submitArea { margin-top: 20px; }
   </style>
 </head>
 
-/* Check list before committing changes to Github
-  1. API_URL udpated?
-  2. Bugs fixed?
-  3. Comments added */
-  
 <body>
-  <!-- 页面标题 -->
   <h2>选择班级 / Select Class</h2>
-  <!-- 班级按钮的容器 -->
   <div id="classButtons">Loading...</div>
 
-  <!-- 顶部统计栏 -->
   <div id="stats">Student / Guardian</div>
 
-  <!-- 学生考勤表格 -->
   <table id="attendanceTable">
     <thead>
       <tr>
@@ -62,170 +51,174 @@
     <tbody></tbody>
   </table>
 
+  <!-- 提交区域 -->
+  <div id="submitArea">
+    <button onclick="previewSubmission()">预览提交 / Preview Submission</button>
+    <button onclick="submitAll()">提交全班打卡 / Submit All</button>
+  </div>
+
   <script>
-    // ===== 全局变量设置 =====
-    // 替换成你自己的 Apps Script 部署地址
     const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
 
-    // 当前选择的班级
     let currentClass = null;
-    // 学生数组，每个元素包含 {studentName, guardianName, guardianPhone, leave, notes, status}
     let students = [];
-    // 考勤统计
     let stats = { present: 0, leave: 0, absent: 0 };
 
-    // ===== 载入班级按钮 =====
+
+    // 加载班级按钮
     async function loadClasses() {
-      try {
-        const res = await fetch(`${API_URL}?action=getClasses`);
-        const data = await res.json();
-        if (data.ok) {
-          const container = document.getElementById("classButtons");
-          container.innerHTML = ""; // 清空原有内容
+      const res = await fetch(`${API_URL}?action=getClasses`);
+      const json = await res.json();
+      const container = document.getElementById("classButtons");
+      container.innerHTML = "";
 
-          data.classes.forEach(cls => {
-            const btn = document.createElement("button");
-            btn.textContent = cls;
-            btn.onclick = () => selectClass(cls, btn);
-            container.appendChild(btn);            
-          });
+      json.classes.forEach(cls => {
+        const btn = document.createElement("button");
+        btn.textContent = cls;
+        btn.onclick = () => selectClass(cls, btn);
+        container.appendChild(btn);
+      });
 
-          // Add reset button
-          const resetBtn = document.createElement("button");
-          resetBtn.textContent = "Reset";
-          resetBtn.classList.add("reset");
-          resetBtn.onclick = resetClassSelection;
-          container.appendChild(resetBtn);
-        }
-      } catch (err) {
-        document.getElementById("classButtons").textContent = "加载失败: " + err;
-      }
+      const resetBtn = document.createElement("button");
+      resetBtn.textContent = "Reset";
+      resetBtn.classList.add("reset");
+      resetBtn.onclick = resetClassSelection;
+      container.appendChild(resetBtn);
     }
 
-    // ===== 选择某个班级后加载学生名单 =====
+
+    // 选择班级
     async function selectClass(cls, clickedBtn) {
       currentClass = cls;
       stats = { present: 0, leave: 0, absent: 0 };
-      document.getElementById("stats").textContent = "Student / Guardian";
-
-      // Disable all the classes button
-      document.querySelectorAll("#classButtons button").forEach(b=> {
+      
+      document.querySelectorAll("#classButtons button").forEach(b => {
         if (b !== clickedBtn && b.textContent !== "Reset") {
           b.disabled = true;
           b.classList.add("disabled");
-        } else if ( b === clickedBtn) {
-          b.classList.add("present");  // Highlight the selected button
+        } else if (b === clickedBtn) {
+          b.classList.add("present");
         }
       });
 
       try {
         const res = await fetch(`${API_URL}?action=getStudents&className=${encodeURIComponent(cls)}`);
-        const data = await res.json();
-        if (data.ok) {
-          students = data.students; // 保存学生数组
-          renderTable(students); // 渲染表格
-
-          // Update statistics
-          document.getElementById("stats").textContent =
-            `Class: ${cls} | Student / Guardian (共 ${json.students.length} 人 | Present: 0 | Leave: 0 | Absent: 0`;
-        }
+        const json = await res.json();
+        students = json.students;
+        renderTable(students);
+        updateStats();
       } catch (err) {
-        alert("加载学生失败: " + err);
+        console.error("加载学生失败:", err);
+        document.getElementById("stats").textContent = "加载学生失败: " + err.message;
       }
     }
 
-    // ===== 渲染表格：根据 students 数组生成表格行 =====
+    // 渲染学生表格
     function renderTable(students) {
-      const tbody = document.querySelector("#attendanceTable tbody");
-      tbody.innerHTML = ""; // 清空旧内容
+      const tbody = document.getElementById("attendanceTable").querySelector("tbody");
+      tbody.innerHTML = "";
 
       students.forEach((stu, i) => {
         const tr = document.createElement("tr");
+        const tdName = document.createElement("td");
 
-        // 学生信息 + 家长电话
-        const td1 = document.createElement("td");
-        td1.textContent = `${stu.studentName} (${stu.guardianName} ${stu.guardianPhone})`;
-        tr.appendChild(td1);
+        tdName.textContent = `${stu.studentName} / ${stu.guardianName} (${stu.guardianPhone})`;
+        tr.appendChild(tdName);
 
-        // Present 按钮
-        const td2 = document.createElement("td");
-        const btnP = document.createElement("button");
-        btnP.textContent = "Present";
-        btnP.classList.add("present");
-        btnP.onclick = () => markAttendance(i, "Present");
-        td2.appendChild(btnP);
-        tr.appendChild(td2);
+        const tdPresent = document.createElement("td");
+        const btnPresent = document.createElement("button");
+        btnPresent.textContent = "Present";
+        btnPresent.className = "present";
+        btnPresent.onclick = () => markAttendance(i, "present", btnPresent);
+        tdPresent.appendChild(btnPresent);
+        tr.appendChild(tdPresent);
 
-        // Leave 按钮
-        const td3 = document.createElement("td");
-        const btnL = document.createElement("button");
-        btnL.textContent = "Leave";
-        btnL.classList.add("leave");
-        btnL.onclick = () => markAttendance(i, "Leave");
-        td3.appendChild(btnL);
-        tr.appendChild(td3);
+        const tdLeave = document.createElement("td");
+        const btnLeave = document.createElement("button");
+        btnLeave.textContent = "Leave";
+        btnLeave.className = "leave";
+        btnLeave.onclick = () => markAttendance(i, "leave", btnLeave);
+        tdLeave.appendChild(btnLeave);
+        tr.appendChild(tdLeave);
 
-        // Absent 按钮
-        const td4 = document.createElement("td");
-        const btnA = document.createElement("button");
-        btnA.textContent = "Absent";
-        btnA.classList.add("absent");
-        btnA.onclick = () => markAttendance(i, "Absent");
-        td4.appendChild(btnA);
-        tr.appendChild(td4);
+        const tdAbsent = document.createElement("td");
+        const btnAbsent = document.createElement("button");
+        btnAbsent.textContent = "Absent";
+        btnAbsent.className = "absent";
+        btnAbsent.onclick = () => markAttendance(i, "absent", btnAbsent);
+        tdAbsent.appendChild(btnAbsent);
+        tr.appendChild(tdAbsent);
 
-        // Notes 输入框
-        const td5 = document.createElement("td");
+        const tdNotes = document.createElement("td");
         const noteInput = document.createElement("input");
         noteInput.type = "text";
         noteInput.id = `note-${i}`;
-        noteInput.value = stu.notes || "";
-        td5.appendChild(noteInput);
-        tr.appendChild(td5);
+        tdNotes.appendChild(noteInput);
+        tr.appendChild(tdNotes);
 
-        // Reset 按钮（清除本行考勤选择）
-        const td6 = document.createElement("td");
-        const btnR = document.createElement("button");
-        btnR.textContent = "Reset";
-        btnR.classList.add("reset");
-        btnR.onclick = () => resetRow(i);
-        td6.appendChild(btnR);
-        tr.appendChild(td6);
-
+        const tdReset = document.createElement("td");
+        const btnReset = document.createElement("button");
+        btnReset.textContent = "Reset";
+        btnReset.className = "reset";
+        btnReset.onclick = () => resetRow(i, tr);
+        tdReset.appendChild(btnReset);
+        tr.appendChild(tdReset);
+        
         tbody.appendChild(tr);
+      });
+    }
 
-        // 如果该学生在请假列表 → 自动设置 Leave 状态并填入 notes
-        if (stu.leave) {
-          markAttendance(i, "Leave");
-          if (stu.notes) document.getElementById(`note-${i}`).value = stu.notes;
+    // 点击状态按钮
+    function markAttendance(index, type, clickedBtn) {
+      const row = clickedBtn.parentNode.parentNode;
+      const buttons = row.querySelectorAll("button");
+
+      buttons.forEach(b => {
+        if (!b.classList.contains("reset")) {
+          b.disabled = false;
+          b.classList.remove("disabled");
         }
       });
 
-      updateStats(); // 更新统计
-    }
-
-    // ===== 设置学生的考勤状态 =====
-    function markAttendance(i, status) {
-      const row = document.querySelector("#attendanceTable tbody").rows[i];
-      // 清除该行所有按钮的 disabled
-      ["present", "leave", "absent"].forEach((cls, idx) => {
-        const btn = row.cells[idx+1].querySelector("button");
-        btn.classList.remove("disabled");
-      });
-
-      // 设置选中的按钮为 disabled 灰色
-      const btn = row.querySelector('.${status.toLowerCase()}');
-      btn.classList.add("disabled");
-
-      // 保存考勤状态
-      students[i].status = status;
+      clickedBtn.disabled = true;
+      students[index].status = type;
       updateStats();
     }
 
-    // Reset all the classes
+    // Reset 单行
+    function resetRow(index, row) {
+      const buttons = row.querySelectorAll("button");
+      buttons.forEach(b => {
+        if (!b.classList.contains("reset")) {
+          b.disabled = false;
+          b.classList.remove("disabled");
+        }
+      });
+
+      students[index].status = null;
+      updateStats();
+    }
+
+    // 更新统计
+    function updateStats() {
+      stats = { present: 0, leave: 0, absent: 0 };
+      students.forEach(stu => {
+        if (stu.status === "present") stats.present++;
+        if (stu.status === "leave") stats.leave++;
+        if (stu.status === "absent") stats.absent+;
+      });
+      
+      document.getElementById("stats").textContent =
+        `Class: ${currentClass || ""} | Student / Guardian (共 ${students.length} 人) | Present: ${stats.present} | Leave: ${stats.leave} | Absent: ${stats.absent}`;
+    }
+
+    // Reset 班级
     function resetClassSelection() {
       currentClass = null;
-      document.querySelectorAll("#classButtons button").forEach( b=> {
+      students = [];
+      stats = { present: 0, leave: 0, absent: 0 };
+
+      document.querySelectorAll("#classButtons button").forEach(b => {
         b.disabled = false;
         b.classList.remove("disabled", "present");
       });
@@ -233,32 +226,58 @@
       document.getElementById("attendanceTable").querySelector("tbody").innerHTML = "";
       document.getElementById("stats").textContent = "Student / Guardian";
     }
-        
 
-    // ===== 重置某一行 =====
-    function resetRow(i) {
-      students[i].status = ""; // 清除状态
-      const row = document.querySelector("#attendanceTable tbody").rows[i];
-      ["present", "leave", "absent"].forEach((cls, idx) => {
-        const btn = row.cells[idx+1].querySelector("button");
-        btn.classList.remove("disabled");
+    // 提交预览
+    function previewSubmission() {
+      if (!currentClass || students.length === 0) {
+        alert("请先选择班级并录入考勤！");
+        return;
+      }
+
+      let summary = `Class: ${currentClass}\n\n`;
+      students.forEach((stu, i) => {
+        summary += `${stu.studentName} (${stu.studentId || "NoID"}, ${stu.gender || "-"}) : ${stu.status || "未打卡"} | Notes: ${document.getElementById("note-"+i).value}\n`;
       });
-      updateStats();
+      alert(summary);
     }
 
-    // ===== 更新统计栏 =====
-    function updateStats() {
-      stats = { present: 0, leave: 0, absent: 0 };
-      students.forEach(s => {
-        if (s.status === "Present") stats.present++;
-        if (s.status === "Leave") stats.leave++;
-        if (s.status === "Absent") stats.absent++;
-      });
-      document.getElementById("stats").textContent =
-        `Student / Guardian (共 ${students.length} 人) | Present: ${stats.present} | Leave: ${stats.leave} | Absent: ${stats.absent}`;
+    // 提交全班打卡
+    async function submitAll() {
+      if (!currentClass || students.length === 0) {
+        alert("请先选择班级并录入考勤！");
+        return;
+      }
+
+      const today = new Date().toISOString().slice(0,10);
+      
+      const records = students.map((stu, i) => ({
+        date: today,
+        className: currentClass,
+        studentId: stu.studentId || "",
+        studentName: stu.studentName,
+        gender: stu.gender || "",
+        status: stu.status || "",
+        notes: document.getElementById("note-"+i).value || ""
+      }));
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ records })
+        });
+
+        const result = await res.json();
+        if (result.ok) {
+          alert("提交成功！写入 " + result.count + " 条记录。");
+        } else {
+          alert("提交失败: " + result.error);
+        }
+      } catch (err) {
+        alert("网络错误: " + err.message);
+      }
     }
 
-    // 页面加载时，自动执行 loadClasses()
     window.onload = loadClasses;
   </script>
 </body>
