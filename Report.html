@@ -31,8 +31,8 @@
     <button onclick="getReport()">生成报表 / Generate Report</button>
   </div>
 
-  <div id="chartContainer">
-    <canvas id="attendanceChart"></canvas>
+  <div id="chartContainer" style="max-width:300px; margin-top:20px;">
+    <canvas id="attendanceChart" width="300" height="200"></canvas>
   </div>
 
   <div id="reportArea"></div>
@@ -97,7 +97,8 @@
       }
 
       chartInstance = new Chart(ctx, {
-        type: 'pie',
+        //type: 'pie',
+        type: 'bar',
         data: {
           labels: ["Present", "Leave", "Absent"],
           datasets: [{
@@ -107,6 +108,10 @@
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
+          scale: {
+            y:{ beginAtZero: true}
+          },
           onClick: showRecords
         }
       });
