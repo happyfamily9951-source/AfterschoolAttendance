@@ -40,7 +40,7 @@
   <div id="classSelection">
     <p>选择班级 / Select Class</p2>
     <div id="classButtons">Loading...</div>
-    <button onclick="resetClass()" class="reset">重置班级 / Reset Class</button>
+    <button onclick="resetClassSelection()" class="reset">重置班级 / Reset Class</button>
   </div>
 
   <!-- === Student Attendance Table Area === -->
@@ -108,11 +108,11 @@
         container.appendChild(btn);
       });
 
-      const resetBtn = document.createElement("button");
-      resetBtn.textContent = "重置班级 / Reset Class";
-      resetBtn.classList.add("reset");
-      resetBtn.onclick = resetClassSelection;
-      container.appendChild(resetBtn);
+      //const resetBtn = document.createElement("button");
+      //resetBtn.textContent = "重置班级 / Reset Class";
+      //resetBtn.classList.add("reset");
+      //resetBtn.onclick = resetClassSelection;
+      //container.appendChild(resetBtn);
     }
 
 
