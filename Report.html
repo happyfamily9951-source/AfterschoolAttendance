@@ -12,6 +12,7 @@
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
     th { background: #f2f2f2; }
+    #chartContainer {max-width: 400px, margin-top: 20px;}
   </style>
 </head>
 <body>
@@ -30,6 +31,7 @@
   </div>
 
   <div id="reportArea"></div>
+  <div id="recordsArea"></div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
@@ -60,9 +62,11 @@
       }
 
       const s = json.stats;
+      lastRecords = json.records;
+      
       document.getElementById("reportArea").innerHTML = `
         <table>
-          <tr><th>班级</th><th>总记录</th><th>出勤</th><th>请假</th><th>缺勤</th></tr>
+          <tr><th>班级 / Class Name </th><th>总记录 / Total Count </th><th>出勤 / Present</th><th>请假 / Leave</th><th>缺勤 / Absent</th></tr>
           <tr>
             <td>${cls}</td>
             <td>${s.total}</td>
@@ -71,8 +75,51 @@
             <td>${s.absent}</td>
           </tr>
         </table>
-        <p>出勤率: ${(s.present / (s.total || 1) * 100).toFixed(1)}%</p>
+        <p>出勤率 / Attendace Rete : ${(s.present / (s.total || 1) * 100).toFixed(1)}%</p>
+        <p><i> 点击图标查看详细记录（最多20条） / Click the table to check details (up to 20 records)</i></p>
       `;
+
+      renderChart(s);
+    }
+
+    function renderChart(stats) {
+      const ctx = document.getElementById("attendanceChart").getContext("2d");
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ["Present", "Leave", "Absent"],
+          datasets: [{
+            data: [stats.present, stats,leave, stats.absent],
+            backgroundColor: ["#28a745", "#ff9800", "#dc3545"]
+          }]
+        },
+        options: {
+          responsive: true,
+          onClick: showRecords
+        }
+      });
+    }
+
+    function showRecords() {
+      let html = `<h3> 详细记录（最多20条）/ Details of Records (Up to 20) </h3>
+        <table>
+          <tr><th>日期 / Date</th><th>学生 / Student Name</th><th>状态 / Status</th><th>备注 / Notes</th></tr>`;
+
+      lastRecords.forEach(r=> {
+        html += `<tr>
+          <td>${r.date}</td>
+          <td>${r.studentName}</td>
+          <td>$(r.status}</td>
+          <td>$(r.notes}</td>
+        </tr>`;
+      });
+      html += `</table>`;
+      document.getElementById("recordsArea").innerHTML = html;
     }
 
     window.onload = loadClasses;
