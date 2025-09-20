@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Attendance</title>
+  <title>考勤系统 Attendance</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 10px; }
     h2 { color: #002060; }
@@ -34,11 +34,16 @@
 </head>
 
 <body>
-  <h2>选择班级 / Select Class</h2>
-  <div id="classButtons">Loading...</div>
+  <h2> 班级考勤 / Class Attendance </h2>
 
-  <div id="stats">Student / Guardian</div>
+  <!-- === Select Class Area === -->
+  <div id="classSelection">
+    <p>选择班级 / Select Class</p2>
+    <div id="classButtons">Loading...</div>
+    <button onclick="resetClass()" class="reset">重置班级 / Reset Class</button>
+  </div>
 
+  <!-- === Student Attendance Table Area === -->
   <table id="attendanceTable">
     <thead>
       <tr>
@@ -62,8 +67,18 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
 
+    // === Google Sheet Name Central Management ===
+    const SHEET_NAME ={
+      students: "Students",
+      classes: "Classes",
+      attendance: "Attendance",
+      studentClassDetails: "Student-Class-Details",
+      leave: "LeaveRequests",
+      report: "Report"
+    };
+
     let currentClass = null;
-    let students = [];
+    let studentData = [];
     let stats = { present: 0, leave: 0, absent: 0 };
 
 
