@@ -136,7 +136,11 @@
         const tr = document.createElement("tr");
         const tdName = document.createElement("td");
 
-        tdName.textContent = `${stu.studentName} / ${stu.guardianName} (${stu.guardianPhone})`;
+        tdName.textContent = `
+          ${stu.studentName} / ${stu.guardianName} (${stu.guardianPhone})
+          <a href="tel:${stu.guardianPhone}" style="margin-left:8px; text-decoration:none;">📞</a>
+          <a href="sms:${stu.guardianPhone}" style="margin-left:5px; text-decoration:none;">💬</a>
+          `;
         tr.appendChild(tdName);
 
         const tdPresent = document.createElement("td");
