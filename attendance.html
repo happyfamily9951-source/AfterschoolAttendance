@@ -192,18 +192,18 @@
     // 点击状态按钮
     function markAttendance(index, type, clickedBtn) {
 
-      const row = clickedBtn.closet("tr");
+      const row = clickedBtn.closest("tr");
       //const row = clickedBtn.parentNode.parentNode;
       const buttons = row.querySelectorAll("button");
 
       buttons.forEach(b => {
         if (!b.classList.contains("reset")) {
           if （ b === clickedBtn) {
-            b.disable = true;  // Current visiable, but disabled
+            b.disabled = true;  // Current visiable, but disabled
             b.classList.remove("disabled");
           } else {
             b.disabled = false;
-            b.classList.remove("disabled");
+            b.classList.add("disabled");
         }
         }
       });
