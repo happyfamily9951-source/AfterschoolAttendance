@@ -163,6 +163,24 @@
         btnReset.onclick = () => resetRow(i, tr);
         tdReset.appendChild(btnReset);
         tr.appendChild(tdReset);
+
+        // Highlight button based on stu.status
+        if (stu.status) {
+          let activeBtn = null;
+          if (stu.status === "present") activeBtn = btnPresent;
+          if (stu.status === "leave") activeBtn = btnLeave;
+          if (stu.status === "absent") activeBtn = btnAbsent;
+
+          if (activeBtn) {
+            activeBtn.disabled = true; // 
+            [btnPresent, btnLeave, btnAbsent].forEach( b=> {
+              if (b!= activeBtn) {
+                b.disabled = true;
+                b.classList.add("disabled");
+              }
+            });
+          }
+        }
         
         tbody.appendChild(tr);
       });
