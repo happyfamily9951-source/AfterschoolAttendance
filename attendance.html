@@ -74,9 +74,21 @@
       const container = document.getElementById("classButtons");
       container.innerHTML = "";
 
+      // Retrieve the day of today
+      const todayIdx = new Date().getDay();
+      const weekMap = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const todayStr = weekMap[todayIdx];
+
       json.classes.forEach(cls => {
         const btn = document.createElement("button");
         btn.textContent = cls;
+
+        // If className includes weekDay, highligh
+        if (cls.includes(todayStr)) {
+          btn.style.backgroundColor = "#007BFF"; // Blue
+          btn.style.color = "white";
+        }
+        
         btn.onclick = () => selectClass(cls, btn);
         container.appendChild(btn);
       });
