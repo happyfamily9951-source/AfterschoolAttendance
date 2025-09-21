@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学生录入与查询 / Student Enrollment</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 15px; }
+    h2 { color: #002060; }
+    label { display:block; margin-top:10px; }
+    input, select { width: 100%; padding: 6px; margin-top: 5px; }
+    button { margin-top: 15px; padding: 8px 14px; background: #007BFF; color: white; border: none; border-radius: 5px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+    th { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h2>学生录入 / Student Enrollment</h2>
+
+  <!-- 学生录入表单 -->
+  <form id="studentForm">
+    <label>学生姓名 / Name:</label>
+    <input type="text" id="studentName" required>
+
+    <label>生日 / Birthday (yyyy-mm-dd):</label>
+    <input type="date" id="birthday" required>
+
+    <label>性别 / Gender:</label>
+    <select id="gender" required>
+      <option value="M">男 / Male</option>
+      <option value="F">女 / Female</option>
+    </select>
+
+    <label>家长姓名 / Guardian Name:</label>
+    <input type="text" id="guardianName" required>
+
+    <label>家长电话 / Guardian Phone:</label>
+    <input type="text" id="guardianPhone" required>
+
+    <label>紧急联系人姓名 / Emergency Contact:</label>
+    <input type="text" id="emergencyName" required>
+
+    <label>紧急联系人电话 / Emergency Phone:</label>
+    <input type="text" id="emergencyPhone" required>
+
+    <button type="submit">提交 / Submit</button>
+  </form>
+
+  <p id="result"></p>
+
+  <hr>
+
+  <!-- 学生查询 -->
+  <h2>学生查询 / Search Student</h2>
+  <input type="text" id="searchKeyword" placeholder="输入姓名 / 电话 / 生日">
+  <button onclick="searchStudent()">查询 / Search</button>
+
+  <table id="searchResults">
+    <thead>
+      <tr>
+        <th>ID</th><th>姓名</th><th>生日</th><th>性别</th>
+        <th>家长</th><th>电话</th><th>紧急联系人</th><th>紧急电话</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
+
+    // 提交录入
+    document.getElementById("studentForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const data = {
+        studentName: document.getElementById("studentName").value,
+        birthday: document.getElementById("birthday").value,
+        gender: document.getElementById("gender").value,
+        guardianName: document.getElementById("guardianName").value,
+        guardianPhone: document.getElementById("guardianPhone").value,
+        emergencyName: document.getElementById("emergencyName").value,
+        emergencyPhone: document.getElementById("emergencyPhone").value
+      };
+
+      try {
+        const res = await fetch(`${API_URL}?action=addStudent`, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.ok) {
+          document.getElementById("result").textContent = "✅ 学生已录入，ID: " + result.studentId;
+          document.getElementById("studentForm").reset();
+        } else {
+          document.getElementById("result").textContent = "❌ 录入失败: " + result.error;
+        }
+      } catch (err) {
+        document.getElementById("result").textContent = "❌ 网络错误: " + err.message;
+      }
+    };
+
+    // 查询学生
+    async function searchStudent() {
+      const keyword = document.getElementById("searchKeyword").value;
+      try {
+        const res = await fetch(`${API_URL}?action=searchStudent&keyword=${encodeURIComponent(keyword)}`);
+        const json = await res.json();
+        const tbody = document.querySelector("#searchResults tbody");
+        tbody.innerHTML = "";
+        if (json.ok) {
+          json.results.forEach(stu => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${stu.studentId}</td>
+              <td>${stu.studentName}</td>
+              <td>${stu.birthday}</td>
+              <td>${stu.gender}</td>
+              <td>${stu.guardianName}</td>
+              <td>${stu.guardianPhone}</td>
+              <td>${stu.emergencyName}</td>
+              <td>${stu.emergencyPhone}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } else {
+          alert("查询失败: " + json.error);
+        }
+      } catch (err) {
+        alert("网络错误: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
