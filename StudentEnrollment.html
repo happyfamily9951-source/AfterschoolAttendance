@@ -94,7 +94,7 @@
         const res = await fetch(`${API_URL}?action=addStudent`, {
           method: "POST",
           headers: {"Content-Type": "text/plain"},
-          body: JSON.stringfy(data)
+          body: JSON.stringify(data)
         });
 
         const json = await res.json();
