@@ -320,17 +320,12 @@
 
       const today = new Date().toISOString().slice(0,10);
       const btn = document.getElementById("submitAttnBtn");  // Locate the submit button
-
-      alert(btn.textContent);
-      
       //const btn = document.querySelector("#submitAttnBtn"); // Locate the submit button
 
       // === Step 1: Disable button to avoid duplicated submission ===
       btn.disabled = true;
-      btn.textConent = "提交中... / Submitting...";   
+      btn.textContent = "提交中... / Submitting...";   
 
-      alert(btn.textContent);
-      
       try {
         const records = students.map((stu, i) => ({
           date: today,
