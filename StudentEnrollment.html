@@ -44,7 +44,7 @@
     <label>紧急联系人电话 / Emergency Phone:</label>
     <input type="text" id="emergencyPhone" required>
 
-    <button type="submit">提交 / Submit</button>
+    <button id="submitBtn" onclick="submitEnrollStudent()">提交 / Submit</button>
   </form>
 
   <p id="result"></p>
@@ -72,37 +72,47 @@
   <script>
     // const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
 
-    // 提交录入
-    document.getElementById("studentForm").onsubmit = async (e) => {
-      e.preventDefault();
-      const data = {
-        studentName: document.getElementById("studentName").value,
-        birthday: document.getElementById("birthday").value,
-        gender: document.getElementById("gender").value,
-        guardianName: document.getElementById("guardianName").value,
-        guardianPhone: document.getElementById("guardianPhone").value,
-        emergencyName: document.getElementById("emergencyName").value,
-        emergencyPhone: document.getElementById("emergencyPhone").value
-      };
+    // Enroll student
+    async function submitEnrollStudent() {
+      const btn = document.getElementById("submitBtn");
+
+      // Step 1: Disable the button to avoiding duplicated enrollment
+      btn.disabled = true;
+      btn.textContent = "提交中...  / Submitting...";
 
       try {
+        const data = {
+          studentName: document.getElementById("studentName").value,
+          birthday: document.getElementById("birthday").value,
+          gender: document.getElementById("gender").value,
+          guardianName: document.getElementById("guardianName").value,
+          guardianPhone: document.getElementById("guardianPhone").value,
+          emergencyName: document.getElementById("emergencyName").value,
+          emergencyPhone: document.getElementById("emergencyPhone").value
+        };
+
         const res = await fetch(`${API_URL}?action=addStudent`, {
           method: "POST",
-          headers: { "Content-Type": "text/plain" },
-          body: JSON.stringify(data)
+          headers: {"Content-Type": "text/plain"},
+          body: JSON.stringfy(data)
         });
-        const result = await res.json();
-        if (result.ok) {
-          document.getElementById("result").textContent = "✅ 学生已录入，ID: " + result.studentId;
-          document.getElementById("studentForm").reset();
+
+        const json = await res.json();
+
+        if (json.ok) {
+          alert("✅ 学生已录入成功，ID: " + json.studentId);
         } else {
-          document.getElementById("result").textContent = "❌ 录入失败: " + result.error;
+          alert("❌ 录入失败: " + json.error);
         }
       } catch (err) {
-        document.getElementById("result").textContent = "❌ 网络错误: " + err.message;
-      }
-    };
-
+        alert("⚠️ 提交出错: " + err.message);
+      } finally {
+        // Step 2: Recover button
+        btn.disabled = false;
+        btn.textContent = "提交 / Submit";
+      }      
+    }
+    
     // 查询学生
     async function searchStudent() {
       const keyword = document.getElementById("searchKeyword").value;
