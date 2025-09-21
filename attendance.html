@@ -319,7 +319,8 @@
       }
 
       const today = new Date().toISOString().slice(0,10);
-      const btn = document.getElementById("submitBtn");  // Locate the submit button
+      // const btn = document.getElementById("submitBtn");  // Locate the submit button
+      const btn = document.querySelector("#submitBtn"); // Locate the submit button
 
       // === Step 1: Disable button to avoid duplicated submission ===
       if（btn) {
