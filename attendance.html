@@ -66,7 +66,7 @@
   <!-- 提交区域 -->
   <div id="submitArea">
     <button onclick="previewSubmission()">预览提交 / Preview Submission</button>
-    <button id="submitBtn" onclick="submitAllAttendance()">提交全班打卡 / Submit All</button>
+    <button id="submitAttnBtn" onclick="submitAllAttendance()">提交全班打卡 / Submit All</button>
   </div>
 
   <!-- === Public configuration file === -->
@@ -319,8 +319,11 @@
       }
 
       const today = new Date().toISOString().slice(0,10);
-      const btn = document.getElementById("submitBtn");  // Locate the submit button
-      //const btn = document.querySelector("#submitBtn"); // Locate the submit button
+      const btn = document.getElementById("submitAttnBtn");  // Locate the submit button
+
+      alert(btn.textContent);
+      
+      //const btn = document.querySelector("#submitAttnBtn"); // Locate the submit button
 
       // === Step 1: Disable button to avoid duplicated submission ===
       btn.disabled = true;
