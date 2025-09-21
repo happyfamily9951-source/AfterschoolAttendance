@@ -337,7 +337,7 @@
           notes: document.getElementById("note-"+i).value || ""
         }));        
         
-        const res = await fetch(`${API_URL}`, {
+        const res = await fetch(`${API_URL}?action=submitAttendance`, {
           method: "POST",
           //headers: { "Content-Type": "application/json" },
           headers: {"Content-Type": "text/plain"},
