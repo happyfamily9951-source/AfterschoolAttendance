@@ -328,6 +328,8 @@
       // === Step 1: Disable button to avoid duplicated submission ===
       btn.disabled = true;
       btn.textConent = "提交中... / Submitting...";   
+
+      alert(btn.textContent);
       
       try {
         const records = students.map((stu, i) => ({
