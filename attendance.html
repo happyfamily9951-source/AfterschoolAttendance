@@ -322,9 +322,11 @@
       const btn = document.getElementById("submitBtn");  // Locate the submit button
 
       // === Step 1: Disable button to avoid duplicated submission ===
-      btn.disabled = true;
-      btn.textConent = "提交中... / Submitting...";     
-
+      if（btn) {
+        btn.disabled = true;
+        btn.textConent = "提交中... / Submitting...";     
+      }
+      
       try {
         const records = students.map((stu, i) => ({
           date: today,
