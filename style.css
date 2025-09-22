@@ -1,0 +1,57 @@
+/* === 全局基础样式 === */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f8f8f8;
+}
+
+/* === iOS 风格主界面图标 === */
+.icon {
+  width: 120px;
+  height: 120px;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 28px;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+.icon:hover {
+  transform: scale(1.05);
+}
+.label {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* === 返回主页按钮 === */
+.home-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #1ABC9C; /* Turquoise */
+  color: white;
+  padding: 10px 15px;
+  border-radius: 15px;
+  font-size: 16px;
+  text-decoration: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s, background 0.2s;
+}
+.home-btn:hover {
+  transform: scale(1.05);
+  background: #16A085; /* 深色 Teal hover 效果 */
+}
+
+/* === 调色板：Innovative Spirit === */
+.turquoise { background: #1ABC9C; }
+.teal { background: #16A085; }
+.yellow { background: #F1C40F; color: black; }
+.orange { background: #E67E22; }
+.red { background: #E74C3C; }
