@@ -4,91 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>系统入口 / Main Menu</title>
-  <style>
-    /* 页面基础设置 */
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
-      background: #f8f8f8; /* 背景浅灰，模仿 iOS 桌面 */
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh; /* 全屏居中 */
-    }
-
-    /* 网格布局：两列排列，像 iOS 主屏 */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 140px); /* 两列，每列宽度 140px */
-      grid-gap: 25px; /* 图标间距 */
-      text-align: center;
-    }
-
-    /* 单个图标按钮 */
-    .icon {
-      width: 120px;
-      height: 120px;
-      border-radius: 25px; /* iOS 风格圆角 */
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 28px; /* Emoji 图标放大 */
-      text-decoration: none; /* 去掉下划线 */
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* 阴影效果 */
-      transition: transform 0.2s; /* 悬停缩放过渡 */
-    }
-
-    /* 鼠标悬停动画 */
-    .icon:hover {
-      transform: scale(1.05);
-    }
-
-    /* 图标下方文字 */
-    .label {
-      margin-top: 8px;
-      font-size: 14px;
-      color: #333;
-    }
-
-    /* 调色板：Innovative Spirit */
-    .turquoise { background: #1ABC9C; }
-    .teal { background: #16A085; }
-    .yellow { background: #F1C40F; color: black; }
-    .orange { background: #E67E22; }
-    .red { background: #E74C3C; }
-  </style>
+  <!-- 引入全局样式 -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- 返回主页按钮（主页也放一个，风格统一） -->
+  <a href="index.html" class="home-btn">🏠 返回主页</a>
+
   <!-- 功能入口网格 -->
   <div class="grid">
-    <!-- 学生录入 -->
     <a href="StudentEnrollment.html" class="icon turquoise">
       👨‍👩‍👧
       <div class="label">学生录入</div>
     </a>
 
-    <!-- 课程录入 -->
     <a href="CourseEnrollment.html" class="icon teal">
       📚
       <div class="label">课程录入</div>
     </a>
 
-    <!-- 学生课程报名 -->
     <a href="StudentClassApplication.html" class="icon yellow">
       📝
       <div class="label">课程报名</div>
     </a>
 
-    <!-- 考勤打卡 -->
     <a href="Attendance.html" class="icon orange">
       ✔️
       <div class="label">考勤打卡</div>
     </a>
 
-    <!-- 报表统计 -->
     <a href="Report.html" class="icon red">
       📊
       <div class="label">统计报表</div>
