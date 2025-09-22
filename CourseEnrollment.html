@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>课程录入 / Course Enrollment</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    label { display: block; margin-top: 10px; }
+    input, select { width: 100%; padding: 5px; margin-top: 3px; }
+    button { margin-top: 15px; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>课程录入 / Add New Class</h2>
+
+  <label>Class Name
+    <input type="text" id="className" required>
+  </label>
+
+  <label>Short Description
+    <input type="text" id="shortDescription">
+  </label>
+
+  <label>Date From
+    <input type="date" id="dateFrom">
+  </label>
+
+  <label>Date To
+    <input type="date" id="dateTo">
+  </label>
+
+  <label>Time From
+    <input type="time" id="timeFrom">
+  </label>
+
+  <label>Time To
+    <input type="time" id="timeTo">
+  </label>
+
+  <label>Day of Week
+    <select id="dayOfWeek">
+      <option>Monday</option>
+      <option>Tuesday</option>
+      <option>Wednesday</option>
+      <option>Thursday</option>
+      <option>Friday</option>
+      <option>Saturday</option>
+      <option>Sunday</option>
+    </select>
+  </label>
+
+  <label>Teacher Name
+    <input type="text" id="teacherName">
+  </label>
+
+  <label>Teacher Contact Number
+    <input type="text" id="teacherContactNumber">
+  </label>
+
+  <label>Teacher Email
+    <input type="email" id="teachersEmail">
+  </label>
+
+  <label>Age From
+    <input type="number" id="ageFrom">
+  </label>
+
+  <label>Age To
+    <input type="number" id="ageTo">
+  </label>
+
+  <label>Maximum Position
+    <input type="number" id="maximumPosition">
+  </label>
+
+  <button id="submitBtn" onclick="submitClass()">提交课程 / Submit</button>
+
+  <script src="config.js"></script>
+  <script>
+    async function submitClass() {
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "提交中... / Submitting...";
+
+      try {
+        const data = {
+          className: document.getElementById("className").value,
+          shortDescription: document.getElementById("shortDescription").value,
+          dateFrom: document.getElementById("dateFrom").value,
+          dateTo: document.getElementById("dateTo").value,
+          timeFrom: document.getElementById("timeFrom").value,
+          timeTo: document.getElementById("timeTo").value,
+          dayOfWeek: document.getElementById("dayOfWeek").value,
+          teacherName: document.getElementById("teacherName").value,
+          teacherContactNumber: document.getElementById("teacherContactNumber").value,
+          teachersEmail: document.getElementById("teachersEmail").value,
+          ageFrom: document.getElementById("ageFrom").value,
+          ageTo: document.getElementById("ageTo").value,
+          maximumPosition: document.getElementById("maximumPosition").value
+        };
+
+        const res = await fetch(`${API_URL}?action=addClass`, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(data)
+        });
+
+        const json = await res.json();
+        if (json.ok) {
+          alert("✅ 课程已录入成功！");
+        } else {
+          alert("❌ 录入失败: " + json.error);
+        }
+      } catch (err) {
+        alert("提交出错: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "提交课程 / Submit";
+      }
+    }
+  </script>
+</body>
+</html>
