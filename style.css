@@ -40,8 +40,8 @@ body {
   justify-content: center;  /* Aligned in Center */
 }
 
-/* === Small screen (<=400px) auto single column === */
-@media (max-width: 400px) {
+/* === Small screen (<=600px) auto single column === */
+@media (max-width: 600px) {
   .grid {
     grid-template-columns: 1fr; /* single colum */
     justify-content: center; /* Aligned in center */
