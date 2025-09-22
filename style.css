@@ -44,7 +44,7 @@ body {
 @media (max-width: 600px) {
   .grid {
     grid-template-columns: 1fr; /* single colum */
-    justify-content: center; /* Aligned in center */
+    justify-item: center; /* Aligned in center */
   }
 }
 
