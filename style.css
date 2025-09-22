@@ -48,6 +48,21 @@ body {
   }
 }
 
+/* Letters (Chinese/English) */
+.label {
+  margin-top: 8px;
+  font-size: 18px;  
+  color: #333;
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+.label .en {
+  font-size： 14px;
+  color: #555;
+  font-weight: normal;
+}
+
 /* === 返回主页按钮 === */
 .home-btn {
   position: absolute;
