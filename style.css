@@ -40,6 +40,13 @@ body {
   justify-content: center;  /* Aligned in Center */
 }
 
+/* === Small screen (<=400px) auto single column === */
+@media (max-width: 400px) {
+  .grid {
+    grid-template-columns: 1fr; /* single colum */
+    justify-content: center; /* Aligned in center */
+  }
+}
 
 /* === 返回主页按钮 === */
 .home-btn {
