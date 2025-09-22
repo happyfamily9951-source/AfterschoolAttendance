@@ -37,6 +37,7 @@ body {
   grid-gap: 25px;
   text-align: center;
   margin-top: 80px; /* 给返回按钮留空间 */
+  justify-content: center;  /* Aligned in Center */
 }
 
 
