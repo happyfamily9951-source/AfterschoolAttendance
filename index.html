@@ -1,171 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Class Attendance</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>系统入口 / Main Menu</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 1rem; }
-    h1 { font-size: 1.2rem; }
-    .student { margin: 0.5rem 0; padding: 0.5rem; border: 1px solid #ddd; border-radius: 8px; }
-    button { margin: 0 0.3rem; padding: 0.4rem 0.8rem; border: none; border-radius: 6px; }
-    .present { background: #4caf50; color: white; }
-    .absent { background: #f44336; color: white; }
-    .leave { background: #ff9800; color: white; }
+    /* 页面基础设置 */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      background: #f8f8f8; /* 背景浅灰，模仿 iOS 桌面 */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; /* 全屏居中 */
+    }
+
+    /* 网格布局：两列排列，像 iOS 主屏 */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 140px); /* 两列，每列宽度 140px */
+      grid-gap: 25px; /* 图标间距 */
+      text-align: center;
+    }
+
+    /* 单个图标按钮 */
+    .icon {
+      width: 120px;
+      height: 120px;
+      border-radius: 25px; /* iOS 风格圆角 */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 28px; /* Emoji 图标放大 */
+      text-decoration: none; /* 去掉下划线 */
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* 阴影效果 */
+      transition: transform 0.2s; /* 悬停缩放过渡 */
+    }
+
+    /* 鼠标悬停动画 */
+    .icon:hover {
+      transform: scale(1.05);
+    }
+
+    /* 图标下方文字 */
+    .label {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    /* 调色板：Innovative Spirit */
+    .turquoise { background: #1ABC9C; }
+    .teal { background: #16A085; }
+    .yellow { background: #F1C40F; color: black; }
+    .orange { background: #E67E22; }
+    .red { background: #E74C3C; }
   </style>
 </head>
 <body>
-  <h1>Class Attendance / 班级打卡</h1>
-  <label>Select Class / 选择班级：</label>
-  <select id="classSelect">
-    <option value="">--请选择班级--</option>
-    <option value="2025Q3-TuesWriting">2025 Q3 Tuesday Writing Class</option>
-    <option value="2025Q3-TuesPainting">2025 Q3 Tuesday Painting Class</option>
-    <option value="2025Q3-WedReading">2025 Q3 Wednesday Reading</option>
-    <option value="2025Q3-FriSports">2025 Q3 Friday Sports</option>
-</select>
+  <!-- 功能入口网格 -->
+  <div class="grid">
+    <!-- 学生录入 -->
+    <a href="StudentEnrollment.html" class="icon turquoise">
+      👨‍👩‍👧
+      <div class="label">学生录入</div>
+    </a>
 
-<button onclick="showReport()">📊 Report</button>
-<div id="report"></div>
-  
-<div id="students"></div>
-  
-  <h1>Class Attendance / 班级打卡</h1>
-  <div id="students"></div>
+    <!-- 课程录入 -->
+    <a href="CourseEnrollment.html" class="icon teal">
+      📚
+      <div class="label">课程录入</div>
+    </a>
 
-  <script>
-    // 你的 Google Apps Script 部署 URL 
-    // const API_URL = "https://script.google.com/macros/s/AKfycbw27tmi3WW73NK6XoBEiU6n09bFiSrhrq2EAQrCViI6RlOIBotAS-rmdDFUKpN2HGwI/exec";
-    const API_URL = "https://script.google.com/macros/s/AKfycbzCv_cpjuR-0NOio1E22oqlMXKoLC3P3vnXDpmjVLfN8WWRr6-8NnhADDN26lsi8Lxr/exec";
-    const classSelect = document.getElementById("classSelect");
-    const studentsContainer = document.getElementById("students");
+    <!-- 学生课程报名 -->
+    <a href="StudentClassApplication.html" class="icon yellow">
+      📝
+      <div class="label">课程报名</div>
+    </a>
 
-classSelect.onchange = () => {
-  const className = classSelect.value;
-  if (!className) {
-    studentsContainer.innerHTML = "";
-    return;
-  }
+    <!-- 考勤打卡 -->
+    <a href="Attendance.html" class="icon orange">
+      ✔️
+      <div class="label">考勤打卡</div>
+    </a>
 
-  
-  fetch(API_URL + "?className=" + encodeURIComponent(className))
-    .then(res => res.json())
-    .then(data => {
-      if (!data.ok) {
-        alert("加载学生失败: " + data.error);
-        return;
-      }
-
-      // Clear old contents
-      studentsContainer.innerHTML = "";
-
-      // load all the students
-      data.students.forEach(s => {
-        const div = document.createElement("div");
-
-        //  添加 class 和唯一标识        
-        div.className = "student";
-        div.dataset.id = s.id; // ← 关键：给每个学生行一个唯一标识
-
-        //format phone number, removing space 
-        const phone = (s.guardianPhone || "").replace(/\s+/g, "");
-
-        // 显示学生姓名 + 家长信息 + 打卡按钮 + 联系方式
-        div.innerHTML = `
-          <strong>${s.name}</strong><br>
-          <span style="font-size: 0.9em; color: gray;">
-            Guardian: ${s.guardianName || "-"} 
-            <span class="contact">(${phone || "-"})</span>
-          </span><br>
-          <button class="present">Present</button>
-          <button class="leave">Leave</button>
-          <button class="absent">Absent</button>
-          <a class="call" href="tel:${phone || ''}"> 📞 Call</a>
-          <a class="sms" href="sms:${phone || ''}">💬 SMS</a>
-        `;
-
-        // If the student is already applied in leave, save the status
-        if (s.status === "Leave") {
-          div.style.backgroudColor = "#fff3cd"; // Yellow background
-          div.innerHTML += `<br><em style="color:#b76e00;">Already on leave / 已请假 </em>`;
-          // disable the buttons to avoid miss-operation
-          div.querySelectorAll("button").foreach(btn => btn.disabled = true);
-        }
-          
-
-        // 加到页面里
-        studentsContainer.appendChild(div);
-
-        
-        // 给按钮绑定事件
-        div.querySelector(".present").onclick = () => markAttendance(className, s.id, "Present");
-        div.querySelector(".leave").onclick = () => markAttendance(className, s.id, "Leave");
-        div.querySelector(".absent").onclick = () => markAttendance(className, s.id, "Absent");
-      });
-    });
-};
-
-// Reports
-    function showReport() {
-      const className = document.getElementById("classSelect").value;
-      if (!className) {
-        alert("请先选择班级");
-        return;
-      }
-      
-      const today = new Date().toISOString().slice(0,10); // YYYY-MM-DD
-      const fromDate = "2025-09-01"; // 先写死学期开始日，可以之后改成动态配置
-      
-      fetch(`${API_URL}?function=getReport&className=${encodeURIComponent(className)}&fromDate=${fromDate}&toDate=${today}`)
-        .then(res => res.json())
-        .then(data => {
-          if (!data.ok) {
-            alert("报表生成失败");
-            return;
-          }
-          
-          const stats = data.stats;
-          document.getElementById("report").innerHTML = `
-          <h3>出勤报表 (${className})</h3>
-          出勤: ${stats.Present || 0} <br>
-          缺勤: ${stats.Absent || 0} <br>
-          请假: ${stats.Leave || 0} <br>
-          `;
-        })
-        
-        .catch(err => alert("Error: " + err));
-    }
-
-
-// markAttendance
-function markAttendance(className, studentId, status) {
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      className: className,
-      studentId: studentId,
-      status: status
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert("Saved: " + status);
-
-    // 更新界面样式
-    const row = document.querySelector(`[data-id="${studentId}"]`);
-    if (row) {
-      row.dataset.status = status;
-      if (status === "Absent") {
-        row.style.border = "2px solid red";
-        row.querySelector(".contact").style.color = "red";
-      } else {
-        row.style.border = "1px solid #ddd";
-        row.querySelector(".contact").style.color = "inherit";
-      }
-    }
-  })
-  .catch(err => alert("Error: " + err));
-}
-</script>
+    <!-- 报表统计 -->
+    <a href="Report.html" class="icon red">
+      📊
+      <div class="label">统计报表</div>
+    </a>
+  </div>
 </body>
 </html>
