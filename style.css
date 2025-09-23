@@ -1,4 +1,4 @@
-/* === 全局样式 === */
+/* === 全局 === */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   margin: 0;
@@ -6,72 +6,73 @@ body {
   background-color: #f4f6f9;
 }
 
-/* === 表单两列布局 === */
+/* === 卡片容器 === */
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  margin: 12px;
+  padding: 15px;
+}
+
+/* === 卡片标题 === */
+.card h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1a237e;
+}
+
+/* === 表单每一行用卡片风格 === */
 .form-row {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 .form-row label {
   flex: 1;
+  text-align: left;   /* label 靠左对齐 */
   font-size: 15px;
   color: #333;
-  padding-right: 10px;
-  text-align: right;
 }
 
 .form-row input,
 .form-row select {
   flex: 2;
-  padding: 8px;
-  font-size: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-/* === 卡片样式 === */
-.card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  margin: 15px;
-  padding: 20px;
-}
-
-
-
-.card h2 {
-  margin-bottom: 15px;
-  font-size: 18px;
-  color: #1a237e;
-}
-
-.card input, .card select, .card button {
-  width: 100%;
-  margin-bottom: 12px;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.card button {
-  background: #1abc9c;
-  color: white;
   border: none;
+  outline: none;
+  font-size: 15px;
+  padding: 6px;
+  background: transparent;
+}
+
+/* === 查询卡片略深背景 === */
+.card-dark {
+  background: #f0f2f5;
+}
+
+/* === 提交按钮 === */
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
   font-weight: bold;
+  color: #fff;
+  background: #1abc9c;
   cursor: pointer;
 }
 
-.card button:disabled {
+button:disabled {
   background: #aaa;
   cursor: not-allowed;
-}
-
-/* === 查询区的卡片，稍深背景 === */
-.card-dark {
-  background: #e8ebf0;
 }
 
 /* === 底部导航栏 === */
