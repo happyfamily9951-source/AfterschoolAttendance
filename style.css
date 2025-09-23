@@ -33,7 +33,7 @@ body {
 /* === 功能入口网格布局（两列排列） === */
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 140px); /* 两列 */
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* 两列 */
   grid-gap: 25px;
   text-align: center;
   margin-top: 80px; /* 给返回按钮留空间 */
