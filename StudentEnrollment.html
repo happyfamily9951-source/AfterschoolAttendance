@@ -2,261 +2,95 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Enrollment</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
-      background: #f8f8f8;
-      margin: 0;
-      padding: 20px;
-      padding-bottom: 80px; /* 预留底部导航空间 */
-    }
-    h2, h3 {
-      margin-bottom: 15px;
-      color: #333;
-    }
-    /* === 卡片样式 === */
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .label {
-      flex: 0 0 40%;
-      font-size: 16px;
-      color: #333;
-    }
-    .input {
-      flex: 1;
-    }
-    .input input, .input select {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 15px;
-    }
-    .submit-btn {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      color: white;
-      background: #1ABC9C;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-      transition: background 0.2s;
-    }
-    .submit-btn:hover {
-      background: #16A085;
-    }
-    /* === 查询区 === */
-    .search-section {
-      background: #eef2f7;
-      padding: 15px;
-      border-radius: 12px;
-      margin-top: 30px;
-    }
-    .search-card {
-      background: #fff;
-      border-left: 5px solid #1ABC9C;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 10px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .search-info {
-      flex: 1;
-      font-size: 14px;
-      color: #333;
-    }
-    .search-actions button {
-      margin-left: 8px;
-      padding: 5px 10px;
-      font-size: 13px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .edit-btn {
-      background: #3498db;
-      color: white;
-    }
-    .delete-btn {
-      background: #e74c3c;
-      color: white;
-    }
-    /* === 底部导航 === */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: #fff;
-      border-top: 1px solid #ddd;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-    }
-    .bottom-nav button {
-      background: none;
-      border: none;
-      font-size: 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      color: #555;
-    }
-    .bottom-nav button:focus {
-      outline: none;
-    }
-    .bottom-nav button span {
-      font-size: 20px;
-    }
-  </style>
 </head>
 <body>
-  <h2>Student Enrollment</h2>
 
-  <!-- 学生录入 -->
+  <!-- === 学生录入 === -->
   <div class="card">
-    <div class="label">Student Name</div>
-    <div class="input"><input type="text" id="studentName" required></div>
-  </div>
-  <div class="card">
-    <div class="label">Birthday</div>
-    <div class="input"><input type="date" id="birthday" required></div>
-  </div>
-  <div class="card">
-    <div class="label">Gender</div>
-    <div class="input">
+    <h2>➕ New Student Enrollment</h2>
+    <form id="enrollForm">
+      <label>Student Name</label>
+      <input type="text" id="studentName" required>
+
+      <label>Gender</label>
       <select id="gender">
         <option value="M">Male</option>
         <option value="F">Female</option>
       </select>
-    </div>
-  </div>
-  <div class="card">
-    <div class="label">Guardian Name</div>
-    <div class="input"><input type="text" id="guardianName" required></div>
-  </div>
-  <div class="card">
-    <div class="label">Guardian Phone</div>
-    <div class="input"><input type="text" id="guardianPhone" required></div>
-  </div>
-  <div class="card">
-    <div class="label">Emergency Contact</div>
-    <div class="input"><input type="text" id="emergencyContact"></div>
-  </div>
-  <div class="card">
-    <div class="label">Emergency Phone</div>
-    <div class="input"><input type="text" id="emergencyPhone"></div>
-  </div>
-  <button class="submit-btn" id="submitBtn" onclick="submitStudent()">Submit</button>
 
-  <!-- 学生查询 -->
-  <div class="search-section">
-    <h3>Search Student</h3>
-    <div class="card">
-      <div class="label">Keyword</div>
-      <div class="input"><input type="text" id="searchKeyword" placeholder="Name / Birthday / Phone"></div>
-    </div>
-    <button class="submit-btn" onclick="searchStudent()">Search</button>
+      <label>Date of Birth</label>
+      <input type="date" id="dob" required>
 
-    <div id="searchResults" style="margin-top:15px;"></div>
+      <label>Guardian Name</label>
+      <input type="text" id="guardianName" required>
+
+      <label>Guardian Phone</label>
+      <input type="tel" id="guardianPhone" required>
+
+      <label>Emergency Contact</label>
+      <input type="text" id="emergencyContact">
+
+      <label>Emergency Phone</label>
+      <input type="tel" id="emergencyPhone">
+
+      <button type="submit" id="submitBtn">Submit</button>
+    </form>
   </div>
 
-  <!-- 底部导航 -->
+  <!-- === 学生查询 === -->
+  <div class="card card-dark">
+    <h2>🔍 Search Student</h2>
+    <input type="text" id="searchKeyword" placeholder="Enter name / DOB / phone">
+    <button onclick="searchStudent()">Search</button>
+
+    <div id="searchResults"></div>
+  </div>
+
+  <!-- === 底部导航栏 === -->
   <div class="bottom-nav">
-    <button><span>👤</span> Student</button>
-    <button><span>📚</span> Course</button>
-    <button onclick="location.href='index.html'"><span>🏠</span> Home</button>
-    <button><span>📝</span> Apply</button>
-    <button><span>📊</span> Report</button>
+    <a href="index.html" class="nav-item active">
+      <span class="icon">🏠</span>
+      <span class="label">Home</span>
+    </a>
+    <a href="CourseEnrollment.html" class="nav-item">
+      <span class="icon">📚</span>
+      <span class="label">Courses</span>
+    </a>
+    <a href="index.html" class="nav-item logo">★</a>
+    <a href="Attendance.html" class="nav-item">
+      <span class="icon">📝</span>
+      <span class="label">Attendance</span>
+    </a>
+    <a href="Report.html" class="nav-item">
+      <span class="icon">📊</span>
+      <span class="label">Reports</span>
+    </a>
   </div>
 
-  <script src="config.js"></script>
   <script>
-    async function submitStudent() {
-      const btn = document.getElementById("submitBtn");
+    // 防重复提交逻辑
+    const form = document.getElementById("enrollForm");
+    const btn = document.getElementById("submitBtn");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
       btn.disabled = true;
       btn.textContent = "Submitting...";
-      try {
-        const data = {
-          studentName: document.getElementById("studentName").value,
-          birthday: document.getElementById("birthday").value,
-          gender: document.getElementById("gender").value,
-          guardianName: document.getElementById("guardianName").value,
-          guardianPhone: document.getElementById("guardianPhone").value,
-          emergencyContact: document.getElementById("emergencyContact").value,
-          emergencyPhone: document.getElementById("emergencyPhone").value
-        };
-        const res = await fetch(`${API_URL}?action=addStudent`, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain" },
-          body: JSON.stringify(data)
-        });
-        const json = await res.json();
-        alert(json.ok ? "✅ Enrolled!" : "❌ Failed: " + json.error);
-      } catch (err) {
-        alert("Error: " + err.message);
-      } finally {
+
+      // TODO: fetch 到 Apps Script API
+      setTimeout(() => {
+        alert("提交成功 (模拟)");
         btn.disabled = false;
         btn.textContent = "Submit";
-      }
-    }
+      }, 1500);
+    });
 
-    async function searchStudent() {
-      const keyword = document.getElementById("searchKeyword").value;
-      if (!keyword) { alert("Please enter a keyword"); return; }
-      try {
-        const res = await fetch(`${API_URL}?action=searchStudent&keyword=${encodeURIComponent(keyword)}`);
-        const json = await res.json();
-        const container = document.getElementById("searchResults");
-        container.innerHTML = "";
-        if (json.ok) {
-          json.results.forEach(stu => {
-            const div = document.createElement("div");
-            div.className = "search-card";
-            div.innerHTML = `
-              <div class="search-info">${stu.studentName} | ${stu.birthday} | ${stu.gender} | Guardian: ${stu.guardianName} (${stu.guardianPhone})</div>
-              <div class="search-actions">
-                <button class="edit-btn" onclick="editStudent('${stu.studentId}')">Edit</button>
-                <button class="delete-btn" onclick="deleteStudent('${stu.studentId}')">Delete</button>
-              </div>`;
-            container.appendChild(div);
-          });
-        } else {
-          alert("❌ Search failed: " + json.error);
-        }
-      } catch (err) {
-        alert("Search error: " + err.message);
-      }
-    }
-
-    function editStudent(id) {
-      alert("Edit student: " + id);
-      // TODO: 打开编辑界面 / 弹窗
-    }
-    function deleteStudent(id) {
-      if (confirm("Are you sure to delete student " + id + "?")) {
-        alert("Deleted student: " + id);
-        // TODO: 调用 API 删除
-      }
+    function searchStudent() {
+      const kw = document.getElementById("searchKeyword").value;
+      document.getElementById("searchResults").innerHTML = 
+        `<p>Searching for <b>${kw}</b>... (mockup)</p>`;
     }
   </script>
 </body>
