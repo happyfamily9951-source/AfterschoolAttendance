@@ -1,52 +1,7 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test doPost</title>
-</head>
-<body>
-<h2>Test doPost → Attendance 08:52PM </h2>
-<button onclick="sendTest()">发送测试数据</button>
-
-<pre id="result"></pre>
-
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyi35NGMumD8qWV9bXUljR9aiAY9PB2aZ8m7WoMba_om4kp8PqCD3-YK2VfvLYmSCll/exec";
-
-function sendTest() {
-  const testRecords = [
-    {
-      "studentId": "stu001",
-      "studentName": "Tom",
-      "gender": "M",
-      "className": "2025Q3-TestClass",
-      "status": "Present",
-      "notes": "Test record from HTML"
-    },
-    {
-      "studentId": "stu002",
-      "studentName": "Alice",
-      "gender": "F",
-      "className": "2025Q3-TestClass",
-      "status": "Leave",
-      "notes": "Doctor appointment"
-    }
-  ];
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({ "records": testRecords }),
-    headers: { "Content-Type": "application/json" }
-  })
-    .then(r => r.json())
-    .then(data => {
-      document.getElementById("result").textContent = JSON.stringify(data, null, 2);
-    })
-    .catch(err => {
-      document.getElementById("result").textContent = "Error: " + err;
-    });
-}
-</script>
-</body>
-</html>
+<div class="bottom-nav">
+  <button onclick="location.href='StudentEnrollment.html'"><span>👤</span> Student</button>
+  <button onclick="location.href='CourseEnrollment.html'"><span>📚</span> Course</button>
+  <button onclick="location.href='index.html'"><span>🏠</span> Home</button>
+  <button onclick="location.href='StudentClassApplication.html'"><span>📝</span> Apply</button>
+  <button onclick="location.href='Report.html'"><span>📊</span> Report</button>
+</div>
