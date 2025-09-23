@@ -1,41 +1,62 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>系统入口 / Main Menu</title>
-  <!-- 引入全局样式 -->
+  <title>Main Menu</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      background: #f8f8f8;
+      margin: 0;
+      padding: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-decoration: none;
+      color: #4B0082; /* Indigo purple */
+      font-size: 16px;
+      font-weight: 500;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+    }
+    .card-icon {
+      font-size: 22px;
+      margin-right: 12px;
+    }
+  </style>
 </head>
 <body>
-  <!-- 返回主页按钮（主页也放一个，风格统一） -->
-  <a href="index.html" class="home-btn">🏠 返回主页</a>
+  <h2>Main Menu</h2>
 
-  <!-- 功能入口网格 -->
   <div class="grid">
-    <a href="StudentEnrollment.html" class="icon turquoise">
-      👨‍👩‍👧
-      <div class="label">学生录入<br><span class="en">Student Enrollment</span></div>
+    <a href="StudentEnrollment.html" class="card">
+      <span class="card-icon">👨‍👩‍👧</span> Student Enrollment
     </a>
-
-    <a href="CourseEnrollment.html" class="icon teal">
-      📚
-      <div class="label">课程录入<br><span class="en">Course Enrollment</span></div>
+    <a href="CourseEnrollment.html" class="card">
+      <span class="card-icon">📚</span> Course Enrollment
     </a>
-
-    <a href="StudentClassApplication.html" class="icon yellow">
-      📝
-      <div class="label">课程报名<br><span class="en">Class Application</span></div>
+    <a href="StudentClassApplication.html" class="card">
+      <span class="card-icon">📝</span> Class Application
     </a>
-
-    <a href="Attendance.html" class="icon orange">
-      ✔️
-      <div class="label">考勤打卡<br><span class="en">Attendance</span></div>
+    <a href="Attendance.html" class="card">
+      <span class="card-icon">✔️</span> Attendance
     </a>
-
-    <a href="Report.html" class="icon red">
-      📊
-      <div class="label">统计报表<br><span class="en">Attendance Reports</span></div>
+    <a href="Report.html" class="card">
+      <span class="card-icon">📊</span> Reports
     </a>
   </div>
 </body>
