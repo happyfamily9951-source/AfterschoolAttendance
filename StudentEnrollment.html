@@ -11,29 +11,44 @@
   <div class="card">
     <h2>➕ New Student Enrollment</h2>
     <form id="enrollForm">
-      <label>Student Name</label>
-      <input type="text" id="studentName" required>
 
-      <label>Gender</label>
-      <select id="gender">
-        <option value="M">Male</option>
-        <option value="F">Female</option>
-      </select>
+      <div class="form-row">
+        <label for="studentName">Student Name</label>
+        <input type="text" id="studentName" required>
+      </div>
 
-      <label>Date of Birth</label>
-      <input type="date" id="dob" required>
+      <div class="form-row">
+        <label for="gender">Gender</label>
+        <select id="gender">
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+        </select>
+      </div>
 
-      <label>Guardian Name</label>
-      <input type="text" id="guardianName" required>
+      <div class="form-row">
+        <label for="dob">Date of Birth</label>
+        <input type="date" id="dob" required>
+      </div>
 
-      <label>Guardian Phone</label>
-      <input type="tel" id="guardianPhone" required>
+      <div class="form-row">
+        <label for="guardianName">Guardian Name</label>
+        <input type="text" id="guardianName" required>
+      </div>
 
-      <label>Emergency Contact</label>
-      <input type="text" id="emergencyContact">
+      <div class="form-row">
+        <label for="guardianPhone">Guardian Phone</label>
+        <input type="tel" id="guardianPhone" required>
+      </div>
 
-      <label>Emergency Phone</label>
-      <input type="tel" id="emergencyPhone">
+      <div class="form-row">
+        <label for="emergencyContact">Emergency Contact</label>
+        <input type="text" id="emergencyContact">
+      </div>
+
+      <div class="form-row">
+        <label for="emergencyPhone">Emergency Phone</label>
+        <input type="tel" id="emergencyPhone">
+      </div>
 
       <button type="submit" id="submitBtn">Submit</button>
     </form>
@@ -42,9 +57,11 @@
   <!-- === 学生查询 === -->
   <div class="card card-dark">
     <h2>🔍 Search Student</h2>
-    <input type="text" id="searchKeyword" placeholder="Enter name / DOB / phone">
+    <div class="form-row">
+      <label for="searchKeyword">Keyword</label>
+      <input type="text" id="searchKeyword" placeholder="Enter name / DOB / phone">
+    </div>
     <button onclick="searchStudent()">Search</button>
-
     <div id="searchResults"></div>
   </div>
 
@@ -89,7 +106,7 @@
 
     function searchStudent() {
       const kw = document.getElementById("searchKeyword").value;
-      document.getElementById("searchResults").innerHTML = 
+      document.getElementById("searchResults").innerHTML =
         `<p>Searching for <b>${kw}</b>... (mockup)</p>`;
     }
   </script>
