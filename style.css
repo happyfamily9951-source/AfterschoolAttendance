@@ -26,30 +26,26 @@ body {
 /* === 表单每一行用卡片风格 === */
 .form-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 10px;
+  flex-direction: column;   /* 🔹 改为上下排列 */
+  align-items: flex-start;
+  margin-bottom: 15px;
 }
 
 .form-row label {
-  flex: 1;
-  text-align: left;   /* label 靠左对齐 */
   font-size: 15px;
   color: #333;
+  margin-bottom: 6px;       /* label 与输入框有间距 */
+  text-align: left;
 }
 
 .form-row input,
 .form-row select {
-  flex: 2;
-  border: none;
-  outline: none;
+  width: 100%;              /* 🔹 宽度占满卡片 */
+  padding: 10px;
   font-size: 15px;
-  padding: 6px;
-  background: transparent;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f5f5f5;      /* 浅灰背景 */
 }
 
 /* === 查询卡片略深背景 === */
