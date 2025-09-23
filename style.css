@@ -6,6 +6,30 @@ body {
   background-color: #f4f6f9;
 }
 
+/* === 表单两列布局 === */
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.form-row label {
+  flex: 1;
+  font-size: 15px;
+  color: #333;
+  padding-right: 10px;
+  text-align: right;
+}
+
+.form-row input,
+.form-row select {
+  flex: 2;
+  padding: 8px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
 /* === 卡片样式 === */
 .card {
   background: #fff;
@@ -14,6 +38,8 @@ body {
   margin: 15px;
   padding: 20px;
 }
+
+
 
 .card h2 {
   margin-bottom: 15px;
