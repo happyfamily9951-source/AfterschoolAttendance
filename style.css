@@ -41,12 +41,12 @@ body {
 }
 
 /* === Small screen (<=600px) auto single column === */
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   .grid {
     grid-template-columns: 1fr; /* single colum */
     justify-items: center; /* Aligned in center */
   }
-}
+}*/
 
 /* Letters (Chinese/English) */
 .label {
