@@ -1,56 +1,39 @@
-/* 全局字体 */
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
+/* 网格布局（两列卡片） */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 20px;
+  margin-bottom: 80px; /* 避开底部导航 */
 }
 
-/* 底部导航栏 */
-.bottom-nav {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  background: linear-gradient(to right, #1a237e, #283593);
-  padding: 10px 0;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-}
-
-.nav-item {
-  flex: 1;
-  text-align: center;
-  color: #ddd;
-  font-size: 16px;       /* 与主按钮文字一致 */
-  text-decoration: none;
-  padding: 6px 0;
-}
-
-.nav-item .icon {
-  display: block;
-  font-size: 26px;       /* 与效果图统一 */
-  margin-bottom: 3px;
-}
-
-.nav-item.active {
-  color: #F1C40F;
-  font-weight: bold;
-}
-
-/* 提交按钮（统一主色） */
-button {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: bold;
+/* 大按钮风格 */
+.card-btn {
+  background: #1a73e8;       /* 🔹 蓝色主色调 */
   color: #fff;
-  background: #1a73e8;   /* 🔹 蓝色，与 index.html 按钮一致 */
+  border-radius: 12px;
+  text-align: center;
+  padding: 30px 10px;
+  font-size: 18px;           /* 与效果图一致的文字大小 */
+  font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, background 0.2s;
 }
 
-button:disabled {
-  background: #aaa;
-  cursor: not-allowed;
+.card-btn:hover {
+  background: #1669c1;
+  transform: translateY(-3px);
+}
+
+.card-btn .icon {
+  display: block;
+  font-size: 32px;           /* 图标比底部导航大 */
+  margin-bottom: 8px;
+}
+
+.card-btn .label {
+  display: block;
+  font-size: 16px;
+  line-height: 1.3;
 }
