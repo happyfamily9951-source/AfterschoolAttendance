@@ -2,62 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Main Menu</title>
+  <title>Dashboard</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
-      background: #f8f8f8;
-      margin: 0;
-      padding: 20px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-    }
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      text-decoration: none;
-      color: #4B0082; /* Indigo purple */
-      font-size: 16px;
-      font-weight: 500;
-      transition: transform 0.2s;
-    }
-    .card:hover {
-      transform: translateY(-3px);
-    }
-    .card-icon {
-      font-size: 22px;
-      margin-right: 12px;
-    }
-  </style>
 </head>
 <body>
-  <h2>Main Menu</h2>
 
   <div class="grid">
-    <a href="StudentEnrollment.html" class="card">
-      <span class="card-icon">👨‍👩‍👧</span> Student Enrollment
-    </a>
-    <a href="CourseEnrollment.html" class="card">
-      <span class="card-icon">📚</span> Course Enrollment
-    </a>
-    <a href="StudentClassApplication.html" class="card">
-      <span class="card-icon">📝</span> Class Application
-    </a>
-    <a href="Attendance.html" class="card">
-      <span class="card-icon">✔️</span> Attendance
-    </a>
-    <a href="Report.html" class="card">
-      <span class="card-icon">📊</span> Reports
-    </a>
+    <div class="card-btn" onclick="location.href='StudentEnrollment.html'">
+      <span class="icon">👤</span>
+      <span class="label">Student<br>Enrollment</span>
+    </div>
+    <div class="card-btn" onclick="location.href='CourseEnrollment.html'">
+      <span class="icon">📚</span>
+      <span class="label">Course<br>Enrollment</span>
+    </div>
+    <div class="card-btn" onclick="location.href='StudentClassApplication.html'">
+      <span class="icon">📝</span>
+      <span class="label">Class<br>Application</span>
+    </div>
+    <div class="card-btn" onclick="location.href='Attendance.html'">
+      <span class="icon">✅</span>
+      <span class="label">Attendance</span>
+    </div>
+    <div class="card-btn" onclick="location.href='Report.html'">
+      <span class="icon">📊</span>
+      <span class="label">Reports</span>
+    </div>
   </div>
+
 </body>
 </html>
