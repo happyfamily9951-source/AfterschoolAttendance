@@ -5,55 +5,92 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Enrollment</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* 局部布局优化 */
+    .form-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .form-row .form-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
 
   <!-- 顶部标题 -->
   <h2 style="text-align:center; margin:20px 0; color:#1a73e8;">Student Enrollment / 学生报名</h2>
 
-  <!-- 表单容器 -->
   <div class="card-container" style="grid-template-columns:1fr;">
-    
-    <!-- 学生姓名 -->
-    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-      <label for="studentName" style="display:block; font-weight:600; margin-bottom:8px;">Student Name / 学生姓名</label>
-      <input type="text" id="studentName" placeholder="Enter student name" 
-             style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px;">
-    </div>
+    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1); width:100%; text-align:left;">
+      <form id="enrollForm">
 
-    <!-- 出生日期 -->
-    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-      <label for="dob" style="display:block; font-weight:600; margin-bottom:8px;">Date of Birth / 出生日期</label>
-      <input type="date" id="dob" 
-             style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px;">
-    </div>
+        <!-- 第1行：学生姓名 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="studentName">Student Name / 学生姓名</label>
+            <input type="text" id="studentName" placeholder="Enter student name">
+          </div>
+        </div>
 
-    <!-- 性别 -->
-    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-      <label for="gender" style="display:block; font-weight:600; margin-bottom:8px;">Gender / 性别</label>
-      <select id="gender" style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px;">
-        <option value="M">Male / 男</option>
-        <option value="F">Female / 女</option>
-      </select>
-    </div>
+        <!-- 第2行：生日 + 性别 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dob">Date of Birth / 出生日期</label>
+            <input type="date" id="dob">
+          </div>
+          <div class="form-group">
+            <label for="gender">Gender / 性别</label>
+            <select id="gender">
+              <option value="M">Male / 男</option>
+              <option value="F">Female / 女</option>
+            </select>
+          </div>
+        </div>
 
-    <!-- 家长姓名 -->
-    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-      <label for="guardianName" style="display:block; font-weight:600; margin-bottom:8px;">Guardian Name / 家长姓名</label>
-      <input type="text" id="guardianName" placeholder="Enter guardian name" 
-             style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px;">
-    </div>
+        <!-- 第3行：家长姓名 + 电话 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="guardianName">Guardian Name / 家长姓名</label>
+            <input type="text" id="guardianName" placeholder="Enter guardian name">
+          </div>
+          <div class="form-group">
+            <label for="guardianPhone">Guardian Phone / 家长电话</label>
+            <input type="tel" id="guardianPhone" placeholder="Enter phone number">
+          </div>
+        </div>
 
-    <!-- 家长联系电话 -->
-    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-      <label for="guardianPhone" style="display:block; font-weight:600; margin-bottom:8px;">Guardian Phone / 家长电话</label>
-      <input type="tel" id="guardianPhone" placeholder="Enter phone number" 
-             style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px;">
-    </div>
+        <!-- 第4行：紧急联系人姓名 + 电话 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="emergencyName">Emergency Contact / 紧急联系人</label>
+            <input type="text" id="emergencyName" placeholder="Enter contact name">
+          </div>
+          <div class="form-group">
+            <label for="emergencyPhone">Emergency Phone / 联系电话</label>
+            <input type="tel" id="emergencyPhone" placeholder="Enter phone number">
+          </div>
+        </div>
 
-    <!-- 提交按钮 -->
-    <div class="card-btn" style="background:#1a73e8; color:#fff; cursor:pointer;" onclick="submitForm()">
-      <span style="font-size:18px;">Submit / 提交</span>
+        <!-- 提交按钮 -->
+        <button type="submit" style="width:100%; padding:14px; background:#1a73e8; color:white; border:none; border-radius:8px; font-size:18px;">
+          Submit / 提交
+        </button>
+      </form>
     </div>
   </div>
 
@@ -82,9 +119,10 @@
   </div>
 
 <script>
-function submitForm() {
+document.getElementById("enrollForm").addEventListener("submit", function(e) {
+  e.preventDefault();
   alert("Student enrollment submitted!");
-}
+});
 </script>
 
 </body>
