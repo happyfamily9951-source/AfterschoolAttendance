@@ -1,146 +1,181 @@
-/* 通用字体和背景 */
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #f9f9fb;
+/* ====================================
+   1. 全局变量 (颜色 / 字体 / 尺寸)
+   ==================================== */
+:root {
+  /* 主题色 / 卡片色 */
+  --color-home: #1ABC9C;        /* Turquoise */
+  --color-student: #16A085;     /* Teal */
+  --color-course: #F1C40F;      /* Yellow */
+  --color-attendance: #E67E22;  /* Orange */
+  --color-report: #E74C3C;      /* Red */
+
+  /* 主色调 */
+  --color-primary: #1a73e8;     /* 深蓝按钮 */
+  --color-bg: #ffffff;          /* 页面背景 */
+  --color-text: #1a2a44;        /* 主文本色 */
+  --color-muted: #777777;       /* 次要文本 */
+
+  /* 圆角 / 阴影 */
+  --radius: 12px;
+  --shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ====================================
+   2. 全局 Reset / 基础样式
+   ==================================== */
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+body {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+/* ====================================
+   3. 顶部 Header
+   ==================================== */
 .header {
   display: flex;
   align-items: center;
-  justify-content: center; /* 居中显示 */
-  padding: calc(12px+ env(safe-area-inset-top)) 12px 12px 12px;
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  justify-content: center;
+  padding: calc(12px + env(safe-area-inset-top)) 12px 12px 12px;
+  background: var(--color-bg);
+  box-shadow: var(--shadow);
 }
-
 .header img {
-  width: 80% !important;
-  height: auto !important;      /* 控制 logo 高度 */
+  width: 60% !important;
+  height: auto !important;
   display: block;
   margin: 0 auto;
 }
 
-@media (max-width: 600px) {
-  .header img {
-    height: 40px;    /* 小屏时缩小 */
-  }
+/* ====================================
+   4. 主体内容区域
+   ==================================== */
+.page-content {
+  padding: 16px;
+  padding-bottom: 84px; /* 给底部导航留出空间 */
 }
 
-/* 卡片按钮 */
-.card-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
-  padding: 20px;
+/* ====================================
+   5. 表单容器 & 输入控件
+   ==================================== */
+.form-container {
+  background: #fff;
+  padding: 16px;
+  margin: 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
-
-.card-btn {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  border-radius: 15px;
-  color: white;
-  font-weight: bold;
+.form-container h2 {
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  cursor: pointer;
-  transition: transform 0.2s;
+  margin-bottom: 16px;
 }
-
-.card-btn:hover {
-  transform: scale(1.05);
-}
-
-/* 卡片背景色 */
-.blue { background-color: #1abc9c; }
-.green { background-color: #16a085; }
-.orange { background-color: #e67e22; }
-.yellow { background-color: #f1c40f; }
-.red { background-color: #e74c3c; }
-
-/* SVG 图标 */
-.card-btn img.icon {
-  width: 40px;
-  height: 40px;
-  margin-bottom: 10px;
-  filter: invert(1); /* 让图标显示为白色线条 */
-}
-
-/* Label */
-.card-btn span {
+.form-container input,
+.form-container select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: var(--radius);
   font-size: 16px;
 }
-
-.card-btn small {
-  font-size: 13px;
-  display: block;
+.row {
+  display: flex;
+  gap: 12px;
+}
+.col {
+  flex: 1;
 }
 
-/* 底部导航 */
-/* ===== Bottom Nav (5 icons, no text) ===== */
-/* ===== Bottom Nav (5 icons, no text) ===== */
+/* 按钮 */
+.btn-primary {
+  width: 100%;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 16px;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: #1669c1;
+}
+
+/* ====================================
+   6. 大卡片按钮 (index.html 首页)
+   ==================================== */
+.card-grid {
+  display: grid;
+  gap: 16px;
+  margin: 16px;
+}
+.card {
+  padding: 20px;
+  border-radius: var(--radius);
+  color: #fff;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: var(--shadow);
+}
+.card-home       { background: var(--color-home); }
+.card-student    { background: var(--color-student); }
+.card-course     { background: var(--color-course); }
+.card-attendance { background: var(--color-attendance); }
+.card-report     { background: var(--color-report); }
+
+/* ====================================
+   7. 底部导航 (5 个快捷按钮)
+   ==================================== */
 .bottom-nav {
   position: fixed;
   left: 0; right: 0; bottom: 0;
   z-index: 1000;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 0;
-  background: #ffffff;
-  box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+  background: var(--color-bg);
   padding: 8px max(12px, env(safe-area-inset-left)) 
            calc(8px + env(safe-area-inset-bottom)) 
            max(12px, env(safe-area-inset-right));
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
 }
 
-/* 单个图标按钮（无文本） */
 .bottom-nav .nav-item {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;               /* 扩大触控面积 */
-  border-radius: 12px;
-  transition: transform .08s ease, background .2s ease, box-shadow .2s ease;
-  -webkit-tap-highlight-color: transparent;
+  padding: 10px;
+  border-radius: var(--radius);
+  transition: transform .1s ease, opacity .2s ease;
 }
 
-/* 图标尺寸 */
 .bottom-nav .nav-item img,
 .bottom-nav .nav-item svg {
   width: 28px;
   height: 28px;
-  display: block;
 }
 
-/* 悬停/点击反馈（桌面与移动） */
-.bottom-nav .nav-item:active {
-  transform: scale(0.96);
-}
-.bottom-nav .nav-item:hover {
-  background: #f3f6fb;
-}
+/* 底部导航的背景色和卡片一致 */
+.nav-home     { background: var(--color-home); }
+.nav-student  { background: var(--color-student); }
+.nav-course   { background: var(--color-course); }
+.nav-attend   { background: var(--color-attendance); }
+.nav-report   { background: var(--color-report); }
 
-/* 当前页面的激活态 */
-.bottom-nav .nav-item.active {
-  background: #e9f1fe;
-  box-shadow: inset 0 0 0 2px #1a73e8;
-}
-.bottom-nav .nav-item.active img,
-.bottom-nav .nav-item.active svg {
-  filter: none;
-}
+.bottom-nav .nav-item:active { transform: scale(0.95); opacity: 0.8; }
 
-/* 小屏略增大图标 */
-@media (max-width: 420px) {
-  .bottom-nav .nav-item img,
-  .bottom-nav .nav-item svg { width: 30px; height: 30px; }
-}
-
-/* 给正文留出底部空间，避免被导航栏遮住 */
-.page-content {
-  padding-bottom: 84px; /* 可按需要微调 */
+/* ====================================
+   8. 响应式优化
+   ==================================== */
+@media (max-width: 600px) {
+  .header img { width: 80% !important; }
+  .card { font-size: 16px; }
+  .bottom-nav .nav-item img { width: 30px; height: 30px; }
 }
