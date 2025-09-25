@@ -2,112 +2,90 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Enrollment</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- === 学生录入 === -->
-  <div class="card" style="border-top: 4px solid #1a73e8;">
-    <h2 style="color:#1a73e8;">➕ New Student Enrollment</h2>
-    <form id="enrollForm">
+  <!-- 顶部标题 -->
+  <h2 style="text-align:center; margin:20px 0; color:#1a73e8;">Student Enrollment / 学生报名</h2>
 
-      <div class="form-row">
-        <label for="studentName">Student Name</label>
-        <input type="text" id="studentName" required>
-      </div>
-
-      <div class="form-row">
-        <label for="gender">Gender</label>
-        <select id="gender">
-          <option value="M">Male</option>
-          <option value="F">Female</option>
-        </select>
-      </div>
-
-      <div class="form-row">
-        <label for="dob">Date of Birth</label>
-        <input type="date" id="dob" required>
-      </div>
-
-      <div class="form-row">
-        <label for="guardianName">Guardian Name</label>
-        <input type="text" id="guardianName" required>
-      </div>
-
-      <div class="form-row">
-        <label for="guardianPhone">Guardian Phone</label>
-        <input type="tel" id="guardianPhone" required>
-      </div>
-
-      <div class="form-row">
-        <label for="emergencyContact">Emergency Contact</label>
-        <input type="text" id="emergencyContact">
-      </div>
-
-      <div class="form-row">
-        <label for="emergencyPhone">Emergency Phone</label>
-        <input type="tel" id="emergencyPhone">
-      </div>
-
-      <button type="submit" id="submitBtn">Submit</button>
-    </form>
-  </div>
-
-  <!-- === 学生查询 === -->
-  <div class="card card-dark">
-    <h2>🔍 Search Student</h2>
-    <div class="form-row">
-      <label for="searchKeyword">Keyword</label>
-      <input type="text" id="searchKeyword" placeholder="Enter name / DOB / phone">
+  <!-- 表单容器 -->
+  <div class="card-container" style="grid-template-columns:1fr;">
+    
+    <!-- 学生姓名 -->
+    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+      <label for="studentName" style="display:block; font-weight:600; margin-bottom:8px;">Student Name / 学生姓名</label>
+      <input type="text" id="studentName" placeholder="Enter student name" 
+             style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px;">
     </div>
-    <button onclick="searchStudent()">Search</button>
-    <div id="searchResults"></div>
+
+    <!-- 出生日期 -->
+    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+      <label for="dob" style="display:block; font-weight:600; margin-bottom:8px;">Date of Birth / 出生日期</label>
+      <input type="date" id="dob" 
+             style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px;">
+    </div>
+
+    <!-- 性别 -->
+    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+      <label for="gender" style="display:block; font-weight:600; margin-bottom:8px;">Gender / 性别</label>
+      <select id="gender" style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px;">
+        <option value="M">Male / 男</option>
+        <option value="F">Female / 女</option>
+      </select>
+    </div>
+
+    <!-- 家长姓名 -->
+    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+      <label for="guardianName" style="display:block; font-weight:600; margin-bottom:8px;">Guardian Name / 家长姓名</label>
+      <input type="text" id="guardianName" placeholder="Enter guardian name" 
+             style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px;">
+    </div>
+
+    <!-- 家长联系电话 -->
+    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+      <label for="guardianPhone" style="display:block; font-weight:600; margin-bottom:8px;">Guardian Phone / 家长电话</label>
+      <input type="tel" id="guardianPhone" placeholder="Enter phone number" 
+             style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px;">
+    </div>
+
+    <!-- 提交按钮 -->
+    <div class="card-btn" style="background:#1a73e8; color:#fff; cursor:pointer;" onclick="submitForm()">
+      <span style="font-size:18px;">Submit / 提交</span>
+    </div>
   </div>
 
-  <!-- === 底部导航栏 === -->
-  <div class="bottom-nav">
-    <a href="index.html" class="nav-item active">
-      <span class="icon">🏠</span>
-      <span class="label">Home</span>
-    </a>
-    <a href="CourseEnrollment.html" class="nav-item">
-      <span class="icon">📚</span>
-      <span class="label">Courses</span>
-    </a>
-    <a href="index.html" class="nav-item logo">★</a>
-    <a href="Attendance.html" class="nav-item">
-      <span class="icon">📝</span>
-      <span class="label">Attendance</span>
-    </a>
-    <a href="Report.html" class="nav-item">
-      <span class="icon">📊</span>
-      <span class="label">Reports</span>
-    </a>
+  <!-- 底部导航 -->
+  <div class="navbar">
+    <div class="nav-item" onclick="location.href='index.html'">
+      <img src="icons/home.svg" alt="Home">
+      Home
+    </div>
+    <div class="nav-item">
+      <img src="icons/calendar.svg" alt="Calendar">
+      Calendar
+    </div>
+    <div class="nav-item">
+      <img src="icons/center.svg" alt="Center">
+      Center
+    </div>
+    <div class="nav-item">
+      <img src="icons/report.svg" alt="Reports">
+      Reports
+    </div>
+    <div class="nav-item">
+      <img src="icons/menu.svg" alt="Menu">
+      Menu
+    </div>
   </div>
 
-  <script>
-    const form = document.getElementById("enrollForm");
-    const btn = document.getElementById("submitBtn");
+<script>
+function submitForm() {
+  alert("Student enrollment submitted!");
+}
+</script>
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      btn.disabled = true;
-      btn.textContent = "Submitting...";
-
-      // TODO: fetch 到 Apps Script API
-      setTimeout(() => {
-        alert("提交成功 (模拟)");
-        btn.disabled = false;
-        btn.textContent = "Submit";
-      }, 1500);
-    });
-
-    function searchStudent() {
-      const kw = document.getElementById("searchKeyword").value;
-      document.getElementById("searchResults").innerHTML =
-        `<p>Searching for <b>${kw}</b>... (mockup)</p>`;
-    }
-  </script>
 </body>
 </html>
