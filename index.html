@@ -1,71 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>School Management</title>
+  <title>Attendance System</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <! -- Logo in header -->
+  <!-- 顶部 Logo -->
   <div class="header">
-    <img src="icons/logo-monica-linan.svg" alt="Logo" 
-      onerror="this.onerror=null; this.src='icons/logo-monica-linan.png';">
-  </div>
-  
-  <div class="card-container">
-    <div class="card-btn blue" onclick="location.href='StudentEnrollment.html'">
-      <img src="icons/student-enroll.svg" class="icon" alt="Student">
-      <span>Student Enrollment<br><small>学生报名</small></span>
-    </div>
-    <div class="card-btn green" onclick="location.href='CourseEnrollment.html'">
-      <img src="icons/course-enroll.svg" class="icon" alt="Course">
-      <span>Course Enrollment<br><small>课程注册</small></span>
-    </div>
-    <div class="card-btn yellow" onclick="location.href='StudentClassApplication.html'">
-      <img src="icons/student-course-application.svg" class="icon" alt="Application">
-      <span>Student Application<br><small>课程报名</small></span>
-    </div>
-    <div class="card-btn orange" onclick="location.href='Attendance.html'">
-      <img src="icons/attendance.svg" class="icon" alt="Attendance">
-      <span>Attendance<br><small>学生考勤</small></span>
-    </div>
-    <div class="card-btn red" onclick="location.href='Report.html'">
-      <img src="icons/report.svg" class="icon" alt="Report">
-      <span>Reports<br><small>考勤记录</small></span>
-    </div>
+    <img src="icons/logo-monica-linan.svg" alt="Logo"
+         onerror="this.onerror=null; this.src='icons/logo-monica-linan.png';">
   </div>
 
-  <!-- 底部 6 个图标快捷按钮（无文字） -->
-  <nav class="bottom-nav" aria-label="Quick actions">
-    <!-- Home / Dashboard -->
-    <a class="nav-item" href="index.html" aria-label="Home" title="Home">
+  <!-- 主内容 -->
+  <main class="page-content">
+    <div class="card-grid">
+
+      <a href="index.html" class="card card-home">
+        <img src="icons/home.svg" alt="Home icon" class="card-icon">
+        <span>Home</span>
+      </a>
+
+      <a href="StudentEnrollment.html" class="card card-student">
+        <img src="icons/student-enroll.svg" alt="Student icon" class="card-icon">
+        <span>Student Enrollment</span>
+      </a>
+
+      <a href="CourseEnrollment.html" class="card card-course">
+        <img src="icons/course-enroll.svg" alt="Course icon" class="card-icon">
+        <span>Course Enrollment</span>
+      </a>
+
+      <a href="Attendance.html" class="card card-attendance">
+        <img src="icons/attendance.svg" alt="Attendance icon" class="card-icon">
+        <span>Attendance</span>
+      </a>
+
+      <a href="Report.html" class="card card-report">
+        <img src="icons/report.svg" alt="Report icon" class="card-icon">
+        <span>Reports</span>
+      </a>
+
+    </div>
+  </main>
+
+  <!-- 底部导航（纯图标） -->
+  <nav class="bottom-nav">
+    <a class="nav-item nav-home" href="index.html" aria-label="Home">
       <img src="icons/home.svg" alt="">
     </a>
-    <!-- Student Enrollment -->
-    <a class="nav-item" href="StudentEnrollment.html" aria-label="Student Enrollment" title="Student Enrollment">
+    <a class="nav-item nav-student" href="StudentEnrollment.html" aria-label="Student Enrollment">
       <img src="icons/student-enroll.svg" alt="">
     </a>
-    <!-- Course Enrollment -->
-    <a class="nav-item" href="CourseEnrollment.html" aria-label="Course Enrollment" title="Course Enrollment">
+    <a class="nav-item nav-course" href="CourseEnrollment.html" aria-label="Course Enrollment">
       <img src="icons/course-enroll.svg" alt="">
     </a>
-    <!-- Attendance -->
-    <a class="nav-item" href="Attendance.html" aria-label="Attendance" title="Attendance">
+    <a class="nav-item nav-attend" href="Attendance.html" aria-label="Attendance">
       <img src="icons/attendance.svg" alt="">
     </a>
-    <!-- Student Course Application -->
-    <a class="nav-item" href=".html" aria-label="Application" title="Application">
-      <img src="icons/student-course-application.svg" alt="">
-    </a>    
-    <!-- Reports -->
-    <a class="nav-item" href="Report.html" aria-label="Reports" title="Reports">
+    <a class="nav-item nav-report" href="Report.html" aria-label="Reports">
       <img src="icons/report.svg" alt="">
     </a>
   </nav>
 
-    <script>
+  <script>
     // 自动高亮当前页面对应的图标
     (function highlightActive(){
       var path = location.pathname.split('/').pop() || 'index.html';
@@ -75,5 +75,6 @@
       });
     })();
   </script>
+
 </body>
 </html>
