@@ -8,6 +8,8 @@
   --color-course: #F1C40F;      /* Yellow */
   --color-attendance: #E67E22;  /* Orange */
   --color-report: #E74C3C;      /* Red */
+  --radius: 12px;
+  --shadow: 0 2px 6px rgba(0,0,0,.1);
 
   /* 主色调 */
   --color-primary: #1a73e8;     /* 深蓝按钮 */
@@ -115,8 +117,10 @@ body {
   display: grid;
   gap: 16px;
   margin: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));  
 }
 .card {
+  display: block; 
   padding: 20px;
   border-radius: var(--radius);
   color: #fff;
@@ -124,12 +128,14 @@ body {
   font-size: 18px;
   font-weight: bold;
   box-shadow: var(--shadow);
+  text-decoration: none;
+   background： #e0e0e0;
 }
-.card-home       { background: var(--color-home); }
-.card-student    { background: var(--color-student); }
-.card-course     { background: var(--color-course); }
-.card-attendance { background: var(--color-attendance); }
-.card-report     { background: var(--color-report); }
+.card.card-home       { background: var(--color-home, #1ABC9C) !important; }
+.card.card-student    { background: var(--color-student, #16A085) !important; }
+.card.card-course     { background: var(--color-course, #F1C40F) !important; }
+.card.card-attendance { background: var(--color-attendance, #E67E22) !important; }
+.card.card-report     { background: var(--color-report, #E74C3C) !important; }
 
 /* ====================================
    7. 底部导航 (5 个快捷按钮)
@@ -163,11 +169,11 @@ body {
 }
 
 /* 底部导航的背景色和卡片一致 */
-.nav-home     { background: var(--color-home); }
-.nav-student  { background: var(--color-student); }
-.nav-course   { background: var(--color-course); }
-.nav-attend   { background: var(--color-attendance); }
-.nav-report   { background: var(--color-report); }
+.nav-home     { background: var(--color-home, #1ABC9C) !important; }
+.nav-student  { background: var(--color-student, #16A085) !important; }
+.nav-course   { background: var(--color-course, #F1C40F) !important; }
+.nav-attend   { background: var(--color-attendance, #E67E22) !important; }
+.nav-report   { background: var(--color-report, #E74C3C) !important; }
 
 .bottom-nav .nav-item:active { transform: scale(0.95); opacity: 0.8; }
 
