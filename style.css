@@ -121,15 +121,18 @@ body {
 
 }
 .card {
-  display: block; 
-  padding: 20px;
-  border-radius: var(--radius);
-  color: #fff;
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-  box-shadow: var(--shadow);
-  text-decoration: none;
+   display: flex;
+   flex-direction: column;    /* vertical alignment */
+   align-items: center;
+   justify-content: center;
+   padding: 20px;
+   border-radius: var(--radius);
+   color: #fff;
+   text-align: center;
+   font-size: 18px;
+   font-weight: bold;
+   box-shadow: var(--shadow);
+   text-decoration: none;
    min-height: 120px;
    background: #e0e0e0;
 }
