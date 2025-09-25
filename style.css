@@ -16,8 +16,11 @@ body {
 }
 
 .header img {
-  height: 60px;      /* 控制 logo 高度 */
+  width: 80%;
+  height: auto;      /* 控制 logo 高度 */
   max-width: 90%;    /* 防止超出屏幕 */
+  display: block;
+  margin: 0 auto;
 }
 
 @media (max-width: 600px) {
