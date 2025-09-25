@@ -18,7 +18,6 @@ body {
 .header img {
   width: 80%;
   height: auto;      /* 控制 logo 高度 */
-  max-width: 90%;    /* 防止超出屏幕 */
   display: block;
   margin: 0 auto;
 }
