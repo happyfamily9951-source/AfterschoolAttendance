@@ -117,8 +117,7 @@ body {
   display: grid;
   gap: 16px;
   margin: 16px;
-  /*grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));  /* One grid per line */ */
-  grid-template-columns: repeat(2, 1fr); /* two grids per line */ 
+  grid-template-columns: repeat(2, 1fr) !important; /* two grids per line */ 
 
 }
 .card {
