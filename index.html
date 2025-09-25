@@ -2,33 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Management</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div class="grid">
-    <div class="card-btn" onclick="location.href='StudentEnrollment.html'">
-      <span class="icon">👤</span>
-      <span class="label">Student<br>Enrollment</span>
+  <div class="card-container">
+    <div class="card-btn blue" onclick="location.href='StudentEnrollment.html'">
+      <img src="icons/student.svg" class="icon" alt="Student">
+      <span>Student Enrollment<br><small>Student Enrollment</small></span>
     </div>
-    <div class="card-btn" onclick="location.href='CourseEnrollment.html'">
-      <span class="icon">📚</span>
-      <span class="label">Course<br>Enrollment</span>
+    <div class="card-btn green" onclick="location.href='CourseEnrollment.html'">
+      <img src="icons/course.svg" class="icon" alt="Course">
+      <span>Course Enrollment<br><small>Course Registration</small></span>
     </div>
-    <div class="card-btn" onclick="location.href='StudentClassApplication.html'">
-      <span class="icon">📝</span>
-      <span class="label">Class<br>Application</span>
+    <div class="card-btn yellow" onclick="location.href='StudentClassApplication.html'">
+      <img src="icons/application.svg" class="icon" alt="Application">
+      <span>Student Application<br><small>Student Application</small></span>
     </div>
-    <div class="card-btn" onclick="location.href='Attendance.html'">
-      <span class="icon">✅</span>
-      <span class="label">Attendance</span>
+    <div class="card-btn orange" onclick="location.href='Attendance.html'">
+      <img src="icons/attendance.svg" class="icon" alt="Attendance">
+      <span>Attendance<br><small>Attendance</small></span>
     </div>
-    <div class="card-btn" onclick="location.href='Report.html'">
-      <span class="icon">📊</span>
-      <span class="label">Reports</span>
+    <div class="card-btn red" onclick="location.href='Report.html'">
+      <img src="icons/report.svg" class="icon" alt="Report">
+      <span>Reports<br><small>Reports</small></span>
     </div>
   </div>
 
+  <!-- 底部导航 -->
+  <div class="navbar">
+    <div class="nav-item" onclick="location.href='index.html'">
+      <img src="icons/home.svg" alt="Home">
+      Home
+    </div>
+    <div class="nav-item">
+      <img src="icons/calendar.svg" alt="Calendar">
+      Calendar
+    </div>
+    <div class="nav-item">
+      <img src="icons/center.svg" alt="Center">
+      Center
+    </div>
+    <div class="nav-item">
+      <img src="icons/report.svg" alt="Reports">
+      Reports
+    </div>
+    <div class="nav-item">
+      <img src="icons/menu.svg" alt="Menu">
+      Menu
+    </div>
+  </div>
 </body>
 </html>
