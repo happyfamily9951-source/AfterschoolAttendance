@@ -6,29 +6,47 @@
   <title>Student Enrollment</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* 局部布局优化 */
-    .form-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
+    /* 表单容器 */
+    .form-container {
+      max-width: 600px;   /* 大屏时最大宽度 */
+      margin: 0 auto;     /* 居中 */
+      padding: 16px;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      border-radius: 12px;
     }
-    .form-row .form-group {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .form-group label {
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    .form-group input,
-    .form-group select {
-      padding: 10px;
+    
+    /* 输入框样式 */
+    .form-container input[type="text"],
+    .form-container input[type="tel"],
+    .form-container input[type="email"] {
+      width: 100%;        /* 关键点：自适应宽度 */
+      padding: 12px;
+      margin-bottom: 12px;
       border: 1px solid #ccc;
       border-radius: 8px;
       font-size: 16px;
+      box-sizing: border-box;
+    }
+    
+    /* 小屏优化 */
+    @media (max-width: 600px) {
+      .form-container {
+        padding: 12px;
+      }
+      
+      .form-container input {
+        font-size: 14px;
+        padding: 10px;
+      }
     }
   </style>
+  
+  <div class="form-container">
+    <input type="text" placeholder="学生姓名">
+    <input type="tel" placeholder="联系电话">
+    <input type="email" placeholder="电子邮箱">
+  </div>
 </head>
 <body>
 
