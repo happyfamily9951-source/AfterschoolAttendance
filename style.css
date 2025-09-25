@@ -6,6 +6,26 @@ body {
   padding: 0;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 居中显示 */
+  padding: 12px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.header img {
+  height: 60px;      /* 控制 logo 高度 */
+  max-width: 90%;    /* 防止超出屏幕 */
+}
+
+@media (max-width: 600px) {
+  .header img {
+    height: 40px;    /* 小屏时缩小 */
+  }
+}
+
 /* 卡片按钮 */
 .card-container {
   display: grid;
