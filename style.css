@@ -3,9 +3,9 @@
    ==================================== */
 :root {
   /* 主题色 / 卡片色 */
-  --color-home: #1ABC9C;        /* Turquoise */
-  --color-student: #16A085;     /* Teal */
-  --color-course: #F1C40F;      /* Yellow */
+  --color-student: #1ABC9C;        /* Turquoise */
+  --color-course: #16A085;     /* Teal */
+  --color-student-course-application: #F1C40F;      /* Yellow */
   --color-attendance: #E67E22;  /* Orange */
   --color-report: #E74C3C;      /* Red */
   --radius: 12px;
@@ -143,9 +143,9 @@ body {
    margin-bottom: 12px;
 }
 
-.card.card-home       { background: var(--color-home, #1ABC9C) !important; }
-.card.card-student    { background: var(--color-student, #16A085) !important; }
-.card.card-course     { background: var(--color-course, #F1C40F) !important; }
+.card.card-student       { background: var(--color-student, #1ABC9C) !important; }
+.card.card-course    { background: var(--color-course, #16A085) !important; }
+.card.card-student-course-application     { background: var(--color-student-course-application, #F1C40F) !important; }
 .card.card-attendance { background: var(--color-attendance, #E67E22) !important; }
 .card.card-report     { background: var(--color-report, #E74C3C) !important; }
 
@@ -181,9 +181,9 @@ body {
 }
 
 /* 底部导航的背景色和卡片一致 */
-.nav-home     { background: var(--color-home, #1ABC9C) !important; }
-.nav-student  { background: var(--color-student, #16A085) !important; }
-.nav-course   { background: var(--color-course, #F1C40F) !important; }
+.nav-student     { background: var(--color-student, #1ABC9C) !important; }
+.nav-course  { background: var(--color-course, #16A085) !important; }
+.nav-student-course-application   { background: var(--color-student-course-application, #F1C40F) !important; }
 .nav-attend   { background: var(--color-attendance, #E67E22) !important; }
 .nav-report   { background: var(--color-report, #E74C3C) !important; }
 
