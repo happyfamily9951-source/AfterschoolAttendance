@@ -146,6 +146,7 @@
         // restore button "submit" 
         btn.disabled = false;
         btn.innerText = "Submit";
+      }
     }
 
     // 查询函数
@@ -162,7 +163,7 @@
         return;
       }
 
-      try{
+      try {
         const response = await fetch(`${API_URL}action=searchStudent`);
         const result = await response.json();
 
