@@ -70,17 +70,18 @@
     <div class="form-container">
       <h2>Search Student</h2>
 
-      <input type="text" id="searchName" placeholder="Enter student name">
-      <button class="btn-primary" id="SearchBtn" onclick="searchStudent()">Search</button>
-
-      <div id="searchResult" style="display:none; margin-top:12px;">
-        <p><strong>Student ID:</strong> <span id="resId"></span></p>
-        <p><strong>Name:</strong> <span id="resName"></span></p>
-        <p><strong>Gender:</strong> <span id="resGender"></span></p>
-        <p><strong>DOB:</strong> <span id="resDob"></span></p>
-        <p><strong>Guardian:</strong> <span id="resGuardian"></span> (<span id="resGuardianContact"></span>)</p>
-        <p><strong>Emergency:</strong> <span id="resEmergency"></span> (<span id="resEmergencyContact"></span>)</p>
+      <!-- Input box and button -->
+      <div class="row">
+        <div class="col">
+          <input type="text" id="searchName" placeholder="Enter student's name">
+        </div>
+        <div>
+          <button class="btn-primary" id="SearchBtn" onclick="searchStudent()">Search</button>
+        </div>
       </div>
+
+      <!-- Search results -->
+      <div id="searchResult" style="margin-top:12px;"></div>
     </div>
 
   </main>
@@ -124,31 +125,6 @@
         emergencyPhone: document.getElementById("emergencyNumber").value,
       };
 
-      if (!student.studentName) {
-        alert("Please enter student name");
-        btn.disabled = false;
-        btn.innerText = "Submit";
-        return;
-      }
-
-      if (!student.gender) {
-        alert("Please enter gender");
-        btn.disabled = false;
-        btn.innerText = "Submit";
-        return;
-      }      
-
-      if (!student.dob) {
-        alert("Please select date of birth")
-        btn.disabled = false;
-        btn.innerText = "Submit";
-        return;
-      }
-
-      console.log("Student Name:", document.getElementById('studentName').value);
-      console.log("Student DOB:", document.getElementById('dob').value);
-      console.log("Student Gender:", document.getElementById('gender').value);
-      
       if (!student.studentName || !student.gender || !student.dob) {
         alert("Please fill in name, gender and date of birth");
         btn.disabled = false;
@@ -183,41 +159,104 @@
     async function searchStudent() {
       const btn = document.getElementById("searchBtn");
       btn.disabled=true;
+      const originalText = btn.innerText;
       btn.innerText = "Searching...";
       
       const name = document.getElementById("searchName").value.trim();
+      const container = document.getElementById("searchResult");
+      
       if (!name) {
         alert("Please enter a student name");
         btn.disabled = false;
-        btn.innerText = "Search";
+        btn.innerText = originalText;
         return;
       }
 
       try {
-        const response = await fetch(`${API_URL}action=searchStudent`);
+        const response = await fetch(`${API_URL}action=searchStudentByName&name=${encodeURIComponent(name)}`);
         const result = await response.json();
 
-        if (result && result.studentId) {
-          document.getElementById("searchResult").style.display = "block";
-          document.getElementById("resId").innerText = result.studentId || "";
-          document.getElementById("resName").innerText = result.name || "";
-          document.getElementById("resGender").innerText = result.gender || "";
-          document.getElementById("resDob").innerText = result.dob || "";
-          document.getElementById("resGuardian").innerText = result.guardianName || "";
-          document.getElementById("resGuardianContact").innerText = result.guardianContact || "";
-          document.getElementById("resEmergency").innerText = result.emergencyName || "";
-          document.getElementById("resEmergencyContact").innerText = result.emergencyContact || "";
+        if (result.ok && result.students && result.students.length > 0) {
+          results.students.forEach((s,idx) => {
+            const card = document.createElement("div");
+            card.className = "student-card";
+
+            // header: ID + Name
+            const header = document.createElement("div");
+            header.className = "student-header";
+            header.innerHTML = `
+              <div>Student ID: ${s.studentId || ""}</div>
+              <div>${s.studentName || ""}</div>
+            `;
+
+            // Details: hiding in default
+            const details = document.createElement("div");
+            details.className = "student-details";
+            details.innerHTML = `
+              <div class="row">
+                <div class="col"><strong>Gender: </strong> ${s.gender || ""}</div>
+                <div class="col"><strong>DOB: </strong> ${s.dob || ""}</div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <strong>Guardian:</strong> ${s.guardianName || ""} / ${s.guardianPhone || ""}
+                  <span class="contact-actions">
+                    <button onclick="callNumber('${s.guardianPhone}')">📞</button>
+                    <button onclick="smsNumber('${s.guardianPhone}')">💬</button>
+                  </span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <strong>Emergency:</strong> ${s.emergencyName || ""} / ${s.emergencyPhone || ""}
+                  <span class="contact-actions">
+                    <button onclick="callNumber('${s.emergencyPhone}')">📞</button>
+                    <button onclick="smsNumber('${s.emergencyPhone}')">💬</button>
+                  </span>
+                </div>
+              </div>
+            `;
+
+            // Click to expland
+            header.addEventListener("click", () => {
+              const expanded = details.style.display === "block";
+              // Collapse other cards
+              document.querySelectorAll(".student-details").forEach(d => d.style.display = "none");
+              document.querySelectorAll(".student-header").forEach(h => h.classList.remove("selected"));
+
+              // Expand the current one
+              if (!expanded) {
+                details.style.display = "block";
+                header.classList.add("selected");
+              }
+            });
+
+            card.appendChild(header);
+            card.appendChild(details);
+            container.appendChild(card);
+          });
         } else {
-          document.getElementById("searchResult").style.display = "block";
-          document.getElementById("searchResult").innerHTML = "<p style='color:red;'>No student found</p>";
+          container.innerHTML = `<p style="color:red">${result.message || "No student found"}</p>`;
         }
       } catch (err) {
         alert("Network error: " + err.message);
       } finally {
         btn.disabled = false;
-        btn.innerText = "Search";
+        btn.innerText = originalText;
       }
-    }    
+    }
+
+    function callNumber(number) {
+      if (number) {
+        window.location.href = `tel:${number}`;
+      }
+    }
+
+    function smsNumber(number) {
+      if (number) {
+        window.location.href = `sms:${number}`;
+      }
+    }
   </script>
 </body>
 </html>
