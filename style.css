@@ -89,6 +89,7 @@ body {
 .form-container h2 {
   text-align: center;
   margin-bottom: 16px;
+  color: #0B3D91;   
 }
 .form-container input,
 .form-container select {
