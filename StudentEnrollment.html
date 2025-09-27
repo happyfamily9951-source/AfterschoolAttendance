@@ -114,7 +114,7 @@
       btn.innerText = "Submitting...";
       
       const student = {
-        action: "addStudent",  // *addStudent action
+        //action: "addStudent",  // *addStudent action
         name: document.getElementById('studentName').value,
         gender: document.getElementById('gender').value,
         dob: document.getElementById('dob').value,
@@ -127,12 +127,13 @@
         alert("Please fill in name, gender and date of birth");
         return;
       }
-
+      
       try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(`${API_URL}?action=addStudent`, {
           method: "POST",
-          header: {"Content-Type": "application/json"},
-          body: JSON.stringify(student)
+          //header: {"Content-Type": "application/json"},
+          header: {"Content-Type":"text/plain"),
+          body: JSON.stringify({student})
         });
 
         const result = await response.json();
