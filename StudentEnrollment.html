@@ -1,114 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Enrollment</title>
   <link rel="stylesheet" href="style.css">
-
-  <div class="form-container">
-    <input type="text" placeholder="学生姓名">
-    <input type="tel" placeholder="联系电话">
-    <input type="email" placeholder="电子邮箱">
-  </div>
 </head>
 <body>
 
-  <! -- left top logo -->
+  <!-- 左上角小 Logo -->
   <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
 
-  <!-- 顶部标题 -->
-  <h2 style="text-align:center; margin:20px 0; color:#1a73e8;">Student Enrollment / 学生报名</h2>
+  <!-- 主内容 -->
+  <main class="page-content">
 
-  <div class="card-container" style="grid-template-columns:1fr;">
-    <div class="card-btn" style="background:#fff; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.1); width:100%; text-align:left;">
-      <form id="enrollForm">
+    <!-- 学生录入 -->
+    <div class="form-container">
+      <h2>Student Enrollment</h2>
 
-        <!-- 第1行：学生姓名 -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="studentName">Student Name</label>
-            <input type="text" id="studentName" placeholder="Enter student name">
-          </div>
+      <!-- 1st row: Student name -->
+      <label for="studentName">Student Name</label>
+      <input type="text" id="studentName" placeholder="Enter student name">
+
+      <!-- 2nd row: gender and DOB -->
+      <div class="row">
+        <div class="col">
+          <label for="gender">Gender</label>
+          <select id="gender">
+            <option value="">Select</option>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+          </select>
         </div>
-
-        <!-- 第2行：生日 + 性别 -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="dob">Date of Birth</label>
-            <input type="date" id="dob">
-          </div>
-          <div class="form-group">
-            <label for="gender">Gender</label>
-            <select id="gender">
-              <option value="M">Male</option>
-              <option value="F">Female</option>
-            </select>
-          </div>
+        <div class="col">
+          <label for="dob">Date of Birth</label>
+          <input type="date" id="dob">
         </div>
+      </div>
 
-        <!-- 第3行：家长姓名 + 电话 -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="guardianName">Guardian Name</label>
-            <input type="text" id="guardianName" placeholder="Enter guardian name">
-          </div>
-          <div class="form-group">
-            <label for="guardianPhone">Guardian Phone</label>
-            <input type="tel" id="guardianPhone" placeholder="Enter phone number">
-          </div>
+      <!-- 3rd row: Guardian name and contact number -->
+      <div class="row">
+        <div class="col">
+          <label for="guardianName">Guardian Name</label>
+          <input type="text" id="guardianName" placeholder="Enter guardian name">
         </div>
-
-        <!-- 第4行：紧急联系人姓名 + 电话 -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="emergencyName">Emergency Contact</label>
-            <input type="text" id="emergencyName" placeholder="Enter contact name">
-          </div>
-          <div class="form-group">
-            <label for="emergencyPhone">Emergency Phone</label>
-            <input type="tel" id="emergencyPhone" placeholder="Enter phone number">
-          </div>
+        <div class="col">
+          <label for="guardianContact">Guardian Contact Number</label>
+          <input type="tel" id="guardianContact" placeholder="Enter guardian contact">
         </div>
+      </div>
 
-        <!-- 提交按钮 -->
-        <button type="submit" style="width:100%; padding:14px; background:#1a73e8; color:white; border:none; border-radius:8px; font-size:18px;">
-          Submit / 提交
-        </button>
-      </form>
+      <!-- 4th row: Emergency name and contact number -->
+      <div class="row">
+        <div class="col">
+          <label for="emergencyName">Emergency Contact Name</label>
+          <input type="text" id="emergencyName" placeholder="Enter emergency contact name">
+        </div>
+        <div class="col">
+          <label for="emergencyContact">Emergency Contact Number</label>
+          <input type="tel" id="emergencyContact" placeholder="Enter emergency contact">
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="submitStudent()">Submit</button>
     </div>
-  </div>
+
+    <!-- 学生查询 -->
+    <div class="form-container">
+      <h2>Search Student</h2>
+
+      <input type="text" id="searchName" placeholder="Enter student name">
+      <button class="btn-primary" onclick="searchStudent()">Search</button>
+
+      <div id="searchResult" style="display:none; margin-top:12px;">
+        <p><strong>Student ID:</strong> <span id="resId"></span></p>
+        <p><strong>Name:</strong> <span id="resName"></span></p>
+        <p><strong>Gender:</strong> <span id="resGender"></span></p>
+        <p><strong>DOB:</strong> <span id="resDob"></span></p>
+        <p><strong>Guardian:</strong> <span id="resGuardian"></span> (<span id="resGuardianContact"></span>)</p>
+        <p><strong>Emergency:</strong> <span id="resEmergency"></span> (<span id="resEmergencyContact"></span>)</p>
+      </div>
+    </div>
+
+  </main>
 
   <!-- 底部导航 -->
-  <div class="navbar">
-    <div class="nav-item" onclick="location.href='index.html'">
-      <img src="icons/home.svg" alt="Home">
-      Home
-    </div>
-    <div class="nav-item">
-      <img src="icons/calendar.svg" alt="Calendar">
-      Calendar
-    </div>
-    <div class="nav-item">
-      <img src="icons/center.svg" alt="Center">
-      Center
-    </div>
-    <div class="nav-item">
-      <img src="icons/report.svg" alt="Reports">
-      Reports
-    </div>
-    <div class="nav-item">
-      <img src="icons/menu.svg" alt="Menu">
-      Menu
-    </div>
-  </div>
+  <nav class="bottom-nav">
+    <a class="nav-item nav-student active" href="StudentEnrollment.html" aria-label="Student Enrollment">
+      <img src="icons/student-enroll.svg" alt="">
+    </a>
+    <a class="nav-item nav-course" href="CourseEnrollment.html" aria-label="Course Enrollment">
+      <img src="icons/course-enroll.svg" alt="">
+    </a>
+    <a class="nav-item nav-student-course-application" href="StudentCourseApplication.html" aria-label="Student Course Application">
+      <img src="icons/student-course-application.svg" alt="">
+    </a>    
+    <a class="nav-item nav-attend" href="Attendance.html" aria-label="Attendance">
+      <img src="icons/attendance.svg" alt="">
+    </a>
+    <a class="nav-item nav-report" href="Report.html" aria-label="Reports">
+      <img src="icons/report.svg" alt="">
+    </a>
+  </nav>
 
-<script>
-document.getElementById("enrollForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  alert("Student enrollment submitted!");
-});
-</script>
+  <!-- JS 功能 -->
+  <script>
+    // 提交函数
+    function submitStudent() {
+      const student = {
+        name: document.getElementById('studentName').value,
+        gender: document.getElementById('gender').value,
+        dob: document.getElementById('dob').value,
+        guardianName: document.getElementById('guardianName').value,
+        guardianContact: document.getElementById('guardianContact').value,
+        emergencyName: document.getElementById('emergencyName').value,
+        emergencyContact: document.getElementById('emergencyContact').value,
+      };
+      if (!student.name || !student.gender || !student.dob) {
+        alert("Please fill in name, gender and date of birth");
+        return;
+      }
+      google.script.run.addStudent(student); // 需要在 Apps Script 里实现
+      alert("Student submitted!");
+    }
+
+    // 查询函数
+    function searchStudent() {
+      var name = document.getElementById("searchName").value.trim();
+      if (!name) {
+        alert("Please enter a student name");
+        return;
+      }
+      google.script.run.withSuccessHandler(function(result) {
+        if (result) {
+          document.getElementById("searchResult").style.display = "block";
+          document.getElementById("resId").innerText = result.studentId || "";
+          document.getElementById("resName").innerText = result.name || "";
+          document.getElementById("resGender").innerText = result.gender || "";
+          document.getElementById("resDob").innerText = result.dob || "";
+          document.getElementById("resGuardian").innerText = result.guardianName || "";
+          document.getElementById("resGuardianContact").innerText = result.guardianContact || "";
+          document.getElementById("resEmergency").innerText = result.emergencyName || "";
+          document.getElementById("resEmergencyContact").innerText = result.emergencyContact || "";
+        } else {
+          document.getElementById("searchResult").style.display = "block";
+          document.getElementById("searchResult").innerHTML = "<p style='color:red;'>No student found</p>";
+        }
+      }).getStudentByName(name); // 需要在 Apps Script 里实现
+    }
+  </script>
 
 </body>
 </html>
