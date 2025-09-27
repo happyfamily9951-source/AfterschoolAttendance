@@ -63,7 +63,7 @@ body {
    position: fixed;
    top: env(safe-area-inset-top, 12px);
    left: 12px;
-   width: 60px;
+   width: 144px;
    height: auto;
    z-index: 2000; /* on the top-most */
 }
