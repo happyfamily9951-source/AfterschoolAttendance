@@ -46,7 +46,7 @@
           <input type="text" id="guardianName" placeholder="Enter guardian name">
         </div>
         <div class="col">
-          <label for="guardianContact">Guardian Contact Number</label>
+          <label for="guardianContact">Guardian Number</label>
           <input type="tel" id="guardianContact" placeholder="Enter guardian contact">
         </div>
       </div>
@@ -54,11 +54,11 @@
       <!-- 4th row: Emergency name and contact number -->
       <div class="row">
         <div class="col">
-          <label for="emergencyName">Emergency Contact Name</label>
+          <label for="emergencyName">Emergency Name</label>
           <input type="text" id="emergencyName" placeholder="Enter emergency contact name">
         </div>
         <div class="col">
-          <label for="emergencyContact">Emergency Contact Number</label>
+          <label for="emergencyContact">Emergency Number</label>
           <input type="tel" id="emergencyContact" placeholder="Enter emergency contact">
         </div>
       </div>
@@ -71,7 +71,7 @@
       <h2>Search Student</h2>
 
       <input type="text" id="searchName" placeholder="Enter student name">
-      <button class="btn-primary" onclick="searchStudent()">Search</button>
+      <button class="btn-primary" id="SearchBtn" onclick="searchStudent()">Search</button>
 
       <div id="searchResult" style="display:none; margin-top:12px;">
         <p><strong>Student ID:</strong> <span id="resId"></span></p>
@@ -109,8 +109,7 @@
     // 提交函数
     async function submitStudent() {
 
-      const btn = document.getElemenyById('EnrollmentSubmit');
-
+      const btn = document.getElemenyById("EnrollmentSubmit");
       btn.disabled = true;
       btn.innerText = "Submitting...";
       
@@ -151,13 +150,23 @@
 
     // 查询函数
     function searchStudent() {
-      var name = document.getElementById("searchName").value.trim();
+      const btn = document.getElementById("searchBtn");
+      btn.disabled=true;
+      btn.innerText = "Searching...";
+      
+      const name = document.getElementById("searchName").value.trim();
       if (!name) {
         alert("Please enter a student name");
+        btn.disabled = false;
+        btn.innerText = "Search";
         return;
       }
-      google.script.run.withSuccessHandler(function(result) {
-        if (result) {
+
+      try{
+        const response = await fetch(`${API_URL}action=searchStudent`);
+        const result = await response.json();
+
+        if (result && result.studentId) {
           document.getElementById("searchResult").style.display = "block";
           document.getElementById("resId").innerText = result.studentId || "";
           document.getElementById("resName").innerText = result.name || "";
@@ -171,9 +180,13 @@
           document.getElementById("searchResult").style.display = "block";
           document.getElementById("searchResult").innerHTML = "<p style='color:red;'>No student found</p>";
         }
-      }).getStudentByName(name); // 需要在 Apps Script 里实现
-    }
+      } catch (err) {
+        alert("Network error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Search";
+      }
+    }    
   </script>
-
 </body>
 </html>
