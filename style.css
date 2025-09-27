@@ -11,6 +11,13 @@
   --radius: 12px;
   --shadow: 0 2px 6px rgba(0,0,0,.1);
 
+  /* Background color, light color */
+  --bg-student: #E8F9F6;
+   --bg-course: #E8F7F5;
+   --bg-student-course-application: #FFF9E5;
+   --bg-attendance: #FFF2E5;
+   --bg-report: #FDECEC;
+
   /* 主色调 */
   --color-primary: #1a73e8;     /* 深蓝按钮 */
   --color-bg: #ffffff;          /* 页面背景 */
