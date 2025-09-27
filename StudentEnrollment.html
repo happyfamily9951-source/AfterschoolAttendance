@@ -123,8 +123,32 @@
         emergencyName: document.getElementById("emergencyName").value,
         emergencyPhone: document.getElementById("emergencyNumber").value,
       };
+
+      if (!student.name) {
+        alert("Please enter student name");
+        btn.disabled = false;
+        btn.innerText = "Submit";
+        return;
+      }
+
+      if (!student.gender) {
+        alert("Please enter gender");
+        btn.disabled = false;
+        btn.innerText = "Submit";
+        return;
+      }      
+
+      if (!student.dob) {
+        alert("Please select date of birth")
+        btn.disabled = false;
+        btn.innerText = "Submit";
+        return;
+      }
+      
       if (!student.name || !student.gender || !student.dob) {
         alert("Please fill in name, gender and date of birth");
+        btn.disabled = false;
+        btn.innerText = "Submit";
         return;
       }
       
