@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Enrollment</title>
   <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
 </head>
 <body class="page-student">
 
@@ -62,7 +63,7 @@
         </div>
       </div>
 
-      <button class="btn-primary" onclick="submitStudent()">Submit</button>
+      <button class="btn-primary" id="EnrollmentSubmit" onclick="submitStudent()">Submit</button>
     </div>
 
     <!-- 学生查询 -->
@@ -106,7 +107,13 @@
   <!-- JS 功能 -->
   <script>
     // 提交函数
-    function submitStudent() {
+    async function submitStudent() {
+
+      const btn = document.getElemenyById('EnrollmentSubmit');
+
+      btn.disabled = true;
+      btn.innerText = "Submitting...";
+      
       const student = {
         name: document.getElementById('studentName').value,
         gender: document.getElementById('gender').value,
@@ -120,8 +127,26 @@
         alert("Please fill in name, gender and date of birth");
         return;
       }
-      google.script.run.addStudent(student); // 需要在 Apps Script 里实现
-      alert("Student submitted!");
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(student),
+          header: {"Content-Type":"application/json"}
+        });
+
+        const result = await response.json();
+        if (result.status === "success") {
+          alert("Student submitted successfully!");
+        } else {
+          alert("Error: " + (result.message || "Unknown error"));
+        }
+      } catch (err) {
+        alert("Network error: " + err.message);
+      } finally {
+        // restore button "submit" 
+        btn.disabled = false;
+        btn.innerText = "Submit";
     }
 
     // 查询函数
