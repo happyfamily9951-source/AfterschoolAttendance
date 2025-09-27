@@ -130,8 +130,8 @@
       try {
         const response = await fetch(`${API_URL}?action=addStudent`, {
           method: "POST",
-          body: JSON.stringify(student),
-          header: {"Content-Type":"text/plain"}
+          header: {"Content-Type": "application/json"},
+          body: JSON.stringify(student)
         });
 
         const result = await response.json();
