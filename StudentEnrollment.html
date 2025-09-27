@@ -144,6 +144,10 @@
         btn.innerText = "Submit";
         return;
       }
+
+      console.log("Student Name:", document.getElementById('studentName').value);
+      console.log("Student DOB:", document.getElementById('dob').value);
+      console.log("Student Gender:", document.getElementById('gender').value);
       
       if (!student.name || !student.gender || !student.dob) {
         alert("Please fill in name, gender and date of birth");
