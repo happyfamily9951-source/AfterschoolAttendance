@@ -45,6 +45,13 @@ body {
   line-height: 1.5;
 }
 
+/* === Background color control ============================= */
+body.page-student {background: var(--bg-student);}
+body.page-course {background: var(--bg-course);}
+body.page-student-course-application {background: var(--bg-student-course-application);}
+body.page-attendance {background: var(--bg-attendance);}
+body.page-report {background: var(--bg-report);}
+
 /* ====================================
    3. 顶部 Header
    ==================================== */
