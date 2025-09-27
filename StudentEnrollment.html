@@ -46,8 +46,8 @@
           <input type="text" id="guardianName" placeholder="Enter guardian name">
         </div>
         <div class="col">
-          <label for="guardianContact">Guardian Number</label>
-          <input type="tel" id="guardianContact" placeholder="Enter guardian contact">
+          <label for="guardianNumber">Guardian Number</label>
+          <input type="tel" id="guardianNumber" placeholder="Enter guardian contact number">
         </div>
       </div>
 
@@ -58,8 +58,8 @@
           <input type="text" id="emergencyName" placeholder="Enter emergency contact name">
         </div>
         <div class="col">
-          <label for="emergencyContact">Emergency Number</label>
-          <input type="tel" id="emergencyContact" placeholder="Enter emergency contact">
+          <label for="emergencyNumber">Emergency Number</label>
+          <input type="tel" id="emergencyNumber" placeholder="Enter emergency contact number">
         </div>
       </div>
 
@@ -115,13 +115,13 @@
       
       const student = {
         //action: "addStudent",  // *addStudent action
-        studentName: document.getElementById('studentName').value,
-        gender: document.getElementById('gender').value,
-        dob: document.getElementById('dob').value,
-        guardianName: document.getElementById('guardianName').value,
-        guardianPhone: document.getElementById('guardianContact').value,
-        emergencyName: document.getElementById('emergencyName').value,
-        emergencyPhone: document.getElementById('emergencyContact').value,
+        studentName: document.getElementById("studentName").value,
+        gender: document.getElementById("gender").value,
+        dob: document.getElementById("dob").value,
+        guardianName: document.getElementById("guardianName").value,
+        guardianPhone: document.getElementById("guardianNumber").value,
+        emergencyName: document.getElementById("emergencyName").value,
+        emergencyPhone: document.getElementById("emergencyNumber").value,
       };
       if (!student.name || !student.gender || !student.dob) {
         alert("Please fill in name, gender and date of birth");
