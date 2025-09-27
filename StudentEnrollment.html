@@ -115,13 +115,13 @@
       
       const student = {
         //action: "addStudent",  // *addStudent action
-        name: document.getElementById('studentName').value,
+        studentName: document.getElementById('studentName').value,
         gender: document.getElementById('gender').value,
         dob: document.getElementById('dob').value,
         guardianName: document.getElementById('guardianName').value,
-        guardianContact: document.getElementById('guardianContact').value,
+        guardianPhone: document.getElementById('guardianContact').value,
         emergencyName: document.getElementById('emergencyName').value,
-        emergencyContact: document.getElementById('emergencyContact').value,
+        emergencyPhone: document.getElementById('emergencyContact').value,
       };
       if (!student.name || !student.gender || !student.dob) {
         alert("Please fill in name, gender and date of birth");
