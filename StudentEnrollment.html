@@ -138,7 +138,7 @@
 
         const result = await response.json();
         if (result.status === "success") {
-          alert("Student submitted successfully!");
+          alert(`Student submitted successfully! ID: ${result.studentId}`);
         } else {
           alert("Error: " + (result.message || "Unknown error"));
         }
