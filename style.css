@@ -117,10 +117,59 @@ body.page-report {background: var(--bg-report);}
 .row {
   display: flex;
   gap: 12px;
+  align-items: center;
 }
 .col {
   flex: 1;
 }
+
+
+/* Student card - used in StudentEnrollment.html */
+/* =========================================== */
+.student-card {
+   border: 1px solid #ccc;
+   border-radius: 12px;
+   margin-top: 12px;
+   background: #fff;
+   box-shadow: 0 2px 6px rgba(0,0,0,.1);
+}
+
+/* 1st row: ID + name */
+.student-header {
+   display: flex;
+   justify-content: space-between;
+   padding: 8px 12px;
+   background: #e0e0e0;
+   font-weight: bold;
+   cursor: pointer;
+}
+
+.student-header.selected {
+   background: #cce4ff; /* highlighted when selected */
+   border-left: 4px solid #1A73E8;
+}
+
+.student-details .row {
+   margin-bottom: 8px;
+}
+
+/* number + sms button */
+.contact-actions {
+   display: inline-flex;
+   gap: 6px;
+   margin-left: 6px;
+}
+.contact-actions button {
+   border: none;
+   background: none;
+   cursor: pointer;
+   font-size: 16px;
+}
+.contact-actions button:hover {
+   color: #1A73E8;
+}
+/* ================================================ */
+
 
 /* 按钮 */
 .btn-primary {
