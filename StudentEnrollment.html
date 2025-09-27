@@ -182,8 +182,8 @@
         const response = await fetch(`${API_URL}?action=searchStudentByName&name=${encodeURIComponent(name)}`);
         const result = await response.json();
 
-        if (result.ok && result.students && result.students.length > 0) {
-          results.students.forEach((s,idx) => {
+        if (result.ok && result.results && result.results.length > 0) {
+          results.results.forEach((s,idx) => {
             const card = document.createElement("div");
             card.className = "student-card";
 
