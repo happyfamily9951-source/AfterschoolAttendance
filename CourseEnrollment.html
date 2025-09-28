@@ -1,234 +1,227 @@
 <!DOCTYPE html>
 <html lang="zh">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Enrollment</title>
-    <link rel="stylesheet" herf="style.css">
-    <script src="config.js"></script>
-  </head>
-  
-  <body class="page-course">
-    
-    <!-- Logo on the top left -->
-    <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
-    
-    <main class="page-content">
-      
-      <!-- Course Enrollment -->
-      <div class="form-container">
-        <h2>Course Enrollment</h2>
-        
-        <!-- 1st row: class Name -->
-        <label for="className">Class Name</label>
-        <input type="text" id="className" placeholder="Enter class name">
-        
-        <!-- 2nd row: short description -->
-        <label for="classShortDescription">Class Short Description</label>
-        <input type="text" id="classShortDescription" placeholder="Enter description">
-        
-        <!-- 3rd row: Date From and Date To -->
-        <div class="row">
-          <div class="col">
-            <label for="dateFrom">Date From</label>
-            <input type="date" id="dateFrom">
-          </div>
-          <div class="col">
-            <label for="dateTo">Date To</label>
-            <input type="date" id="dateTo">
-          </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Enrollment</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+</head>
+<body class="page-course">
+
+  <!-- 左上角小 Logo -->
+  <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
+
+  <!-- 顶部大 Logo -->
+  <div class="header">
+    <img src="icons/logo.svg" alt="Main Logo"
+         onerror="this.onerror=null; this.src='icons/logo.png';">
+  </div>
+
+  <!-- 主内容 -->
+  <main class="page-content">
+
+    <!-- 课程录入 -->
+    <div class="form-container">
+      <h2>Course Enrollment</h2>
+
+      <div class="row">
+        <div class="col">
+          <label for="className">Class Name</label>
+          <input type="text" id="className" placeholder="Enter class name">
         </div>
-        
-        <!-- 4th row: Time From and Time To -->
-        <div class="row">
-          <div class="col">
-            <label for="timeFrom">Time From</label>
-            <input type="time" id="timeFrom">
-          </div>
-          <div class="col">
-            <label for="timeTo">Time To</label>
-            <input type="time" id="timeTo">
-          </div>
+        <div class="col">
+          <label for="classShort">Class Short</label>
+          <input type="text" id="classShort" placeholder="Enter short code">
         </div>
-        
-        <!-- 5th row: Age From and Age To -->
-        <div class="row">
-          <div class="col">
-            <label for="ageFrom">Age From</label>
-            <input type="number" id="ageFrom" min="1">
-          </div>
-          <div class="col">
-            <label for="ageTo">Age To</label>
-            <input type="number" id="ageTo" min="1" max="18">
-          </div>
-        </div>
-        
-        <!-- 6th row: DayOfWeek and Max Position -->
-        <div class="row">
-          <div class="col">
-            <label for="dayOfWeek">Day of Week</label>
-            <select id="dayOfWeek">
-              <option value="">Select</option>
-              <option value="Mon">Monday</option>
-              <option value="Tue">Tuesday</option>
-              <option value="Wed">Wednesday</option>
-              <option value="Thu">Thursday</option>
-              <option value="Fri">Friday</option>
-              <option value="Sat">Saturday</option>
-              <option value="Sun">Sunday</option>
-            </select>
-          </div>
-          <div class="col">
-            <label for="maxPosition">Maximum Positions</label>
-            <input type="number" id="maxPositions" min="1">
-          </div>
-        </div>
-        
-        <!-- 7th row: Teacher name -->
-        <label for="teacherName">Teacher Name</label>
-        <input type="text" id="teacherName" placeholder="Enter teacher's name">
-        
-        <!-- 8th row: Teacher number and email -->
-        <div class="row">
-          <div class="col">
-            <label for="teacherContact">Teacher Contact Number</label>
-            <input type="tel" id="teacherContact" placeholder="Enter teacher contact number">
-          </div>          
-          <div class="col">
-            <label for="teacherEmail">Teacher Email</label>
-            <input type="email" id="teacherEmail" placeholder="Enter teacher email">
-          </div>
-        </div>
-        
-        <button class="btn-primary" id="CourseSubmit" onlick="submitCourse()">Submit</button>
       </div>
-      
-      <!-- Search Course -->
-      <div class="form-container">
-        <h2>Course Search</h2>
-        
-        <!-- Input box and button -->
-        <div class="row">
-          <div class="col">
-            <input type="text" id="searchCourse" placeholder="Enter course name">
-          </div>
-          <div>
-            <button class="btn-primary" id="CourseSearchBtn" onclick="searchCourse()">Search</button>
-          </div>
+
+      <label for="description">Description</label>
+      <input type="text" id="description" placeholder="Enter description">
+
+      <div class="row">
+        <div class="col">
+          <label for="dateFrom">Date From</label>
+          <input type="date" id="dateFrom">
         </div>
-        
-        <!-- Search Results -->
-        <div id="courseResult" style="margin-top:12px;"></div>       
+        <div class="col">
+          <label for="dateTo">Date To</label>
+          <input type="date" id="dateTo">
+        </div>
       </div>
-    </main>
-    
-    <!-- Nagivator button on the bottom -->
-    <nav class="bottom-nav">
-      <a class="nav-item nav-student active" href="StudentEnrollment.html" aria-label="Student Enrollment">
-        <img src="icons/student-enroll.svg" alt="">
-      </a>
-      <a class="nav-item nav-course" href="CourseEnrollment.html" aria-label="Course Enrollment">
-        <img src="icons/course-enroll.svg" alt="">
-      </a>
-      <a class="nav-item nav-student-course-application" href="StudentCourseApplication.html" aria-label="Student Course Application">
-        <img src="icons/student-course-application.svg" alt="">
-      </a>    
-      <a class="nav-item nav-attend" href="Attendance.html" aria-label="Attendance">
-        <img src="icons/attendance.svg" alt="">
-      </a>
-      <a class="nav-item nav-report" href="Report.html" aria-label="Reports">
-        <img src="icons/report.svg" alt="">
-      </a>
-    </nav>
-    
-    <script>
-      async function submitCourse() {
-        const btn = document.getElementById("CourseSubmit");
-        btn.disabled = true;
-        const originalText=btn.innerText;
-        btn.innerText="Submitting..."
-          
-        const course = {
-          action: "addCourse",
-          className: document.getElementById("className").value,
-          classShortDescription: document.getElementById("classShortDescription").value,
-          dateFrom: document.getElementById("dateFrom").value,
-          dateTo: document.getElementById("dateTo").value,
-          timeFrom: document.getElementById("timeFrom").value,
-          timeTo: document.getElementById("timeTo").value,
-          ageFrom: document.getElementById("ageFrom").value,
-          ageTo: document.getElementById("ageTo").value,
-          dayOfWeek: document.getElementById("dayOfWeek").value,
-          maxPositions: document.getElementById("maxPositions").value,
-          teacherName: document.getElementById("teacherName").value,
-          teacherContact: document.getElementById("teacherContact").value,
-          teacherEmail: document.getElementById("teacherEmail").value,
-        };
-        
-        try {
-          const resp = await fetch(API_URL, {
-            method: "POST",
-            headers: {"Content-Type" : "text/plain"},
-            body: JSON.stringify(course)            
-          });
-          
-          const result = await resp.json();
-          
-          if (result.ok) {
-            alert("Course submitted successfully!");
-          } else {
-            alert("Error: " + (result.message || "Unknown error"));
-          }
-        } catch (e) {
-          alert("Network error: " + e.message);
-        } finally {
-          btn.disabled = false;
-          btn.innerText = originalText;
-        }
+
+      <div class="row">
+        <div class="col">
+          <label for="timeFrom">Time From</label>
+          <input type="time" id="timeFrom">
+        </div>
+        <div class="col">
+          <label for="timeTo">Time To</label>
+          <input type="time" id="timeTo">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label for="ageFrom">Age From</label>
+          <input type="number" id="ageFrom" placeholder="e.g. 6">
+        </div>
+        <div class="col">
+          <label for="ageTo">Age To</label>
+          <input type="number" id="ageTo" placeholder="e.g. 12">
+        </div>
+      </div>
+
+      <label for="dayOfWeek">Day of Week</label>
+      <select id="dayOfWeek">
+        <option value="">Select</option>
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+      </select>
+
+      <label for="maxPositions">Maximum Positions</label>
+      <input type="number" id="maxPositions" placeholder="Enter number">
+
+      <label for="teacherName">Teacher Name</label>
+      <input type="text" id="teacherName" placeholder="Enter teacher's name">
+
+      <label for="teacherContact">Teacher Contact Number</label>
+      <input type="tel" id="teacherContact" placeholder="Enter contact number">
+
+      <label for="teacherEmail">Teacher Email</label>
+      <input type="email" id="teacherEmail" placeholder="Enter teacher email">
+
+      <button class="btn-primary" id="CourseSubmit" type="button" onclick="submitCourse()">Submit</button>
+    </div>
+
+    <!-- 课程查询 -->
+    <div class="form-container">
+      <h2>Course Search</h2>
+      <div class="row">
+        <div class="col">
+          <input type="text" id="searchCourse" placeholder="请输入课程名称进行查询">
+        </div>
+        <div>
+          <button class="btn-primary" id="CourseSearchBtn" onclick="searchCourse()">Search</button>
+        </div>
+      </div>
+
+      <div id="searchResult" style="margin-top:12px;"></div>
+    </div>
+
+  </main>
+
+  <!-- 底部导航 -->
+  <nav class="bottom-nav">
+    <a class="nav-item nav-home" href="index.html" aria-label="Home">
+      <img src="icons/home.svg" alt="">
+    </a>
+    <a class="nav-item nav-student" href="StudentEnrollment.html" aria-label="Student Enrollment">
+      <img src="icons/student-enroll.svg" alt="">
+    </a>
+    <a class="nav-item nav-course active" href="CourseEnrollment.html" aria-label="Course Enrollment">
+      <img src="icons/course-enroll.svg" alt="">
+    </a>
+    <a class="nav-item nav-attend" href="Attendance.html" aria-label="Attendance">
+      <img src="icons/attendance.svg" alt="">
+    </a>
+    <a class="nav-item nav-report" href="Report.html" aria-label="Reports">
+      <img src="icons/report.svg" alt="">
+    </a>
+  </nav>
+
+  <!-- JS 功能 -->
+  <script>
+  async function submitCourse() {
+    const btn = document.getElementById("CourseSubmit");
+    btn.disabled = true;
+    const originalText = btn.innerText;
+    btn.innerText = "Submitting...";
+
+    const course = {
+      action: "addCourse",
+      className: document.getElementById("className").value.trim(),
+      classShort: document.getElementById("classShort").value.trim(),
+      description: document.getElementById("description").value.trim(),
+      dateFrom: document.getElementById("dateFrom").value,
+      dateTo: document.getElementById("dateTo").value,
+      timeFrom: document.getElementById("timeFrom").value,
+      timeTo: document.getElementById("timeTo").value,
+      ageFrom: document.getElementById("ageFrom").value,
+      ageTo: document.getElementById("ageTo").value,
+      dayOfWeek: document.getElementById("dayOfWeek").value,
+      maxPositions: document.getElementById("maxPositions").value,
+      teacherName: document.getElementById("teacherName").value.trim(),
+      teacherContact: document.getElementById("teacherContact").value.trim(),
+      teacherEmail: document.getElementById("teacherEmail").value.trim()
+    };
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(course)
+      });
+      const result = await response.json();
+      if (result.ok) {
+        alert(`Course submitted successfully! ID: ${result.courseId}`);
+      } else {
+        alert("Error: " + (result.message || "Unknown error"));
       }
-      
-      async function searchCourse() {
-        const btn = document.getElementById("CourseSearchBtn");
-        const container = document.getElementById("courseResult");
-        const name=document.getElementById("searchCourse").value.trim();
-        
-        if (!name) {
-          alert("Please input the course name");
-          return;
-        }
-        
-        btn.disabled = true;
-        const originalText = btn.innerText;
-        btn.innerText="Searching...";
-        
-        container.innerHTML = "";
-        try {
-          const resp = await fetch(`${API_URL}?action=searchCourseByName&name=${encodeURIComponent(name)}`);
-          const result = await resp.json();
-          
-          if (result.ok && result.results && result.results.length > 0) {
-            container.innerHTML = result.results.map(c => `
-            <div class="form-container">
-            <p><strong>Class Name:</strong> ${c.className || ""}</p>
-            <p><strong>Description:</strong> ${c.classShortDescription || ""}</p>
-            <p><strong>Date:</strong> ${c.dateFrom || ""} ~ ${c.dateTo || ""}</p>
-            <p><strong>Time:</strong> ${c.timeFrom || ""} ~ ${c.timeTo || ""}</p>
-            <p><strong>Day:</strong> ${c.dayOfWeek || ""}</p>
-            <p><strong>Teacher:</strong> ${c.teacherName || ""} / ${c.teacherContact || ""} / ${c.teacherEmail || ""}</p>
-            <p><strong>Age:</strong> ${c.ageFrom || ""} - ${c.ageTo || ""}</p>
-            <p><strong>Maximum Positions:</strong> ${c.maxPositions || ""}</p>
-            </div>
-            `).join("");
-          } else {
-            container.innerHTML = `<p style="color:red;">${result.message || "No course found"}</p>`;
-          }
-        } catch (e) {
-          alert("Network error: " + e.message);
-        } finally {
-          btn.disabled = false;
-          btn.innerText = originalText;
-        }
+    } catch (err) {
+      alert("Network error: " + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = originalText;
+    }
+  }
+
+  async function searchCourse() {
+    const btn = document.getElementById("CourseSearchBtn");
+    btn.disabled = true;
+    const originalText = btn.innerText;
+    btn.innerText = "Searching...";
+
+    const courseName = document.getElementById("searchCourse").value.trim();
+    const container = document.getElementById("searchResult");
+    container.innerHTML = "";
+
+    if (!courseName) {
+      alert("请输入课程名称");
+      btn.disabled = false;
+      btn.innerText = originalText;
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}?action=searchCourseByName&name=${encodeURIComponent(courseName)}`);
+      const result = await response.json();
+
+      if (result.ok && result.results && result.results.length > 0) {
+        result.results.forEach(c => {
+          const div = document.createElement("div");
+          div.className = "form-container";
+          div.innerHTML = `
+            <p><strong>Course ID:</strong> ${c.courseId || ""}</p>
+            <p><strong>Name:</strong> ${c.className || ""} (${c.classShort || ""})</p>
+            <p><strong>Teacher:</strong> ${c.teacherName || ""} (${c.teacherContact || ""})</p>
+            <p><strong>Day:</strong> ${c.dayOfWeek || ""}, ${c.timeFrom || ""} - ${c.timeTo || ""}</p>
+          `;
+          container.appendChild(div);
+        });
+      } else {
+        container.innerHTML = `<p style="color:red;">${result.message || "No course found"}</p>`;
       }
-    </script>
-  </body>
+    } catch (err) {
+      alert("Network error: " + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = originalText;
+    }
+  }
+  </script>
+</body>
 </html>
