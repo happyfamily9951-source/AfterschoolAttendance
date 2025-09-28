@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Course Enrollment</title>
-  <link rel="stylesheet" herf="style.css">
-  <script src="config.js"></script>
-</head>
-
-<body class="page-course">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Enrollment</title>
+    <link rel="stylesheet" herf="style.css">
+    <script src="config.js"></script>
+  </head>
   
+  <body class="page-course">
+    
     <!-- Logo on the top left -->
     <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
-
+    
     <main class="page-content">
       
       <!-- Course Enrollment -->
@@ -26,7 +26,7 @@
         <!-- 2nd row: short description -->
         <label for="classShortDescription">Class Short Description</label>
         <input type="text" id="classShortDescription" placeholder="Enter description">
-
+        
         <!-- 3rd row: Date From and Date To -->
         <div class="row">
           <div class="col">
@@ -38,7 +38,7 @@
             <input type="date" id="dateTo">
           </div>
         </div>
-
+        
         <!-- 4th row: Time From and Time To -->
         <div class="row">
           <div class="col">
@@ -50,7 +50,7 @@
             <input type="time" id="timeTo">
           </div>
         </div>
-
+        
         <!-- 5th row: Age From and Age To -->
         <div class="row">
           <div class="col">
@@ -62,7 +62,7 @@
             <input type="number" id="ageTo" min="1" max="18">
           </div>
         </div>
-
+        
         <!-- 6th row: DayOfWeek and Max Position -->
         <div class="row">
           <div class="col">
@@ -83,30 +83,30 @@
             <input type="number" id="maxPositions" min="1">
           </div>
         </div>
-
+        
         <!-- 7th row: Teacher name -->
         <label for="teacherName">Teacher Name</label>
         <input type="text" id="teacherName" placeholder="Enter teacher's name">
-
+        
         <!-- 8th row: Teacher number and email -->
         <div class="row">
           <div class="col">
             <label for="teacherContact">Teacher Contact Number</label>
             <input type="tel" id="teacherContact" placeholder="Enter teacher contact number">
-          </div>
+          </div>          
           <div class="col">
             <label for="teacherEmail">Teacher Email</label>
             <input type="email" id="teacherEmail" placeholder="Enter teacher email">
           </div>
         </div>
-
+        
         <button class="btn-primary" id="CourseSubmit" onlick="submitCourse()">Submit</button>
       </div>
-
+      
       <!-- Search Course -->
       <div class="form-container">
         <h2>Course Search</h2>
-
+        
         <!-- Input box and button -->
         <div class="row">
           <div class="col">
@@ -116,12 +116,12 @@
             <button class="btn-primary" id="CourseSearchBtn" onclick="searchCourse()">Search</button>
           </div>
         </div>
-
+        
         <!-- Search Results -->
         <div id="courseResult" style="margin-top:12px;"></div>       
       </div>
     </main>
-
+    
     <!-- Nagivator button on the bottom -->
     <nav class="bottom-nav">
       <a class="nav-item nav-student active" href="StudentEnrollment.html" aria-label="Student Enrollment">
@@ -140,14 +140,14 @@
         <img src="icons/report.svg" alt="">
       </a>
     </nav>
-
+    
     <script>
       async function submitCourse() {
         const btn = document.getElementById("CourseSubmit");
         btn.disabled = true;
         const originalText=btn.innerText;
         btn.innerText="Submitting..."
-
+          
         const course = {
           action: "addCourse",
           className: document.getElementById("className").value,
@@ -164,16 +164,16 @@
           teacherContact: document.getElementById("teacherContact").value,
           teacherEmail: document.getElementById("teacherEmail").value,
         };
-
+        
         try {
           const resp = await fetch(API_URL, {
             method: "POST",
             headers: {"Content-Type" : "text/plain"},
             body: JSON.stringify(course)            
-        });
-
+          });
+          
           const result = await resp.json();
-
+          
           if (result.ok) {
             alert("Course submitted successfully!");
           } else {
@@ -186,25 +186,26 @@
           btn.innerText = originalText;
         }
       }
-
+      
       async function searchCourse() {
         const btn = document.getElementById("CourseSearchBtn");
         const container = document.getElementById("courseResult");
         const name=document.getElementById("searchCourse").value.trim();
-
+        
         if (!name) {
           alert("Please input the course name");
           return;
         }
-
-        btn.disabled = true
+        
+        btn.disabled = true;
         const originalText = btn.innerText;
-        btn.innerText="Searching..."
-
+        btn.innerText="Searching...";
+        
         container.innerHTML = "";
         try {
           const resp = await fetch(`${API_URL}?action=searchCourseByName&name=${encodeURIComponent(name)}`);
           const result = await resp.json();
+          
           if (result.ok && result.results && result.results.length > 0) {
             container.innerHTML = result.results.map(c => `
             <div class="form-container">
@@ -225,7 +226,7 @@
           alert("Network error: " + e.message);
         } finally {
           btn.disabled = false;
-          btn.innerText = txt;
+          btn.innerText = originalText;
         }
       }
     </script>
