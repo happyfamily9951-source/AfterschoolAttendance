@@ -1,27 +1,33 @@
 <!DOCTYPE html>
 <html lang="zh">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Enrollment</title>
-    <link rel="stylesheet" herf="style.css">
-    <script src="config.js"></script>
-  </head>
-  
-  <body class="page-course">  <!-- background color, defined in style.css -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Enrollment</title>
+  <link rel="stylesheet" herf="style.css">
+  <script src="config.js"></script>
+</head>
 
+<body class="page-course">
+  
     <!-- Logo on the top left -->
     <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
 
     <main class="page-content">
+      
       <!-- Course Enrollment -->
       <div class="form-container">
         <h2>Course Enrollment</h2>
+        
+        <!-- 1st row: class Name -->
         <label for="className">Class Name</label>
         <input type="text" id="className" placeholder="Enter class name">
+        
+        <!-- 2nd row: short description -->
         <label for="classShortDescription">Class Short Description</label>
         <input type="text" id="classShortDescription" placeholder="Enter description">
 
+        <!-- 3rd row: Date From and Date To -->
         <div class="row">
           <div class="col">
             <label for="dateFrom">Date From</label>
@@ -33,6 +39,7 @@
           </div>
         </div>
 
+        <!-- 4th row: Time From and Time To -->
         <div class="row">
           <div class="col">
             <label for="timeFrom">Time From</label>
@@ -44,6 +51,7 @@
           </div>
         </div>
 
+        <!-- 5th row: Age From and Age To -->
         <div class="row">
           <div class="col">
             <label for="ageFrom">Age From</label>
@@ -55,6 +63,7 @@
           </div>
         </div>
 
+        <!-- 6th row: DayOfWeek and Max Position -->
         <div class="row">
           <div class="col">
             <label for="dayOfWeek">Day of Week</label>
@@ -74,10 +83,12 @@
             <input type="number" id="maxPositions" min="1">
           </div>
         </div>
-          
+
+        <!-- 7th row: Teacher name -->
         <label for="teacherName">Teacher Name</label>
         <input type="text" id="teacherName" placeholder="Enter teacher's name">
 
+        <!-- 8th row: Teacher number and email -->
         <div class="row">
           <div class="col">
             <label for="teacherContact">Teacher Contact Number</label>
@@ -95,6 +106,8 @@
       <!-- Search Course -->
       <div class="form-container">
         <h2>Course Search</h2>
+
+        <!-- Input box and button -->
         <div class="row">
           <div class="col">
             <input type="text" id="searchCourse" placeholder="Enter course name">
@@ -103,6 +116,8 @@
             <button class="btn-primary" id="CourseSearchBtn" onclick="searchCourse()">Search</button>
           </div>
         </div>
+
+        <!-- Search Results -->
         <div id="courseResult" style="margin-top:12px;"></div>       
       </div>
     </main>
