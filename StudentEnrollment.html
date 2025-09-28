@@ -183,10 +183,11 @@
         const result = await response.json();
 
         if (result.ok && result.results && result.results.length > 0) {
-          results.results.forEach((s,idx) => {
+          result.results.forEach(s => {
 
-            console.log("Student: ", s.studentId, s.studentName, s.dob);
+            console.log("Student: ", s.studentId, s.studentName, s.dob); 
             
+            const dob = formatDate(s.dob || "");
             const card = document.createElement("div");
             card.className = "student-card";
 
@@ -194,8 +195,8 @@
             const header = document.createElement("div");
             header.className = "student-header";
             header.innerHTML = `
-              <div>Student ID: ${s.studentId}</div>
-              <div>${s.studentName}</div>
+              <div><strong>Student ID: </strong>${s.studentId || ""}</div>
+              <div>${s.studentName || ""}</div>
             `;
 
             // Details: hiding in default
@@ -203,24 +204,24 @@
             details.className = "student-details";
             details.innerHTML = `
               <div class="row">
-                <div class="col"><strong>Gender: </strong> ${s.gender}</div>
-                <div class="col"><strong>DOB: </strong> ${s.dob}</div>
+                <div class="col"><strong>Gender: </strong> ${s.gender || ""}</div>
+                <div class="col"><strong>DOB: </strong> ${dob}</div>
               </div>
               <div class="row">
                 <div class="col">
                   <strong>Guardian:</strong> ${s.guardianName} / ${s.guardianPhone}
                   <span class="contact-actions">
-                    <button onclick="callNumber('${s.guardianPhone}')">📞</button>
-                    <button onclick="smsNumber('${s.guardianPhone}')">💬</button>
+                    <button onclick="callNumber('${s.guardianPhone || ""}')">📞</button>
+                    <button onclick="smsNumber('${s.guardianPhone || ""}')">💬</button>
                   </span>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <strong>Emergency:</strong> ${s.emergencyName} / ${s.emergencyPhone}
+                  <strong>Emergency:</strong> ${s.emergencyName || ""} / ${s.emergencyPhone || ""}
                   <span class="contact-actions">
-                    <button onclick="callNumber('${s.emergencyPhone}')">📞</button>
-                    <button onclick="smsNumber('${s.emergencyPhone}')">💬</button>
+                    <button onclick="callNumber('${s.emergencyPhone || ""}')">📞</button>
+                    <button onclick="smsNumber('${s.emergencyPhone || ""}')">💬</button>
                   </span>
                 </div>
               </div>
@@ -253,6 +254,12 @@
         btn.disabled = false;
         btn.innerText = originalText;
       }
+    }
+
+    function formatDate(isoString) {
+      if (!isoString) return "";
+      const d = new Date(isoString);
+      return d.toISOString().split("T")[0]; // yyyy-MM-dd
     }
 
     function callNumber(number) {
