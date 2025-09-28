@@ -1,180 +1,218 @@
 <!DOCTYPE html>
 <html lang="zh">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>课程管理 / Course Management</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    label { display: block; margin-top: 10px; }
-    input, select { width: 100%; padding: 5px; margin-top: 3px; }
-    button { margin-top: 10px; padding: 8px 12px; margin-right: 5px; }
-    hr { margin: 25px 0; }
-    #classContainer { margin-top: 15px; }
-    table { width: 100%; border-collapse: collapse; }
-    td { vertical-align: top; border: 1px solid #ddd; padding: 5px; width: 14%; }
-  </style>
-</head>
-<body>
-  <h2>课程管理 / Course Management</h2>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Enrollment</title>
+    <link rel="stylesheet" herf="style.css">
+    <script src="config.js"></script>
+  </head>
+  
+  <body class="page-course">  <!-- background color, defined in style.css -->
 
-  <!-- ========== 课程录入表单 ========== -->
-  <h3>课程录入 / Add New Class</h3>
-  <label>Class Name<input type="text" id="className"></label>
-  <label>Short Description<input type="text" id="shortDescription"></label>
-  <label>Date From<input type="date" id="dateFrom"></label>
-  <label>Date To<input type="date" id="dateTo"></label>
-  <label>Time From<input type="time" id="timeFrom"></label>
-  <label>Time To<input type="time" id="timeTo"></label>
-  <label>Day of Week
-    <select id="dayOfWeek">
-      <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
-      <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
-    </select>
-  </label>
-  <label>Teacher Name<input type="text" id="teacherName"></label>
-  <label>Teacher Contact Number<input type="text" id="teacherContactNumber"></label>
-  <label>Teacher Email<input type="email" id="teachersEmail"></label>
-  <label>Age From<input type="number" id="ageFrom"></label>
-  <label>Age To<input type="number" id="ageTo"></label>
-  <label>Maximum Position<input type="number" id="maximumPosition"></label>
-  <button id="submitBtn" onclick="submitClass()">提交课程 / Submit</button>
+    <!-- Logo on the top left -->
+    <img src="icons/logo-monica-linan.sv" alt="Logo" class="logo-top-left">
 
-  <hr>
+    <main class="page-content">
+      <!-- Course Enrollment -->
+      <div class="form-container">
+        <h2>Course Enrollment</h2>
+        <label for="className">Class Name</label>
+        <input type="text" id="className" placeholder="Enter class name">
+        <label for="classShortDescription">Class Short Description</label>
+        <input type="text" id="classShortDescription" placeholder="Enter description">
 
-  <!-- ========== 课程查询区 ========== -->
-  <h3>课程查询 / Course Lookup</h3>
-  <button onclick="renderMode=1; renderClasses()">常规模式</button>
-  <button onclick="renderMode=2; renderClasses()">按星期分组</button>
-  <div id="classContainer">加载中...</div>
+        <div class="row">
+          <div class="col">
+            <label for="dateFrom">Date From</label>
+            <input type="date" id="dateFrom">
+          </div>
+          <div class="col">
+            <label for="dateTo">Date To</label>
+            <input type="date" id="dateTo">
+          </div>
+        </div>
 
-  <script src="config.js"></script>
-  <script>
-    let renderMode = 1;
-    let allClasses = [];
+        <div class="row">
+          <div class="col">
+            <label for="timeFrom">Time From</label>
+            <input type="time" id="timeFrom">
+          </div>
+          <div class="col">
+            <label for="timeTo">Time To</label>
+            <input type="time" id="timeTo">
+          </div>
+        </div>
 
-    // === 提交课程 ===
-    async function submitClass() {
-      const btn = document.getElementById("submitBtn");
-      btn.disabled = true;
-      btn.textContent = "提交中... / Submitting...";
+        <div class="row">
+          <div class="col">
+            <label for="ageFrom">Age From</label>
+            <input type="number" id="ageFrom" min="1">
+          </div>
+          <div class="col">
+            <label for="ageTo">Age To</label>
+            <input type="number" id="ageTo" min="1" max="18">
+          </div>
+        </div>
 
-      try {
-        const data = {
+        <div class="row">
+          <div class="col">
+            <label for="dayOfWeek">Day of Week</label>
+            <select id="dayOfWeek">
+              <option value="">Select</option>
+              <option value="Mon">Monday</option>
+              <option value="Tue">Tuesday</option>
+              <option value="Wed">Wednesday</option>
+              <option value="Thu">Thursday</option>
+              <option value="Fri">Friday</option>
+              <option value="Sat">Saturday</option>
+              <option value="Sun">Sunday</option>
+            </select>
+          </div>
+          <div class="col">
+            <label for="maxPosition">Maximum Positions</label>
+            <input type="number" id="maxPositions" min="1">
+          </div>
+        </div>
+          
+        <label for="teacherName">Teacher Name</label>
+        <input type="text" id="teacherName" placeholder="Enter teacher's name">
+
+        <div class="row">
+          <div class="col">
+            <label for="teacherContact">Teacher Contact Number</label>
+            <input type="tel" id="teacherContact" placeholder="Enter teacher contact number">
+          </div>
+          <div class="col">
+            <label for="teacherEmail">Teacher Email</label>
+            <input type="email" id="teacherEmail" placeholder="Enter teacher email">
+          </div>
+        </div>
+
+        <button class="btn-primary" id="CourseSubmit" onlick="submitCourse()">Submit</button>
+      </div>
+
+      <!-- Search Course -->
+      <div class="form-container">
+        <h2>Course Search</h2>
+        <div class="row">
+          <div class="col">
+            <input type="text" id="searchCourse" placeholder="Enter course name">
+          </div>
+          <div>
+            <button class="btn-primary" id="CourseSearchBtn" onclick="searchCourse()">Search</button>
+          </div>
+        </div>
+        <div id="courseResult" style="margin-top:12px;"></div>       
+      </div>
+    </main>
+
+    <!-- Nagivator button on the bottom -->
+    <nav class="bottom-nav">
+      <a class="nav-item nav-student active" href="StudentEnrollment.html" aria-label="Student Enrollment">
+        <img src="icons/student-enroll.svg" alt="">
+      </a>
+      <a class="nav-item nav-course" href="CourseEnrollment.html" aria-label="Course Enrollment">
+        <img src="icons/course-enroll.svg" alt="">
+      </a>
+      <a class="nav-item nav-student-course-application" href="StudentCourseApplication.html" aria-label="Student Course Application">
+        <img src="icons/student-course-application.svg" alt="">
+      </a>    
+      <a class="nav-item nav-attend" href="Attendance.html" aria-label="Attendance">
+        <img src="icons/attendance.svg" alt="">
+      </a>
+      <a class="nav-item nav-report" href="Report.html" aria-label="Reports">
+        <img src="icons/report.svg" alt="">
+      </a>
+    </nav>
+
+    <script>
+      async function submitCourse() {
+        const btn = document.getElementById("CourseSubmit");
+        btn.disabled = true;
+        const originalText=btn.innerText;
+        btn.innerText="Submitting..."
+
+        const course = {
+          action: "addCourse",
           className: document.getElementById("className").value,
-          shortDescription: document.getElementById("shortDescription").value,
+          classShortDescription: document.getElementById("classShortDescription").value,
           dateFrom: document.getElementById("dateFrom").value,
           dateTo: document.getElementById("dateTo").value,
           timeFrom: document.getElementById("timeFrom").value,
           timeTo: document.getElementById("timeTo").value,
-          dayOfWeek: document.getElementById("dayOfWeek").value,
-          teacherName: document.getElementById("teacherName").value,
-          teacherContactNumber: document.getElementById("teacherContactNumber").value,
-          teachersEmail: document.getElementById("teachersEmail").value,
           ageFrom: document.getElementById("ageFrom").value,
           ageTo: document.getElementById("ageTo").value,
-          maximumPosition: document.getElementById("maximumPosition").value
+          dayOfWeek: document.getElementById("dayOfWeek").value,
+          maxPositions: document.getElementById("maxPositions").value,
+          teacherName: document.getElementById("teacherName").value,
+          teacherContact: document.getElementById("teacherContact").value,
+          teacherEmail: document.getElementById("teacherEmail").value,
         };
 
-        const res = await fetch(`${API_URL}?action=addClass`, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain" }, // 兼容 Apps Script
-          body: JSON.stringify(data)
+        try {
+          const resp = await fetch(API_URL, {
+            method: "POST",
+            headers: {"Content-Type" : "text/plain"},
+            body: JSON.stringify(course)            
         });
 
-        const json = await res.json();
-        if (json.ok) {
-          alert("✅ 课程已录入成功！");
-          await loadClasses(); // 刷新课程列表
-        } else {
-          alert("❌ 录入失败: " + json.error);
-        }
-      } catch (err) {
-        alert("提交出错: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "提交课程 / Submit";
-      }
-    }
+          const result = await resp.json();
 
-    // === 加载课程 ===
-    async function loadClasses() {
-      try {
-        const res = await fetch(`${API_URL}?action=getClasses`);
-        const json = await res.json();
-        if (json.ok) {
-          allClasses = json.classes;
-          renderClasses();
-        } else {
-          document.getElementById("classContainer").textContent = "加载失败";
-        }
-      } catch (err) {
-        document.getElementById("classContainer").textContent = "加载出错: " + err.message;
-      }
-    }
-
-    // === 渲染课程 ===
-    function renderClasses() {
-      const container = document.getElementById("classContainer");
-      container.innerHTML = "";
-
-      if (renderMode === 1) {
-        // 常规模式
-        let rowDiv = document.createElement("div");
-        allClasses.forEach((cls, idx) => {
-          const btn = document.createElement("button");
-          btn.textContent = cls.ClassName;
-          btn.onclick = () => showClassDetail(cls);
-          rowDiv.appendChild(btn);
-
-          if ((idx + 1) % 5 === 0) {
-            container.appendChild(rowDiv);
-            rowDiv = document.createElement("div");
+          if (result.ok) {
+            alert("Course submitted successfully!");
+          } else {
+            alert("Error: " + (result.message || "Unknown error"));
           }
-        });
-        if (rowDiv.children.length > 0) container.appendChild(rowDiv);
-
-      } else if (renderMode === 2) {
-        // 按星期分组
-        const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-        const table = document.createElement("table");
-        const tr = document.createElement("tr");
-
-        days.forEach(day => {
-          const td = document.createElement("td");
-          const dayClasses = allClasses.filter(c => c.DayOfWeek === day);
-
-          dayClasses.forEach(cls => {
-            const btn = document.createElement("button");
-            btn.textContent = cls.ClassName;
-            btn.onclick = () => showClassDetail(cls);
-            td.appendChild(btn);
-            td.appendChild(document.createElement("br"));
-          });
-
-          tr.appendChild(td);
-        });
-
-        table.appendChild(tr);
-        container.appendChild(table);
+        } catch (e) {
+          alert("Network error: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerText = originalText;
+        }
       }
-    }
 
-    // === 显示课程详情 ===
-    function showClassDetail(cls) {
-      alert(`
-课程 / Class Name: ${cls.ClassName}
-简介 / Short Description: ${cls.ShortDescription || ""}
-老师 / Teacher Name: ${cls.TeacherName}
-联系方式 / Teacher Contact Number: ${cls.TeacherContactNumber}, ${cls.TeachersEmail}
-上课时间 / Class Date/Time: ${cls.DayOfWeek} ${cls.TimeFrom} - ${cls.TimeTo}
-起止日期 / Date From ~ Date To: ${cls.DateFrom} 至 ${cls.DateTo}
-人数上限 / Maximum Position: ${cls.MaximumPosition}
-年龄 / Age Range: ${cls.AgeFrom}-${cls.AgeTo}
-      `);
-    }
+      async function searchCourse() {
+        const btn = document.getElementById("CourseSearchBtn");
+        const container = document.getElementById("courseResult");
+        const name=document.getElementById("searchCourse").value.trim();
 
-    window.onload = loadClasses;
-  </script>
-</body>
+        if (!name) {
+          alert("Please input the course name");
+          return;
+        }
+
+        btn.disabled = true
+        const originalText = btn.innerText;
+        btn.innerText="Searching..."
+
+        container.innerHTML = "";
+        try {
+          const resp = await fetch(`${API_URL}?action=searchCourseByName&name=${encodeURIComponent(name)}`);
+          const result = await resp.json();
+          if (result.ok && result.results && result.results.length > 0) {
+            container.innerHTML = result.results.map(c => `
+            <div class="form-container">
+            <p><strong>Class Name:</strong> ${c.className || ""}</p>
+            <p><strong>Description:</strong> ${c.classShortDescription || ""}</p>
+            <p><strong>Date:</strong> ${c.dateFrom || ""} ~ ${c.dateTo || ""}</p>
+            <p><strong>Time:</strong> ${c.timeFrom || ""} ~ ${c.timeTo || ""}</p>
+            <p><strong>Day:</strong> ${c.dayOfWeek || ""}</p>
+            <p><strong>Teacher:</strong> ${c.teacherName || ""} / ${c.teacherContact || ""} / ${c.teacherEmail || ""}</p>
+            <p><strong>Age:</strong> ${c.ageFrom || ""} - ${c.ageTo || ""}</p>
+            <p><strong>Maximum Positions:</strong> ${c.maxPositions || ""}</p>
+            </div>
+            `).join("");
+          } else {
+            container.innerHTML = `<p style="color:red;">${result.message || "No course found"}</p>`;
+          }
+        } catch (e) {
+          alert("Network error: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerText = txt;
+        }
+      }
+    </script>
+  </body>
 </html>
