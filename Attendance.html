@@ -1,365 +1,222 @@
-
-
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>考勤系统 Attendance</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 10px; }
-    h2 { color: #002060; }
-    button {
-      margin: 3px;
-      padding: 6px 12px;
-      font-size: 14px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    table { border-collapse: collapse; width: 100%; margin-top: 15px; }
-    th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
-    th { background-color: #f2f2f2; }
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js"></script>
+    <style>
+      .student-card {
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 10px;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,.1);
+      }
+      
+      .student-name { font-weight: bold; margin-bottom: 8px; }
+      .attendance-buttons { display: flex; gap: 10px; }
+      .btn-status {
+        flex: 1;
+        padding: 10px;
+        border-radius: 20px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        color: #fff;
+        background: #ccc;
+      }
+      
+      .btn-status.active.present { background: #28a745; }
+      .btn-status.active.absent { background: #dc3545; }
+      .btn-status.active.leave { background: #ffc107; color:#333; }
+      .leave-note { margin-top: 6px; font-size: 0.9em; color: #555; }
+      #attendanceSummary { margin: 8px 0; font-weight: bold; color: #1A73E8; }
+      .highlight { background: #ffecb3; }
+    </style>
+  </head>
+  
+  <body class="page-attendance">
+    <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
+    <main class="page-content">
+      <h2>Class Attendance</h2>
+      
+      <div class="form-container">
+        <h2>Select Class</h2>
+        <select id="classSelect"></select>
+      </div>
+      
+      <div class="form-container" id="attendanceContainer" style="display:none;">
+        <h2>Mark Attendance</h2>
+        <div id="attendanceSummary">Total: 0 | 🟢 P: 0 | 🔴 A: 0 | 🟡 L: 0</div>
+        <div id="studentList"></div>
+        <button class="btn-primary" id="AttendanceSubmit" onclick="submitAttendance()">Submit</button>
+      </div>
+    </main>
     
-    .present { background-color: #28a745; color: white; }
-    .leave { background-color: #ff9800; color: white; }
-    .absent { background-color: #dc3545; color: white; }
-    .disabled { background-color: #ccc; color: #666; pointer-events: none; }
-    .reset { background-color: #6c757d; color: white; }
-
-    #stats { margin-top: 15px; font-weight: bold; color: #002060; }
-
-    #submitArea { margin-top: 20px; }
-  </style>
-</head>
-
-<body>
-  <h2> 班级考勤 / Class Attendance </h2>
-
-  <!-- === Select Class Area === -->
-  <div id="classSelection">
-    <p>选择班级 / Select Class</p2>
-    <div id="classButtons">Loading...</div>
-    <button onclick="resetClassSelection()" class="reset">重置班级 / Reset Class</button>
-  </div>
-
-  <!-- === 统计栏 Statistics === -->
-  <p id="stats">
-    Class: - | Student / Guardian (共 0 人) | Present: 0 | Leave: 0 | Absent: 0
-  </p>
-  
-  <!-- === Student Attendance Table Area === -->
-  <table id="attendanceTable">
-    <thead>
-      <tr>
-        <th>Student / Guardian</th>
-        <th>Present</th>
-        <th>Leave</th>
-        <th>Absent</th>
-        <th>Notes</th>
-        <th>Reset</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <!-- 提交区域 -->
-  <div id="submitArea">
-    <button onclick="previewSubmission()">预览提交 / Preview Submission</button>
-    <button id="submitAttnBtn" onclick="submitAllAttendance()">提交全班打卡 / Submit All</button>
-  </div>
-
-  <!-- === Public configuration file === -->
-  <script src="config.js"></script>
-  
-  <script>
-    // const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
-
-    // === Google Sheet Name Central Management ===
-    const SHEET_NAME ={
-      students: "Students",
-      classes: "Classes",
-      attendance: "Attendance",
-      studentClassDetails: "Student-Class-Details",
-      leave: "LeaveRequests",
-      report: "Report"
-    };
-
-    let currentClass = null;
-    let studentData = [];
-    let stats = { present: 0, leave: 0, absent: 0 };
-
-
-    // 加载班级按钮
-    async function loadClasses() {
-      const res = await fetch(`${API_URL}?action=getClasses`);
-      const json = await res.json();
-      const container = document.getElementById("classButtons");
-      container.innerHTML = "";
-
-      // Retrieve the day of today
-      const todayIdx = new Date().getDay();
-      const weekMap = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const todayStr = weekMap[todayIdx];
-
-      json.classes.forEach(cls => {
-        const btn = document.createElement("button");
-        btn.textContent = cls;
-
-        // If className includes weekDay, highligh
-        if (cls.includes(todayStr)) {
-          btn.style.backgroundColor = "#007BFF"; // Blue
-          btn.style.color = "white";
-        }
-        
-        btn.onclick = () => selectClass(cls, btn);
-        container.appendChild(btn);
-      });
-
-      //const resetBtn = document.createElement("button");
-      //resetBtn.textContent = "重置班级 / Reset Class";
-      //resetBtn.classList.add("reset");
-      //resetBtn.onclick = resetClassSelection;
-      //container.appendChild(resetBtn);
-    }
-
-
-    // 选择班级
-    async function selectClass(cls, clickedBtn) {
-      currentClass = cls;
-      stats = { present: 0, leave: 0, absent: 0 };
+    <!-- Nagivator button on the bottom -->
+    <nav class="bottom-nav">
+      <a class="nav-item nav-student active" href="StudentEnrollment.html" aria-label="Student Enrollment">
+        <img src="icons/student-enroll.svg" alt="">
+      </a>
+      <a class="nav-item nav-course" href="CourseEnrollment.html" aria-label="Course Enrollment">
+        <img src="icons/course-enroll.svg" alt="">
+      </a>
+      <a class="nav-item nav-student-course-application" href="StudentCourseApplication.html" aria-label="Student Course Application">
+        <img src="icons/student-course-application.svg" alt="">
+      </a>    
+      <a class="nav-item nav-attend" href="Attendance.html" aria-label="Attendance">
+        <img src="icons/attendance.svg" alt="">
+      </a>
+      <a class="nav-item nav-report" href="Report.html" aria-label="Reports">
+        <img src="icons/report.svg" alt="">
+      </a>
+    </nav>
+    
+    <script>
+      let attendanceSummary = { total: 0, present: 0, absent: 0, leave: 0 };
+      let currentClassId = null;
       
-      document.querySelectorAll("#classButtons button").forEach(b => {
-        if (b !== clickedBtn && b.textContent !== "Reset") {
-          b.disabled = true;
-          b.classList.add("disabled");
-        } else if (b === clickedBtn) {
-          b.classList.add("present");
+      async function loadClasses() {
+        try {
+          const response = await fetch(`${API_URL}?action=getActiveClasses`);
+          const result = await response.json();
+          const select = document.getElementById("classSelect");
+          select.innerHTML = "<option value=''>Please select class</option>";
+          
+          result.results.forEach(c => {
+            const option = document.createElement("option");
+            option.value = c.classId;
+            option.textContent = c.className + (c.highlight ? " 🟢" : "");
+            select.appendChild(option);
+          });
+        } catch (err) {
+          alert("Loading class failure: " + err.message);
         }
-      });
-
-      try {
-        const res = await fetch(`${API_URL}?action=getStudents&className=${encodeURIComponent(cls)}`);
-        const json = await res.json();
-        students = json.students;
-        renderTable(students);
-        updateStats();
-      } catch (err) {
-        console.error("加载学生失败:", err);
-        document.getElementById("stats").textContent = "加载学生失败: " + err.message;
       }
-    }
-
-    // 渲染学生表格
-    function renderTable(students) {
-      const tbody = document.getElementById("attendanceTable").querySelector("tbody");
-      tbody.innerHTML = "";
-
-      students.forEach((stu, i) => {
-        const tr = document.createElement("tr");
-        const tdName = document.createElement("td");
-
-        tdName.innerHTML = `
-          ${stu.studentName} / ${stu.guardianName} (${stu.guardianPhone})
-          <a href="tel:${stu.guardianPhone}" style="margin-left:8px; text-decoration:none;">📞</a>
-          <a href="sms:${stu.guardianPhone}" style="margin-left:5px; text-decoration:none;">💬</a>
-          `;
-        tr.appendChild(tdName);
-
-        const tdPresent = document.createElement("td");
-        const btnPresent = document.createElement("button");
-        btnPresent.textContent = "Present";
-        btnPresent.className = "present";
-        btnPresent.onclick = () => markAttendance(i, "present", btnPresent);
-        tdPresent.appendChild(btnPresent);
-        tr.appendChild(tdPresent);
-
-        const tdLeave = document.createElement("td");
-        const btnLeave = document.createElement("button");
-        btnLeave.textContent = "Leave";
-        btnLeave.className = "leave";
-        btnLeave.onclick = () => markAttendance(i, "leave", btnLeave);
-        tdLeave.appendChild(btnLeave);
-        tr.appendChild(tdLeave);
-
-        const tdAbsent = document.createElement("td");
-        const btnAbsent = document.createElement("button");
-        btnAbsent.textContent = "Absent";
-        btnAbsent.className = "absent";
-        btnAbsent.onclick = () => markAttendance(i, "absent", btnAbsent);
-        tdAbsent.appendChild(btnAbsent);
-        tr.appendChild(tdAbsent);
-
-        const tdNotes = document.createElement("td");
-        const noteInput = document.createElement("input");
-        noteInput.type = "text";
-        noteInput.id = `note-${i}`;
-        noteInput.value = stu.notes || ""; 
-        tdNotes.appendChild(noteInput);
-        tr.appendChild(tdNotes);
-
-        const tdReset = document.createElement("td");
-        const btnReset = document.createElement("button");
-        btnReset.textContent = "Reset";
-        btnReset.className = "reset";
-        btnReset.onclick = () => resetRow(i, tr);
-        tdReset.appendChild(btnReset);
-        tr.appendChild(tdReset);
-
-        // Highlight button based on stu.status
-        if (stu.status) {
-          let activeBtn = null;
-          if (stu.status === "present") activeBtn = btnPresent;
-          if (stu.status === "leave") activeBtn = btnLeave;
-          if (stu.status === "absent") activeBtn = btnAbsent;
-
-          if (activeBtn) {
-            activeBtn.disabled = true; // 
-            [btnPresent, btnLeave, btnAbsent].forEach( b=> {
-              if (b!= activeBtn) {
-                b.disabled = true;
-                b.classList.add("disabled");
-              }
-            });
+      
+      document.getElementById("classSelect").addEventListener("change", async (e) => {
+        currentClassId = e.target.value;
+        if (!currentClassId) return;
+        try {
+          const response = await fetch(`${API_URL}?action=getStudentsByClass&classId=${currentClassId}`);
+          const result = await response.json();
+          if (result.ok) {
+            renderStudents(result.results);
+            document.getElementById("attendanceContainer").style.display = "block";
           }
+        } catch (err) {
+          alert("Loading students failure: " + err.message);
         }
-        
-        tbody.appendChild(tr);
-      });
-    }
-
-    // 点击状态按钮
-    function markAttendance(index, type, clickedBtn) {
-
-      const row = clickedBtn.closest("tr");
-      //const row = clickedBtn.parentNode.parentNode;
-      const buttons = row.querySelectorAll("button");
-
-      buttons.forEach(b => {
-        if (!b.classList.contains("reset")) {
-          if (b === clickedBtn) {
-            b.disabled = true;  // Current visiable, but disabled
-            b.classList.remove("disabled");
-          } else {
-            b.disabled = false;
-            b.classList.add("disabled");
-        }
-        }
-      });
-
-      // clickedBtn.disabled = true;
-      students[index].status = type;
-      updateStats();
-    }
-
-    // Reset 单行
-    function resetRow(index, row) {
-      const buttons = row.querySelectorAll("button");
-      buttons.forEach(b => {
-        if (!b.classList.contains("reset")) {
-          b.disabled = false;
-          b.classList.remove("disabled");
-        }
-      });
-
-      students[index].status = null;
-      updateStats();
-    }
-
-    // 更新统计
-    function updateStats() {
-      stats = { present: 0, leave: 0, absent: 0 };
-      students.forEach(stu => {
-        if (stu.status === "present") stats.present++;
-        if (stu.status === "leave") stats.leave++;
-        if (stu.status === "absent") stats.absent++;
       });
       
-      document.getElementById("stats").textContent =
-        `Class: ${currentClass || ""} | Student / Guardian (共 ${students.length} 人) | Present: ${stats.present} | Leave: ${stats.leave} | Absent: ${stats.absent}`;
-    }
-
-    // Reset 班级
-    function resetClassSelection() {
-      currentClass = null;
-      students = [];
-      stats = { present: 0, leave: 0, absent: 0 };
-
-      // Loop all the buttons
-      document.querySelectorAll("#classButtons button").forEach(b => {
-        if (b.textContent !== "Reset") {
-          b.disabled = false;
-          b.classList.remove("disabled", "present");
-        }
-      });
-
-      document.getElementById("attendanceTable").querySelector("tbody").innerHTML = "";
-      document.getElementById("stats").textContent = "Student / Guardian";
-    }
-
-    // 提交预览
-    function previewSubmission() {
-      if (!currentClass || students.length === 0) {
-        alert("请先选择班级并录入考勤！");
-        return;
-      }
-
-      let summary = `Class: ${currentClass}\n\n`;
-      students.forEach((stu, i) => {
-        summary += `${stu.studentName} (${stu.studentId || "NoID"}, ${stu.gender || "-"}) : ${stu.status || "未打卡"} | Notes: ${document.getElementById("note-"+i).value}\n`;
-      });
-      alert(summary);
-    }
-
-    // 提交全班打卡
-    async function submitAllAttendance() {
-      if (!currentClass || students.length === 0) {
-        alert("请先选择班级并录入考勤！");
-        return;
-      }
-
-      const today = new Date().toISOString().slice(0,10);
-      const btn = document.getElementById("submitAttnBtn");  // Locate the submit button
-      //const btn = document.querySelector("#submitAttnBtn"); // Locate the submit button
-
-      // === Step 1: Disable button to avoid duplicated submission ===
-      btn.disabled = true;
-      btn.textContent = "提交中... / Submitting...";   
-
-      try {
-        const records = students.map((stu, i) => ({
-          date: today,
-          className: currentClass,
-          studentId: stu.studentId || "",
-          studentName: stu.studentName,
-          gender: stu.gender || "",
-          status: stu.status || "",
-          notes: document.getElementById("note-"+i).value || ""
-        }));        
+      function renderStudents(students) {
+        const container = document.getElementById("studentList");
+        container.innerHTML = "";
+        attendanceSummary = { total: students.length, present: 0, absent: 0, leave: 0 };
         
-        const res = await fetch(`${API_URL}?action=submitAttendance`, {
-          method: "POST",
-          //headers: { "Content-Type": "application/json" },
-          headers: {"Content-Type": "text/plain"},
-          body: JSON.stringify({ records })
+        students.forEach(s => {
+          const card = document.createElement("div");
+          card.className = "student-card";
+          card.dataset.studentId = s.studentId;
+          
+          const leaveNote = s.leave ? `(${s.leaveType} - ${s.leaveNotes})` : "";
+          card.innerHTML = `
+          <div class="student-name">${s.studentName}</div>
+          <div class="attendance-buttons">
+          <button class="btn-status present" data-status="Present">Present</button>
+          <button class="btn-status absent" data-status="Absent">Absent</button>
+          <button class="btn-status leave" data-status="Leave">Leave</button>
+          </div>
+          
+          <div class="leave-note" style="${s.leave ? "" : "display:none;"}">${leaveNote}</div>
+          `;
+          
+          container.appendChild(card);
+          
+          // Default value: Leave if student already submit leave request, Present otherwise
+          if (s.leave) {
+            setStatus(card, "Leave");
+          } else {
+            setStatus(card, "Present");
+          }
+          
+          card.querySelectorAll(".btn-status").forEach(btn => {
+            btn.addEventListener("click", () => setStatus(card, btn.dataset.status));
+          });
         });
-
-        const result = await res.json();
-        if (result.ok) {
-          alert("提交成功！写入 " + result.count + " 条记录。");
-        } else {
-          alert("提交失败: " + result.error);
-        }
-      } catch (err) {
-        alert("网络错误: " + err.message);
-      } finally {
-        // === Step 2: Restore the button ===
-        btn.disabled = false;
-        btn.textContent = "提交 / Submit";
+        
+        updateSummary();
       }
-    }
-
-    window.onload = loadClasses;
-  </script>
-</body>
+      
+      function setStatus(card, status) {
+        const buttons = card.querySelectorAll(".btn-status");
+        buttons.forEach(b => b.classList.remove("active"));
+        const targetBtn = card.querySelector(`.btn-status.${status.toLowerCase()}`);
+        if (targetBtn) targetBtn.classList.add("active");
+        updateSummary();
+      }
+      
+      function updateSummary() {
+        const allCards = document.querySelectorAll(".student-card");
+        attendanceSummary.present = 0;
+        attendanceSummary.absent = 0;
+        attendanceSummary.leave = 0;
+        
+        allCards.forEach(card => {
+          const activeBtn = card.querySelector(".btn-status.active");
+          if (activeBtn) {
+            attendanceSummary[activeBtn.dataset.status.toLowerCase()]++;
+          }
+        });
+        
+        document.getElementById("attendanceSummary").innerText =
+          `Total: ${attendanceSummary.total} | 🟢 P: ${attendanceSummary.present} | 🔴 A: ${attendanceSummary.absent} | 🟡 L: ${attendanceSummary.leave}`;
+      }
+      
+      async function submitAttendance() {
+        const btn = document.getElementById("AttendanceSubmit");
+        btn.disabled = true;
+        const originalText = btn.innerText;
+        btn.innerText = "Submitting...";
+        
+        const records = [];
+        document.querySelectorAll(".student-card").forEach(card => {
+          const studentId = card.dataset.studentId;
+          const activeBtn = card.querySelector(".btn-status.active");
+          if (activeBtn) {
+            records.push({ studentId, status: activeBtn.dataset.status });
+          }
+        });
+        
+        try {
+          const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "markAttendance",
+              classId: currentClassId,
+              records
+            })
+          });
+          
+          const result = await response.json();
+          if (result.ok) {
+            alert("Attendance submitted successfully!");
+          } else {
+            alert("Error: " + (result.message || "Unknown error"));
+          }
+        } catch (err) {
+          alert("Network error: " + err.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerText = originalText;
+        }
+      }
+      
+      window.onload = loadClasses;
+    </script>
+  </body>
 </html>
