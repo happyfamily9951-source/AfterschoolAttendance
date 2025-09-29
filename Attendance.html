@@ -123,8 +123,10 @@
           card.dataset.studentId = s.studentId;
           
           const leaveNote = s.leave ? `(${s.leaveType} - ${s.leaveNotes})` : "";
+          const genderIcon = s.gender === "M" ? "👦" : (s.gender === "F" ? "👧" : "");
+          
           card.innerHTML = `
-          <div class="student-name">${s.studentName}</div>
+          <div class="student-name">${s.studentName} ${genderIcon}</div>
           <div class="attendance-buttons">
           <button class="btn-status present" data-status="Present">Present</button>
           <button class="btn-status absent" data-status="Absent">Absent</button>
