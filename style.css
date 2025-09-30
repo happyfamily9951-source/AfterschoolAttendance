@@ -123,6 +123,16 @@ body.page-report {background: var(--bg-report);}
   flex: 1;
 }
 
+/* ===================================  */
+/* Gender icons used in Attendance.html  */
+/* ====================================  */
+.gender-icon {
+   width: 16px;
+   height: 16px;
+   margin-left: 4px;
+   vertical-align: middle;
+}
+
 
 /* Student card - used in StudentEnrollment.html */
 /* =========================================== */
