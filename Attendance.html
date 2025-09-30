@@ -123,8 +123,12 @@
           card.dataset.studentId = s.studentId;
           
           const leaveNote = s.leave ? `(${s.leaveType} - ${s.leaveNotes})` : "";
-          const genderIcon = s.gender === "M" ? "👦" : (s.gender === "F" ? "👧" : "");
-          
+          const genderIco = s.gender === "M"
+            ? '<img src = "icons/male.svg" alt "M" class="gender-icon">'
+            : (s.gender === "F"
+               ? '<img src = "icons/female.svg" alt="F" class="gender-icon">'
+               : "");
+                    
           card.innerHTML = `
           <div class="student-name">${s.studentName} ${genderIcon}</div>
           <div class="attendance-buttons">
