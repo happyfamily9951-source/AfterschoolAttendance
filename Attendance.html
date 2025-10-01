@@ -62,7 +62,7 @@
           result.results.forEach(c => {
             const option = document.createElement("option");
             option.value = c.className;
-            option.textContent = `${c.classNam} (${c.dayOfWeek})`;
+            option.textContent = `${c.className} (${c.dayOfWeek})`;
             select.appendChild(option);
           });
         } catch (err) {
