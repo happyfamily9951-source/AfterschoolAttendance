@@ -83,7 +83,7 @@
         }
 
         try {
-          const response = await fetch(`${API_RUL}?action=getStudentsByClass&className=${encodeURIComponent(currentClassName)}`);
+          const response = await fetch(`${API_URL}?action=getStudentsByClass&className=${encodeURIComponent(currentClassName)}`);
           const result = await response.json();
 
           if (result.ok) {
