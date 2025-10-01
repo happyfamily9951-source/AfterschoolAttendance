@@ -61,7 +61,6 @@
           
           result.results.forEach(c => {
             const option = document.createElement("option");
-            console.log(c.className, c.dayOfWeek, c.highlight);
             option.value = c.className;
             option.textContent = `${c.className} (${c.dayOfWeek})${c.highlight?" 🟢 Today" : ""}`;
             if (c.highlight) option.classList.add("today"); // highlight
