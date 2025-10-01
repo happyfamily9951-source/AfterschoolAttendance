@@ -163,11 +163,11 @@
           if (activeBtn) {
             const status = activeBtn.dataset.status.toLowerCase();
             console.log("activeBtn = ", activeBtn);
-            console.log("status = ", activeBtn?.dataset.status);
+            console.log("status = ", status);
             
             if (status === "present") attendanceSummary.present++;
             if (status === "absent") attendanceSummary.absent++;
-            if (status === "leave”） attendanceSummary.leave++;            
+            if (status === "leave") attendanceSummary.leave++;
           }
         });
 
