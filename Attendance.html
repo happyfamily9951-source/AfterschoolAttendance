@@ -63,6 +63,7 @@
             const option = document.createElement("option");
             option.value = c.className;
             option.textContent = `${c.className} (${c.dayOfWeek})`;
+            if (c.highlight) option.classList.add("today"); // highlight
             select.appendChild(option);
           });
         } catch (err) {
