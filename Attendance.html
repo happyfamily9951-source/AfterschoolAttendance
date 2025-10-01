@@ -144,11 +144,8 @@
       // Set status
       function setStatus(card, status) {
         const buttons = card.querySelectorAll(".attendance-btn");
-        
         buttons.forEach( b=> b.classList.remove("active"));
-        
-        const targetBtn = card.querySelector(`.attendance-btn.${status.toLowerCase()}`);
-        
+        const targetBtn = card.querySelector(`.attendance-btn.${status.toLowerCase()}`);        
         if (targetBtn) targetBtn.classList.add("active");
         updateSummary();
       }
@@ -165,6 +162,9 @@
 
           if (activeBtn) {
             const status = activeBtn.dataset.status.toLowerCase();
+            console.log("activeBtn = ", activeBtn);
+            console.log("status = ", activeBtn?.dataset.status);
+            
             if (status === "present") attendanceSummary.present++;
             if (status === "absent") attendanceSummary.absent++;
             if (status === "leave”） attendanceSummary.leave++;            
