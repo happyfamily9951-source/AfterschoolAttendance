@@ -189,10 +189,10 @@
         });
 
         try {
-          const response = await fetch(API_URL, {
+          const response = await fetch(`${API_URL}?action=markAttendance`, {            
             method: "POST",
             headers: {"Content-Type": "text/plain"},
-            body: JSON.stringify({action:"markAttendance", className: currentClassName, records})
+            body: JSON.stringify({className: currentClassName, records})
           });
 
           const result = await response.json();
