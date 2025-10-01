@@ -77,7 +77,7 @@
         currentClassName = document.getElementById("classSelect").value;
         if (!currentClassName) return;
 
-        const todayName = new Date().toLocaleString("en-us", {weekday: "long"});
+        const todayName = new Date().toLocaleString("en-us", {weekday: "short"});  // weekday: "long" ==> Monday
         const selectedOption = document.querySelector(`#classSelect option[value="${currentClassName}"]`);
         if (selectedOption && !selectedOption.textContent.includes(todayName)) {
           if (!confirm("The selected class is not today. Continue?")) return;
