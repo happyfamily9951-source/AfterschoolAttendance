@@ -162,9 +162,6 @@
 
           if (activeBtn) {
             const status = activeBtn.dataset.status.toLowerCase();
-            console.log("activeBtn = ", activeBtn);
-            console.log("status = ", status);
-            
             if (status === "present") attendanceSummary.present++;
             if (status === "absent") attendanceSummary.absent++;
             if (status === "leave") attendanceSummary.leave++;
