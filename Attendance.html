@@ -22,6 +22,7 @@
       <!-- Student attendance -->
       <div class="form-container" id="attendanceContainer" style="display:none;">
         <h2>Mark Attendance</h2>
+        <div id="currentClassName" style="font-weight: bold;margin-bottom: 8px; color: #333;"></div>
         <div id="attendanceSummary">Total: 0 | 🟢 P: 0 | 🔴 A: 0 | 🟡 L: 0</div>
         <div id="studentList"></div>
         <button class="btn-primary" id="AttendanceSubmit" onclick="submitAttendance()">Submit</button>
@@ -78,6 +79,14 @@
 
         const todayName = new Date().toLocaleString("en-us", {weekday: "short"});  // weekday: "long" ==> Monday
         const selectedOption = document.querySelector(`#classSelect option[value="${currentClassName}"]`);
+
+        // Extract dayOfWeek from selectedOption
+        const optionText = selectedOption ? selectedOption.textContent : "";
+        const match = optionText.match(/\((.*?)\)/);
+        const dayOfWeek = match ? match[1] : "";
+        alert ("Day Of Week = " + dayOfWeek);
+
+        
         if (selectedOption && !selectedOption.textContent.includes(todayName)) {
           if (!confirm("The selected class is not today. Continue?")) return;
         }
@@ -87,6 +96,8 @@
           const result = await response.json();
 
           if (result.ok) {
+            // Update class name
+            document.getElementById("currentClassName").innerText = `${currentClassName} (${dayOfWeek})`;
             renderStudents(result.results);
             document.getElementById("attendanceContainer").style.display="block";
           }
