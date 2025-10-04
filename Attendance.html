@@ -196,23 +196,17 @@
           const studentName = card.dataset.studentName;
           const gender = card.dataset.gender;
           const activeBtn = card.querySelector(".attendance-btn.active");
-          records.push({studentId, studentName, gender, status: activeBtn.dataset.status });
+          records.push({studentId, studentName, gender, status: activeBtn.dataset.status});
         });
 
         try {
-          //const response = await fetch(`${API_URL}?action=markAttendance`, {            
-          const response = await fetch(API_URL, {
+          const response = await fetch(`${API_URL}?action=markAttendance`, {            
+          //const response = await fetch(API_URL, {
             method: "POST",
-            headers: {
-              //"Content-Type": "text/plain"
-              "Content-Type" : "application/json"
-              },
+            headers: {"Content-Type": "text/plain"},
+            // headers: {"Content-Type" : "application/json"},
             // body: JSON.stringify({className: currentClassName, record: records})
-            body: JSON.stringify({
-              action: "markAttendance",
-              className: currentClassName,
-              records
-            })
+            body: JSON.stringify(records)
           });
 
           const result = await response.json();
