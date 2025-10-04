@@ -200,11 +200,19 @@
         });
 
         try {
-          const response = await fetch(`${API_URL}?action=markAttendance`, {            
+          //const response = await fetch(`${API_URL}?action=markAttendance`, {            
+          const response = await fetch(API_URL, {
             method: "POST",
-            headers: {"Content-Type": "text/plain"},
-            body: JSON.stringify({className: currentClassName, record: records})
-          });
+            headers: {
+              //"Content-Type": "text/plain"
+              "Content-Type" : "application/json"
+              },
+            // body: JSON.stringify({className: currentClassName, record: records})
+            body: JSON.stringify({
+              action: "markAttendance",
+              className: currentClassName,
+              records
+            });
 
           const result = await response.json();
           if (result.ok) {
