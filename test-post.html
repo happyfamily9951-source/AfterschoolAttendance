@@ -1,7 +1,37 @@
-<div class="bottom-nav">
-  <button onclick="location.href='StudentEnrollment.html'"><span>👤</span> Student</button>
-  <button onclick="location.href='CourseEnrollment.html'"><span>📚</span> Course</button>
-  <button onclick="location.href='index.html'"><span>🏠</span> Home</button>
-  <button onclick="location.href='StudentClassApplication.html'"><span>📝</span> Apply</button>
-  <button onclick="location.href='Report.html'"><span>📊</span> Report</button>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test GAS API</title>
+</head>
+<body>
+  <button onclick="addStudent()">Add Student</button>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzoG8_Trs8Aa07VeZmTS7N6qPvb_mVmTnSwItVNHMWGE37HkIIeaE326JR3Ut3Q58jw/exec";
+
+    async function addStudent() {
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            action: "addStudent",
+            studentName: "Alice",
+            gender: "F"
+          })
+        });
+
+        const result = await response.json();
+        console.log("返回结果:", result);
+        alert(JSON.stringify(result));
+      } catch (err) {
+        console.error("请求失败:", err);
+        alert("Error: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
