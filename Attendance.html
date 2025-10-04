@@ -84,8 +84,6 @@
         const optionText = selectedOption ? selectedOption.textContent : "";
         const match = optionText.match(/\((.*?)\)/);
         const dayOfWeek = match ? match[1] : "";
-        alert ("Day Of Week = " + dayOfWeek);
-
         
         if (selectedOption && !selectedOption.textContent.includes(todayName)) {
           if (!confirm("The selected class is not today. Continue?")) return;
