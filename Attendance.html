@@ -203,8 +203,8 @@
           const response = await fetch(`${API_URL}?action=markAttendance`, {            
           //const response = await fetch(API_URL, {
             method: "POST",
-            headers: {"Content-Type": "text/plain"},
-            // headers: {"Content-Type" : "application/json"},
+            header: {"Content-Type": "text/plain"},
+            // header: {"Content-Type" : "application/json"},
             // body: JSON.stringify({className: currentClassName, record: records})
             body: JSON.stringify(records)
           });
