@@ -212,7 +212,8 @@
               action: "markAttendance",
               className: currentClassName,
               records
-            });
+            })
+          });
 
           const result = await response.json();
           if (result.ok) {
