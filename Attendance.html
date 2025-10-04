@@ -204,7 +204,7 @@
         const body = 
           "action=" + encodeURIComponent("markAttendance") +
           "&className=" + encodeURIComponent(currentClassName) +
-          ”&records=" + encodeURIComponent(JSON.stringify(records));
+          "&records=" + encodeURIComponent(JSON.stringify(records));
 
         try {          
           const response = await fetch(API_URL, {
