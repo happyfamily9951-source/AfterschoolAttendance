@@ -5,23 +5,33 @@
   <title>Test GAS API</title>
 </head>
 <body>
-  <button onclick="addStudent()">Add Student</button>
+  <h2> Test Google Sheet Write </h2>
+  <button onclick="sendData()">Send Test POST Data</button>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzoG8_Trs8Aa07VeZmTS7N6qPvb_mVmTnSwItVNHMWGE37HkIIeaE326JR3Ut3Q58jw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxFkuQYbOMbJIEjM51wtLxBQkHtvOosw5g0Oa7-B-WixMNSP5gVIauQ2ccCzsq3jBiw/exec";
 
-    async function addStudent() {
+    async function sendData() {
+      const body = 
+        "action=addTest" +
+        "&name=" + encodeURIComponent("Alice") +
+        "&note=" + encodeURIComponent("Hello GAS");    
       
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {"Content-Type": "application/x-www-form-urlencoded"},
-        body: "action=markAttendance&studentName=Alice"
-      });
-      
-      const result = await response.json();
-      console.log("返回结果:", result);
-      alert(JSON.stringify(result));
-    } 
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {"Content-Type": "application/x-www-form-urlencoded"},
+          body: body
+        });
+        
+        const result = await response.json();
+        console.log("返回结果:", result);
+        alert(JSON.stringify(result));
+      } catch (err) {
+        console.error("Bad request: ", err);
+        alert("Error: " + err.message);
+      }
+    }    
   </script>
 </body>
 </html>
