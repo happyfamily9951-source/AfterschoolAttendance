@@ -12,10 +12,17 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbxFkuQYbOMbJIEjM51wtLxBQkHtvOosw5g0Oa7-B-WixMNSP5gVIauQ2ccCzsq3jBiw/exec";
 
     async function sendData() {
+
+      const records = [
+        {studentId: "S001", studentName: "Alice", gender: "F", status: "Present", notes: ""},
+        {studentId: "S002", studentName: "Bob", gender: "M", status: "Absent", notes: "Sick"},
+        {studentId: "S003", studentName: "Charlie", gender: "M", status: "Leave", notes: "Travel"}
+        ];
+      
       const body = 
         "action=addTest" +
         "&name=" + encodeURIComponent("Alice") +
-        "&note=" + encodeURIComponent("Hello GAS");    
+        "&note=" + encodeURIComponent(JSON.stingify(records)); 
       
       try {
         const response = await fetch(API_URL, {
