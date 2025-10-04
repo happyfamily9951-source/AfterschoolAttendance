@@ -11,23 +11,17 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbzoG8_Trs8Aa07VeZmTS7N6qPvb_mVmTnSwItVNHMWGE37HkIIeaE326JR3Ut3Q58jw/exec";
 
     async function addStudent() {
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {"Content-Type": "application/x-www-form-urlencoded"},
-          body: "action=markAttendance&studentName=Alice"
-          });
-      }
-        
-
-        const result = await response.json();
-        console.log("返回结果:", result);
-        alert(JSON.stringify(result));
-      } catch (err) {
-        console.error("请求失败:", err);
-        alert("Error: " + err.message);
-      }
-    }
+      
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: "action=markAttendance&studentName=Alice"
+      });
+      
+      const result = await response.json();
+      console.log("返回结果:", result);
+      alert(JSON.stringify(result));
+    } 
   </script>
 </body>
 </html>
