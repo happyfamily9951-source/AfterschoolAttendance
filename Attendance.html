@@ -201,16 +201,21 @@
         });
 
         // Convert to x-www-form-urlencoded format
+        // const body = 
+        //  "action=" + encodeURIComponent("markAttendance") +
+        //  "&className=" + encodeURIComponent(currentClassName) +
+        //  "&records=" + encodeURIComponent(JSON.stringify(records));
+        
         const body = 
           "action=" + encodeURIComponent("markAttendance") +
-          "&className=" + encodeURIComponent(currentClassName) +
-          "&records=" + encodeURIComponent(JSON.stringify(records));
+          "&className=" + encodeURIComponent("Math1001") +
+          "&records=" + encodeURIComponent(JSON.stringify(records)); 
 
         try {          
           const response = await fetch(API_URL, {
             method: "POST",
-            //headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},
-            headers:{"Content-Type":"text/plain"},
+            headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},            
+            //headers:{"Content-Type":"text/plain"},
             body: body
           });
 
