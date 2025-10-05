@@ -245,16 +245,6 @@
           btn.innerText = originalText;
         }
       }
-
-      function showNotification(message, type="success") {
-        const note = document.getElementById("notification");
-        note.textContent= message;
-        note.className = `notification show ${type}`;
-        setTimeout(() => {
-          note.className = "notification hidden";
-        }, 3000);
-      }
-
       window.onload = loadClasses;
     </script>
   </body>
