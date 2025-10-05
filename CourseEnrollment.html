@@ -94,8 +94,8 @@
         <!-- 8th row: Teacher number and email -->
         <div class="row">
           <div class="col">
-            <label for="teacherContact">Teacher Contact Number</label>
-            <input type="tel" id="teacherContact" placeholder="Enter teacher contact number">
+            <label for="teacherPhone">Teacher Phone Number</label>
+            <input type="tel" id="teacherPhone" placeholder="Enter teacher phone number">
           </div>          
           <div class="col">
             <label for="teacherEmail">Teacher Email</label>
@@ -150,29 +150,52 @@
         btn.disabled = true;
         const originalText=btn.innerText;
         btn.innerText="Submitting..."
-          
-        const course = {
-          action: "addCourse",
-          className: document.getElementById("className").value,
-          classShortDescription: document.getElementById("classShortDescription").value,
-          dateFrom: document.getElementById("dateFrom").value,
-          dateTo: document.getElementById("dateTo").value,
-          timeFrom: document.getElementById("timeFrom").value,
-          timeTo: document.getElementById("timeTo").value,
-          ageFrom: document.getElementById("ageFrom").value,
-          ageTo: document.getElementById("ageTo").value,
-          dayOfWeek: document.getElementById("dayOfWeek").value,
-          maxPositions: document.getElementById("maxPositions").value,
-          teacherName: document.getElementById("teacherName").value,
-          teacherContact: document.getElementById("teacherContact").value,
-          teacherEmail: document.getElementById("teacherEmail").value,
-        };
+
+        // Version A: x-www-form-urlencoded
+        // Step A1: Read values
+        const className = document.getElementById("className").value.trim();
+        const classShortNotes = document.getElementById("classShortDescription").value.trim();
+        const dateFrom = document.getElementById("dateFrom").value.trim();
+        const dateTo = document.getElementById("dateTo").value.trim();
+        const timeFrom = document.getElementById("timeFrom").value.trim();
+        const timeTo = document.getElementById("timeTo").value.trim();
+        const ageFrom = document.getElementById("ageFrom").value.trim();
+        const ageTo = document.getElementById("ageTo").value.trim();
+        const dayOfWeek = document.getElementById("dayOfWeek").value.trim();
+        const maxPositions = document.getElementById("maxPositions").value.trim();
+        const teacherName = document.getElementById("teacherName").value.trim();
+        const teacherPhone = document.getElementById("teacherPhone").value.trim();
+        const teacherEmail = document.getElementById("teacherEmail").value.trim();
+
+        if (!className || !teacherName) {
+          showNotification("❌ Please fill all required fields", "error");
+          btn.disabled = false;
+          btn.innerText = originalText;
+          return;
+        }
+
+        // Step A2: Generate payload
+        const body = 
+          "action=" + encodeURIComponent("addCourse") +
+          "&className=" + encodeURIComponent(className) +
+          "&classShortNotes=" + encodeURIComponent(classShortNotes) +
+          "&dateFrom=" + encodeURIComponent(dateFrom) +
+          "&dateTo=" + encodeURIComponent(dateTo) +
+          "&timeFrom=" + encodeURIComponent(timeFrom) +
+          "&timeTo=" + encodeURIComponent(timeTo) +
+          "&ageFrom=" + encodeURIComponent(ageFrom) +
+          "&ageTo=" + encodeURIComponent(ageTo) +
+          "&dayOfWeek=" + encodeURIComponent(dayOfWeek) +
+          "&maxPositions=" + encodeURIComponent(maxPositions) +
+          "&teacherName=" + encodeURIComponent(teacherName) +
+          "&teacherPhone=" + encodeURIComponent(teacherPhone) +
+          "&teacherEmail=" + encodeURIComponent(teacherEmail);
         
         try {
           const resp = await fetch(API_URL, {
             method: "POST",
-            headers: {"Content-Type" : "text/plain"},
-            body: JSON.stringify(course)            
+            headers: {"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"},
+            body: body
           });
           
           const result = await resp.json();
