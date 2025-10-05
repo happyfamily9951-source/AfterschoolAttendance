@@ -9,14 +9,24 @@ const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB
 
 // Notification function
 function showNotification(message, type = "success") {
-  const note = document.getElementById("notification");
 
-  if (!note) return;  // In case notification is not defined
+  // Check notification node exists or not
+  let note = document.getElementById("notification");
+  // const note = document.getElementById("notification");
 
+  if (!note) {
+    note = document.createElement("div");
+    note.id = "notification";
+    document.body.appendChild(note);
+  }
+
+  // Set contents and style
   note.textContent = message;
   note.className = `notication show ${type}`;
+  
   setTimeout(() => {
-    note.className = "notification hidden";
+    note.classList.remove("show");
+    setTimeout(() => note.remove(),400);    
   }, 3000);
 }
 
