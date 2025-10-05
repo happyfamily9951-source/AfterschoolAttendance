@@ -12,6 +12,9 @@
     
     <!-- Logo on the top left -->
     <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
+
+    <!-- Notification bar -->
+    <div id="notification" class="notification hidden"></div>
     
     <main class="page-content">
       
@@ -175,12 +178,12 @@
           const result = await resp.json();
           
           if (result.ok) {
-            alert("Course submitted successfully!");
+            showNotification(`✅ Course added successful`, "success");            
           } else {
-            alert("Error: " + (result.message || "Unknown error"));
+            showNotification(`❌ Error: ${result.message || "Unknown error"}`, "error");
           }
         } catch (e) {
-          alert("Network error: " + e.message);
+          showNotification("❌ Network error: " + err.message, "error");          
         } finally {
           btn.disabled = false;
           btn.innerText = originalText;
