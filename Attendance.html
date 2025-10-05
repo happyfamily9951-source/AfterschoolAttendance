@@ -120,15 +120,56 @@
           card.dataset.studentId = s.studentId;
           card.dataset.studentName = s.studentName;
           card.dataset.gender = s.gender;
+          card.dataset.guardianPhone = s.guardianPhone;
 
-          const genderIcon = s.gender === "M"
-            ? '<img src="icons/male.svg" alt="M" class="attendance-gender-icon">'
-            : (s.gender === "F"
-               ? '<img src="icons/female.svg" alt="F" class="attendance-gender-icon">'
-               : "");
+          // Student Info Area
+          const info = document.createElement("div");
+          info.className = "student-info";
+
+          // 1st Row: Name + gender on the left, Call/SMS on the right
+          const headerRow = document.createElement("div");
+          headerRow.className = "student-header";
+
+          // On the left
+          const leftPart = document.createElement("div");
+          leftPart.className = "student-left";
+          const nameSpan = document.createElement("span");
+          nameSpan.className = "student-name";
+          nameSpan.textContent = s.studentName;
+
+          const genderIcon = document.createElement("span");
+          genderIcon.className = "gender-icon";
+          genderIcon.src = s.gender === "M"
+            ? "icons/male.svg"
+            : "icons/female.svg"
+          genderIcon.alt = s.gender === "M" ? "Male" : "Female";
+
+          leftPart.appendChild(nameSpan);
+          leftPart.appendChild(genderIcon);
+
+          // On the right
+          const rightPart = document.createElement("div");
+          rightPart.className = "student-right";
+
+          const callBtn = document.createElement("a");
+          callBtn.href = `tel:${s.guardianPhone}`;
+          callBtn.className = "phone-btn";
+          callBtn.innerHTML = "📞";
+
+          const smsBtn = document.createElement("a");
+          smsBtn.href = `sms:${s.guardianPhone}`;
+          smsBtn.innerHTML = "💬";          
+
+          rightPart.appendChild(callBtn);
+          rightPart.appendChild(smsBtn);
+
+          headerRow.appendChild(leftPart);
+          headerRow.appendChild(rightPart);
+          info.appendChild(headerRow);
+
+          card.appendChild(info);
 
           const leaveNote = s.leaveStatus === "Leave" ? `(${s.notes})` : "";
-
           card.innerHTML = `
             <div class="attendance-name">${s.studentName} ${genderIcon}</div>
             <div class="attendance-button">
