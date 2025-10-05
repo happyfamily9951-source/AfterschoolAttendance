@@ -338,24 +338,31 @@ select option.today {
 
 /* ========== 提交结果提示动画 ========== */
 .notification {
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 12px 20px;
-  border-radius: 8px;
-  color: white;
-  font-weight: 500;
-  font-size: 15px;
-  opacity: 0;
-  transition: opacity 0.5s ease, top 0.5s ease;
-  z-index: 9999;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+   position: fixed;
+   top: 10px;
+   left: 50%;
+   transform: translateX(-50%);
+   padding: 12px 20px;
+   border-radius: 10px;
+   color: white;
+   font-weight: 500;
+   font-size: 15px;
+   opacity: 0;
+   transition: opacity 0.5s ease, top 0.5s ease;
+   z-index: 9999;
+   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+   backdrop-filter: blur(6px);
+   letter-space: 0.3px;
 }
 .notification.show {
   opacity: 1;
   top: 30px;
 }
-.notification.success { background-color: #2ecc71; } /* 绿 */
-.notification.error { background-color: #e74c3c; }   /* 红 */
+.notification.success {
+   background-color: linear-gradient(135deg, #27ae60, #2ecc71);
+}
+.notification.error {
+   background-color: linear-gradient(135deg, #c0392b, #e74c3c;
+}
+
 .hidden { display: none; }
