@@ -208,7 +208,7 @@
         
         const body = 
           "action=" + encodeURIComponent("markAttendance") +
-          "&className=" + encodeURIComponent("Math1001") +
+          "&className=" + encodeURIComponent(currentClassName) +
           "&records=" + encodeURIComponent(JSON.stringify(records)); 
 
         try {          
