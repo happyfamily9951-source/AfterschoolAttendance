@@ -200,23 +200,33 @@
           records.push({studentId, studentName, gender, status, notes});
         });
 
-        // Convert to x-www-form-urlencoded format
+        // Version A: Convert to x-www-form-urlencoded format
         // const body = 
         //  "action=" + encodeURIComponent("markAttendance") +
         //  "&className=" + encodeURIComponent(currentClassName) +
-        //  "&records=" + encodeURIComponent(JSON.stringify(records));
-        
-        const body = 
-          "action=" + encodeURIComponent("markAttendance") +
-          "&className=" + encodeURIComponent(currentClassName) +
-          "&records=" + encodeURIComponent(JSON.stringify(records)); 
+        //  "&records=" + encodeURIComponent(JSON.stringify(records)); 
+
+        // Version B: JSON
+        const payload = {
+          action: "markAttendance",
+          className: currentClassName,
+          records: records
+        };
 
         try {          
+
+          // Version A: x-www-form-urlencoded format
+          // const response = await fetch(API_URL, {
+          //  method: "POST",
+          //  headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},            
+          //  body: body
+          // });
+
+          // Version B: JSON
           const response = await fetch(API_URL, {
             method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},            
-            //headers:{"Content-Type":"text/plain"},
-            body: body
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
           });
 
           const result = await response.json();
