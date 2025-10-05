@@ -280,6 +280,39 @@ select option.today {
 }
 /* ================================================ */
 
+/* =======================================
+   CourseEnrollment.html
+   ======================================= */
+.age-range {
+   display: flex;
+   gap: 10px;
+}
+
+.class-card, .student-card {
+   background: #fff;
+   border-radius: 12px;
+   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+   padding: 10px 14px;
+   margin-bottom: 10px;
+   transition: all 0.3s ease;
+}
+
+.class-card.active {
+   display: block;
+}
+
+.class-details {
+   display: none;
+   font-size: 14px;
+   line-height: 1.6;
+}
+
+/* */
+
+/* =================================== */
+   
+      
+
 
 /* 按钮 */
 .btn-primary {
