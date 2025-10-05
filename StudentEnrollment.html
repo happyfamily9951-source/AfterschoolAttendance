@@ -63,7 +63,7 @@
         </div>
       </div>
 
-      <button class="btn-primary" id="EnrollmentSubmit" onclick="submitStudent()">Submit</button>
+      <button class="btn-primary" id="EnrollmentSubmit" onclick="addStudent()">Submit</button>
     </div>
 
     <!-- 学生查询 -->
@@ -108,37 +108,79 @@
   <!-- JS 功能 -->
   <script>
     // 提交函数
-    async function submitStudent() {
+    async function addStudent() {
 
       const btn = document.getElementById("EnrollmentSubmit");
       btn.disabled = true;
+      const originalText = btn.innerText;
       btn.innerText = "Submitting...";
-      
-      const student = {
-        //action: "addStudent",  // *addStudent action
-        studentName: document.getElementById("studentName").value,
-        gender: document.getElementById("gender").value,
-        dob: document.getElementById("dob").value,
-        guardianName: document.getElementById("guardianName").value,
-        guardianPhone: document.getElementById("guardianNumber").value,
-        emergencyName: document.getElementById("emergencyName").value,
-        emergencyPhone: document.getElementById("emergencyNumber").value,
-      };
 
-      if (!student.studentName || !student.gender || !student.dob) {
+      // Version A: x-www-form-urlencoded
+      // Step A1: retrieve the values
+      const studentName = document.getElementById("studentName").value.trim();
+      const gender = document.getElementById("gender").value.trim();
+      const dob = document.getElementById("dob").value.trim();
+      const guardianName = document.getElementById("guardianName").value.trim();
+      const guardianPhone = document.getElementById("guardianNumber").value.trim();
+      const emergencyName = document.getElementById("emergencyName").value.trim();
+      const emergencyPhone = document.getElementById("emergencyNumber").value.trim();
+
+      // Step A2: validate data
+      if (!studentName || !gender || !dob) {
         alert("Please fill in name, gender and date of birth");
         btn.disabled = false;
-        btn.innerText = "Submit";
+        btn.innerText = originalText;
         return;
-      }
+      }       
+
+      // Step A3: Generate body
+      const body =
+        "action=" + encodeURIComponent("addStudent") +
+        "&studentName=" + encodeURIComponent(studentName) +
+        "&gender=" + encodeURIComponent(gender) +
+        "&dob=" + encodeURIComponent(dob) +
+        "&guardianName=" + encodeURIComponent(guardianName) +
+        "&guardianPhone=" + encodeURIComponent(guardianPhone) +
+        "&emergencyName=" + encodeURIComponent(emergencyName) +
+        "&emergencyPhone=" + encodeURIComponent(emergencyPhone);
+
+
+      // Version B: text/plain or application/JSON
+      //const student = {
+      //  //action: "addStudent",  // *addStudent action
+      //  studentName: document.getElementById("studentName").value,
+      //   gender: document.getElementById("gender").value,
+      //  dob: document.getElementById("dob").value,
+      //  guardianName: document.getElementById("guardianName").value,
+      //  guardianPhone: document.getElementById("guardianNumber").value,
+      //  emergencyName: document.getElementById("emergencyName").value,
+      //  emergencyPhone: document.getElementById("emergencyNumber").value,
+      //};
+
+      // if (!student.studentName || !student.gender || !student.dob) {
+      //  alert("Please fill in name, gender and date of birth");
+      //  btn.disabled = false;
+      //  btn.innerText = "Submit";
+      //  return;
+      //}
       
       try {
-        const response = await fetch(`${API_URL}?action=addStudent`, {
+
+        // Version A: x-www-form-urlencoded
+        // Step A4: 
+        const response = await fetch(API_URL, {
           method: "POST",
-          //header: {"Content-Type": "application/json"},
-          header: {"Content-Type":"text/plain"},
-          body: JSON.stringify(student)
+          headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},
+          body: body
         });
+
+        // Version B: text/plain
+        // const response = await fetch(`${API_URL}?action=addStudent`, {
+        //  method: "POST",
+        //  //header: {"Content-Type": "application/json"},
+        //  header: {"Content-Type":"text/plain"},
+        //  body: JSON.stringify(student)
+        //});
 
         const result = await response.json();
         if (result.ok) {
