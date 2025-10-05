@@ -203,6 +203,57 @@ select option.today {
    cursor: pointer;
 }
 
+.studnet-left {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+}
+
+.student-name {
+   font-weight: 600;
+   font-size: 16px;
+   color: #222;
+}
+
+.gender-icon {
+   width: 20px;
+   height: 20px;
+   vertical-align: middle;
+   opacity: 0.85;
+}
+
+.student-right {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+}
+
+.phone-btn, .sms-btn {
+   background: #f2f2f2;
+   border-radius: 50%;
+   width: 28px;
+   height: 28px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   text-decoration: none;
+   font-size: 15px;
+   transition: background 0.2s, transfor 0.2s;
+   user-select: none;
+}
+
+.phone-btn:hover {
+   background: #27ae6015;
+   color: #27ae60;
+   transform: scale(1.1);
+}
+
+.sms-btn:hover {
+   background: #2980b915;
+   color: #2980b9;
+   transform: scale(1.1);
+}   
+
 .student-header.selected {
    background: #cce4ff; /* highlighted when selected */
    border-left: 4px solid #1A73E8;
