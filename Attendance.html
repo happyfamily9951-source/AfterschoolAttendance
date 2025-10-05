@@ -10,6 +10,9 @@
   
   <body class="page-attendance">
     <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
+    <!-- Notification bar -->
+    <div id="notification" class="notification hidden"></div>
+    
     <main class="page-content">
 
       <!-- Select class -->
@@ -231,16 +234,25 @@
 
           const result = await response.json();
           if (result.ok) {
-            alert("Attendance submitted successfully");
+            showNotification(`✅ Attendance submitted! (${result.count} records)`, "success");                        
           } else {
-            alert("Error: " + (result.message || "Unknown error"));
+            showNotification(`❌ Error: ${result.message || "Unknown error"}`, "error");            
           }
         } catch (err) {
-          alert("Network error: " + err.message);
+          showNotification("❌ Network error: " + err.message, "error");          
         } finally {
           btn.disabled = false;
           btn.innerText = originalText;
         }
+      }
+
+      function showNotification(message, type="success") {
+        const note = document.getElementById("notification");
+        note.textContent= message;
+        note.className = `notification show ${type}`;
+        setTimeout(() => {
+          note.className = "notification hidden";
+        }, 3000);
       }
 
       window.onload = loadClasses;
