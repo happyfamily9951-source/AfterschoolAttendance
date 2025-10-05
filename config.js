@@ -1,3 +1,27 @@
 // config.js
+// ==========================================
+// Global configuration and general function 
+// shared for all HTML files
+// ==========================================
+
+// Google Apps Scripts Web APP URL
 const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
-// const API_URL = "https://tight-rain-0894.happyfamily9951.workers.dev/";
+
+// Notification function
+function showNotification(message, type = "success") {
+  const note = document.getElementById("notification");
+
+  if (!note) return;  // In case notification is not defined
+
+  note.textContent = message;
+  note.className = `notication show ${type}`;
+  setTimeout(() => {
+    note.className = "notification hidden";
+  }, 3000);
+}
+
+// General function
+function formatDate(date) {
+  const d = new Date(date);
+  return d.toISOString().split("T")[0];
+}
