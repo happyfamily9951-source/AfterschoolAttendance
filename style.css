@@ -338,7 +338,8 @@ select option.today {
 
 /* ========== 提交结果提示动画 ========== */
 .notification {
-   position: fixed;
+   position: fixed !important;
+   inset: auto !important;
    top: 10px;
    left: 50%;
    transform: translateX(-50%);
@@ -349,7 +350,7 @@ select option.today {
    font-size: 15px;
    opacity: 0;
    transition: opacity 0.5s ease, top 0.5s ease;
-   z-index: 9999;
+   z-index: 999999 !important;
    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
    backdrop-filter: blur(6px);
    letter-space: 0.3px;
