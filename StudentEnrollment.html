@@ -12,6 +12,9 @@
   <!-- 左上角小 Logo -->
   <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
 
+  <!-- Notification bar -->
+  <div id="notification" class="notification hidden"></div>
+
   <!-- 主内容 -->
   <main class="page-content">
 
@@ -184,9 +187,9 @@
 
         const result = await response.json();
         if (result.ok) {
-          alert(`Student submitted successfully! ID: ${result.studentId}`);
+          showNotification("✅ Student added successfully!", "success");          
         } else {
-          alert("Error: " + (result.message || "Unknown error"));
+          showNotification("❌ " + (result.message || "Unknown error"), "error");   
         }
       } catch (err) {
         alert("Network error: " + err.message);
@@ -315,6 +318,15 @@
       if (number) {
         window.location.href = `sms:${number}`;
       }
+    }
+
+    function showNotification(message, type = "success") {
+      const note = document.getElementById("notification");
+      note.textContent = message;
+      note.className = `notification show ${type}`;
+      setTimeout(() => {
+        note.className = "notification hidden";
+      }, 3000);
     }
   </script>
 </body>
