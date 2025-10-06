@@ -144,6 +144,14 @@
     </nav>
     
     <script>
+
+      function formatDate(dateStr) {
+        if (!dateStr) return "";
+        const d = new Date(dateStr);
+        if (isNaN(d)) return dateStr;
+        return d.toISOString().split("T")[0];  // yyyy-MM-dd
+      }
+      
       async function submitCourse() {
         const btn = document.getElementById("CourseSubmit");
         btn.disabled = true;
@@ -224,7 +232,7 @@
               header.className="student-header";
               header.innerHTML = `
                 <div><strong>Class: </strong>${s.className || ""}</div>
-                <div>${s.dayOfWeek || ""}</div>
+                <div>Day of Week: ${s.dayOfWeek || ""}</div>
               `;
 
               //Details: hiding in default
@@ -236,10 +244,10 @@
                   <div class="col"><strong>Description: </strong> ${s.classShortDescription}</div>
                 </div>
                 <div class="row">
-                  <div class="col"><strong>Date: </strong> ${s.dateFrom || ""} ~ ${s.dateTo || ""}</div>
+                  <div class="col"><strong>Date: </strong> ${formatDate(s.dateFrom) || ""} ~ ${formatDate(s.dateTo) || ""}</div>
                 </div>
                 <div class="row">
-                  <div class="col"><strong>Day: </strong> ${s.dayOfWeek || ""}</div>
+                  <div class="col"><strong>Age Range: </strong> ${s.ageFrom || ""} ~ ${s.ageTo || ""}</div>
                   <div class="col"><strong>Max Positions: </strong> ${s.maxPositions ||""}</div>
                 </div>
                 <div class="row">
