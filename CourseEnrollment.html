@@ -144,14 +144,6 @@
     </nav>
     
     <script>
-
-      function formatDate(dateStr) {
-        if (!dateStr) return "";
-        const d = new Date(dateStr);
-        if (isNaN(d)) return dateStr;
-        return d.toISOString().split("T")[0];  // yyyy-MM-dd
-      }
-      
       async function submitCourse() {
         const btn = document.getElementById("CourseSubmit");
         btn.disabled = true;
