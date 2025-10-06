@@ -9,36 +9,32 @@
   </head>
   
   <body class="page-course">
-    
-    <!-- Logo on the top left -->
-    <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
+    <div class="logo-container">
+      <!-- Logo on the top left -->
+      <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
+    </div>
 
-    <!-- Notification bar -->
-    <div id="notification" class="notification hidden"></div>
-    
-    <main class="page-content">
-      
-      <!-- Course Enrollment -->
-      <div class="form-container">
-        <h2>Course Enrollment</h2>
-        
+    <!-- Create class -->
+    <section class="section">
+      <h2>Create New Class</h2>
+      <form id="classForm" onsubmit="event.preventDefault();submitCourse();">
         <!-- 1st row: class Name -->
         <label for="className">Class Name</label>
-        <input type="text" id="className" placeholder="Enter class name">
+        <input type="text" id="className" placeholder="Enter class name" required>
         
         <!-- 2nd row: short description -->
         <label for="classShortDescription">Class Short Description</label>
-        <input type="text" id="classShortDescription" placeholder="Enter description">
+        <input type="text" id="classShortDescription" placeholder="Enter description" required>
         
         <!-- 3rd row: Date From and Date To -->
         <div class="row">
           <div class="col">
             <label for="dateFrom">Date From</label>
-            <input type="date" id="dateFrom">
+            <input type="date" id="dateFrom" required>
           </div>
           <div class="col">
             <label for="dateTo">Date To</label>
-            <input type="date" id="dateTo">
+            <input type="date" id="dateTo" required>
           </div>
         </div>
         
@@ -46,11 +42,11 @@
         <div class="row">
           <div class="col">
             <label for="timeFrom">Time From</label>
-            <input type="time" id="timeFrom">
+            <input type="time" id="timeFrom" required>
           </div>
           <div class="col">
             <label for="timeTo">Time To</label>
-            <input type="time" id="timeTo">
+            <input type="time" id="timeTo" required>
           </div>
         </div>
         
@@ -70,7 +66,7 @@
         <div class="row">
           <div class="col">
             <label for="dayOfWeek">Day of Week</label>
-            <select id="dayOfWeek">
+            <select id="dayOfWeek" required>
               <option value="">Select</option>
               <option value="Mon">Monday</option>
               <option value="Tue">Tuesday</option>
@@ -89,13 +85,13 @@
         
         <!-- 7th row: Teacher name -->
         <label for="teacherName">Teacher Name</label>
-        <input type="text" id="teacherName" placeholder="Enter teacher's name">
+        <input type="text" id="teacherName" placeholder="Enter teacher's name" required>
         
         <!-- 8th row: Teacher number and email -->
         <div class="row">
           <div class="col">
             <label for="teacherPhone">Teacher Phone Number</label>
-            <input type="tel" id="teacherPhone" placeholder="Enter teacher phone number">
+            <input type="tel" id="teacherPhone" placeholder="Enter teacher phone number" required>
           </div>          
           <div class="col">
             <label for="teacherEmail">Teacher Email</label>
@@ -103,28 +99,24 @@
           </div>
         </div>
         
-        <button class="btn-primary" id="CourseSubmit" onclick="submitCourse()">Submit</button>
+        <!-- <button class="btn-primary" id="CourseSubmit" onclick="submitCourse()">Submit</button> -->
+        <button class="btn-primary" id="CourseSubmit">Submit</button>
+      </form>
+    </section>
+
+    <!-- Search class -->
+    <section class="section">
+      <h2>Course Search</h2>
+      <div class="search-bar">
+        <input type="text" id="searchCourse" placeholder="Enter course name">
+        <button class="btn-primary" id="CourseSearchBtn" onclick="searchCourse()">Search</button>
       </div>
-      
-      <!-- Search Course -->
-      <div class="form-container">
-        <h2>Course Search</h2>
+      <div id="classResults" class="accordion-container"></div>
+    </section>
+
+    <!-- Notification -->
+    <div id="notification" class="notification hidden"></div>
         
-        <!-- Input box and button -->
-        <div class="row">
-          <div class="col">
-            <input type="text" id="searchCourse" placeholder="Enter course name">
-          </div>
-          <div>
-            <button class="btn-primary" id="CourseSearchBtn" onclick="searchCourse()">Search</button>
-          </div>
-        </div>
-        
-        <!-- Search Results -->
-        <div id="courseResult" style="margin-top:12px;"></div>       
-      </div>
-    </main>
-    
     <!-- Nagivator button on the bottom -->
     <nav class="bottom-nav">
       <a class="nav-item nav-student active" href="StudentEnrollment.html" aria-label="Student Enrollment">
@@ -153,55 +145,38 @@
 
         // Version A: x-www-form-urlencoded
         // Step A1: Read values
-        const className = document.getElementById("className").value.trim();
-        const classShortNotes = document.getElementById("classShortDescription").value.trim();
-        const dateFrom = document.getElementById("dateFrom").value.trim();
-        const dateTo = document.getElementById("dateTo").value.trim();
-        const timeFrom = document.getElementById("timeFrom").value.trim();
-        const timeTo = document.getElementById("timeTo").value.trim();
-        const ageFrom = document.getElementById("ageFrom").value.trim();
-        const ageTo = document.getElementById("ageTo").value.trim();
-        const dayOfWeek = document.getElementById("dayOfWeek").value.trim();
-        const maxPositions = document.getElementById("maxPositions").value.trim();
-        const teacherName = document.getElementById("teacherName").value.trim();
-        const teacherPhone = document.getElementById("teacherPhone").value.trim();
-        const teacherEmail = document.getElementById("teacherEmail").value.trim();
+        const data = {
+          action: "addCourse",
+          className: className.value.trim(),
+          classShortNotes: classShortDescription.value.trim(),
+          dateFrom: dateFrom.value.trim(),
+          dateTo: dateTo.value.trim(),
+          timeFrom: timeFrom.value.trim(),
+          timeTo: timeTo.value.trim(),
+          ageFrom: ageFrom.value.trim(),
+          ageTo: ageTo.value.trim(),
+          dayOfWeek: dayOfWeek.value.trim(),
+          maxPositions: maxPositions.value.trim(),
+          teacherName: teacherName.value.trim(),
+          teacherPhone: teacherPhone.value.trim(),
+          teacherEmail: teacherEmail.value.trim()
+        };
 
-        if (!className || !teacherName) {
-          showNotification("❌ Please fill all required fields", "error");
-          btn.disabled = false;
-          btn.innerText = originalText;
-          return;
-        }
-
-        // Step A2: Generate payload
-        const body = 
-          "action=" + encodeURIComponent("addCourse") +
-          "&className=" + encodeURIComponent(className) +
-          "&classShortNotes=" + encodeURIComponent(classShortNotes) +
-          "&dateFrom=" + encodeURIComponent(dateFrom) +
-          "&dateTo=" + encodeURIComponent(dateTo) +
-          "&timeFrom=" + encodeURIComponent(timeFrom) +
-          "&timeTo=" + encodeURIComponent(timeTo) +
-          "&ageFrom=" + encodeURIComponent(ageFrom) +
-          "&ageTo=" + encodeURIComponent(ageTo) +
-          "&dayOfWeek=" + encodeURIComponent(dayOfWeek) +
-          "&maxPositions=" + encodeURIComponent(maxPositions) +
-          "&teacherName=" + encodeURIComponent(teacherName) +
-          "&teacherPhone=" + encodeURIComponent(teacherPhone) +
-          "&teacherEmail=" + encodeURIComponent(teacherEmail);
+        const body = Object.keys(data)
+          .map(k=> `${encodeURIComponent(k)}=${encodeURIComponent(data[k])}`)
+          .join("&");
         
         try {
           const resp = await fetch(API_URL, {
             method: "POST",
             headers: {"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"},
-            body: body
+            body
           });
           
           const result = await resp.json();
-          
           if (result.ok) {
             showNotification(`✅ Course added successful`, "success");            
+            document.getElementById("classForm").reset();
           } else {
             showNotification(`❌ Error: ${result.message || "Unknown error"}`, "error");
           }
@@ -215,7 +190,6 @@
       
       async function searchCourse() {
         const btn = document.getElementById("CourseSearchBtn");
-        const container = document.getElementById("courseResult");
         const name=document.getElementById("searchCourse").value.trim();
         
         if (!name) {
@@ -226,34 +200,70 @@
         btn.disabled = true;
         const originalText = btn.innerText;
         btn.innerText="Searching...";
-        
-        container.innerHTML = "";
+
         try {
           const resp = await fetch(`${API_URL}?action=searchCourseByName&name=${encodeURIComponent(name)}`);
           const result = await resp.json();
           
           if (result.ok && result.results && result.results.length > 0) {
-            container.innerHTML = result.results.map(c => `
-            <div class="form-container">
-            <p><strong>Class Name:</strong> ${c.className || ""}</p>
-            <p><strong>Description:</strong> ${c.classShortDescription || ""}</p>
-            <p><strong>Date:</strong> ${c.dateFrom || ""} ~ ${c.dateTo || ""}</p>
-            <p><strong>Time:</strong> ${c.timeFrom || ""} ~ ${c.timeTo || ""}</p>
-            <p><strong>Day:</strong> ${c.dayOfWeek || ""}</p>
-            <p><strong>Teacher:</strong> ${c.teacherName || ""} / ${c.teacherContact || ""} / ${c.teacherEmail || ""}</p>
-            <p><strong>Age:</strong> ${c.ageFrom || ""} - ${c.ageTo || ""}</p>
-            <p><strong>Maximum Positions:</strong> ${c.maxPositions || ""}</p>
-            </div>
-            `).join("");
+            renderClassResults(result.results);            
           } else {
-            container.innerHTML = `<p style="color:red;">${result.message || "No course found"}</p>`;
+            showNotification("⚠️ No matching class found", "error");
+            document.getByElement("classResults").innerHTML = "";
           }
         } catch (e) {
-          alert("Network error: " + e.message);
+          showNotification("❌ Network error: " + err.message, "error"); 
         } finally {
           btn.disabled = false;
           btn.innerText = originalText;
         }
       }
+
+      function renderClassResuls(classes) {
+        const container = document.getElementById("classResults");
+        container.innerHTML = "";
+
+        classes.forEach(cls=> {
+          const card = document.createElement("div");
+          card.className = "class-card";
+
+          const header = document.createElement("div");
+          header.className = "class-header";
+          header.innerHTML = `
+            <span>${cls.className} (${cls.dayOfWeek})</span>
+            <span>▶</span>
+          `;
+          header.addEventListener("click", () => toggleAccordion(card, header));
+
+          const details = document.createElement("div");
+          details.className = "class-details";
+          details.innerHTML = `
+            <strong>Teacher: </strong> ${cls.teacherName}<br>
+            <strong>Period: </strong> ${cls.dateFrom} -> ${cls.dateTo}<br>
+            <strong>Time: </strong> ${cls.timeFrom} -> ${cls.timeTo}<br>
+            <strong>Age Range: </strong> ${cls.ageFrom} -> ${cls.ageTo}<br>
+            <strong>Max Positions: </strong> ${cls.maxPositions}<br>
+            <strong>Status: </strong> ${cls.status}
+          `;
+
+          card.appendChild(header);
+          card.appendChild(details);
+          container.appendChild(card);
+        });
+      }
+
+      function toggleAccordion(card, header) {
+        const isActive = card.classList.contains("active");
+        document.querySelectorAll(".class-card").forEach(
+          c=>c.classList.remove("active"));
+        document.querySelectorAll(".class-header span:last-child").forEach(
+          a=>a.textContent = "▶");
+
+        if (!isActive) {
+          card.classList.add("active");
+          header.querySelector("span:last-child").textContent="▼";
+        }
+      }
+        
     </script>
   </body>
