@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学生报名课程 · StudentCourseApplication</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="icons/logo.svg" />
+  <script defer src="config.js"></script>
+</head>
+
+<body class="student-course-app">
+  <!-- 顶部导航栏（与 CourseEnrollment.html 保持一致风格） -->
+  <header class="appbar">
+    <img class="logo" src="icons/logo-monica-linan.svg" alt="Monica & Linan" />
+    <h1>学生报名课程 · StudentCourseApplication</h1>
+    <div id="notify" class="notify"></div>
+  </header>
+
+  <main class="container">
+    <!-- 学生搜索与选择 -->
+    <section class="section-card" aria-labelledby="student-search-title">
+      <div class="row space-between">
+        <h2 id="student-search-title">1）选择学生</h2>
+        <button id="btnClearStudent" class="btn secondary" type="button">清除选择</button>
+      </div>
+
+      <div class="row mt-10">
+        <input id="studentNameInput" type="text" placeholder="输入学生姓名（支持部分匹配）" autocomplete="off" />
+        <button id="btnSearch" class="btn primary" type="button">搜索学生</button>
+      </div>
+
+      <ul id="studentResult" class="list" aria-live="polite"></ul>
+    </section>
+
+    <!-- 课程展示与选择（按 dayOfWeek 折叠显示） -->
+    <section class="section-card" aria-labelledby="course-choose-title">
+      <h2 id="course-choose-title">2）选择课程（按上课星期分类）</h2>
+      <div id="courseAccordion" class="accordion" aria-live="polite"></div>
+
+      <div class="submit-row">
+        <button id="btnSubmit" class="btn primary" type="button" disabled>提交报名</button>
+      </div>
+    </section>
+  </main>
+  
+  <!-- 底部导航 -->
+  <nav class="bottom-nav">
+    <a class="nav-item nav-student active" href="StudentEnrollment.html" aria-label="Student Enrollment">
+      <img src="icons/student-enroll.svg" alt="">
+    </a>
+    <a class="nav-item nav-course" href="CourseEnrollment.html" aria-label="Course Enrollment">
+      <img src="icons/course-enroll.svg" alt="">
+    </a>
+    <a class="nav-item nav-student-course-application" href="StudentCourseApplication.html" aria-label="Student Course Application">
+      <img src="icons/student-course-application.svg" alt="">
+    </a>    
+    <a class="nav-item nav-attend" href="Attendance.html" aria-label="Attendance">
+      <img src="icons/attendance.svg" alt="">
+    </a>
+    <a class="nav-item nav-report" href="Report.html" aria-label="Reports">
+      <img src="icons/report.svg" alt="">
+    </a>
+  </nav> 
+  
+  <!-- 页面脚本 -->
+  <script src="StudentCourseApplication.js"></script>
+</body>
+</html>
