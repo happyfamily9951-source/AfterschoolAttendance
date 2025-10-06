@@ -17,107 +17,108 @@
     <main class="page-content">
       <!-- Create class -->
       <div class="form-container">
-        <section class="section">
-          <h2>Create New Class</h2>
-          <form id="classForm" onsubmit="event.preventDefault();submitCourse();">
-            <!-- 1st row: class Name -->
-            <label for="className">Class Name</label>
-            <input type="text" id="className" placeholder="Enter class name" required>
-            
-            <!-- 2nd row: short description -->
-            <label for="classShortDescription">Class Short Description</label>
-            <input type="text" id="classShortDescription" placeholder="Enter description" required>
-            
-            <!-- 3rd row: Date From and Date To -->
-            <div class="row">
-              <div class="col">
-                <label for="dateFrom">Date From</label>
-                <input type="date" id="dateFrom" required>
-              </div>
-              <div class="col">
-                <label for="dateTo">Date To</label>
-                <input type="date" id="dateTo" required>
-              </div>
-            </div>
-            
-            <!-- 4th row: Time From and Time To -->
-            <div class="row">
-              <div class="col">
-                <label for="timeFrom">Time From</label>
-                <input type="time" id="timeFrom" required>
-              </div>
-              <div class="col">
-                <label for="timeTo">Time To</label>
-                <input type="time" id="timeTo" required>
-              </div>
-            </div>
-            
-            <!-- 5th row: Age From and Age To -->
-            <div class="row">
-              <div class="col">
-                <label for="ageFrom">Age From</label>
-                <input type="number" id="ageFrom" min="1">
-              </div>
-              <div class="col">
-                <label for="ageTo">Age To</label>
-                <input type="number" id="ageTo" min="1" max="18">
-              </div>
-            </div>
-            
-            <!-- 6th row: DayOfWeek and Max Position -->
-            <div class="row">
-              <div class="col">
-                <label for="dayOfWeek">Day of Week</label>
-                <select id="dayOfWeek" required>
-                  <option value="">Select</option>
-                  <option value="Mon">Monday</option>
-                  <option value="Tue">Tuesday</option>
-                  <option value="Wed">Wednesday</option>
-                  <option value="Thu">Thursday</option>
-                  <option value="Fri">Friday</option>
-                  <option value="Sat">Saturday</option>
-                  <option value="Sun">Sunday</option>
-                </select>
-              </div>
-              <div class="col">
-                <label for="maxPositions">Maximum Positions</label>
-                <input type="number" id="maxPositions" min="1">
-              </div>
-            </div>          
-            
-            <!-- 7th row: Teacher name -->
-            <label for="teacherName">Teacher Name</label>
-            <input type="text" id="teacherName" placeholder="Enter teacher's name" required>
-            
-            <!-- 8th row: Teacher number and email -->
-            <div class="row">
-              <div class="col">
-                <label for="teacherPhone">Teacher Phone Number</label>
-                <input type="tel" id="teacherPhone" placeholder="Enter teacher phone number" required>
-              </div>
-              <div class="col">
-                <label for="teacherEmail">Teacher Email</label>
-                <input type="email" id="teacherEmail" placeholder="Enter teacher email">
-              </div>
-            </div>
-            
-            <!-- <button class="btn-primary" id="CourseSubmit" onclick="submitCourse()">Submit</button> -->
-            <button class="btn-primary" id="CourseSubmit">Submit</button>
-          </form>
-        </section>
+        <h2>Create New Class</h2>
+        <!-- 1st row: class Name -->
+        <label for="className">Class Name</label>
+        <input type="text" id="className" placeholder="Enter class name" required>
+        
+        <!-- 2nd row: short description -->
+        <label for="classShortDescription">Class Short Description</label>
+        <input type="text" id="classShortDescription" placeholder="Enter description" required>
+        
+        <!-- 3rd row: Date From and Date To -->
+        <div class="row">
+          <div class="col">
+            <label for="dateFrom">Date From</label>
+            <input type="date" id="dateFrom" required>
+          </div>
+          <div class="col">
+            <label for="dateTo">Date To</label>
+            <input type="date" id="dateTo" required>
+          </div>
+        </div>
+        
+        <!-- 4th row: Time From and Time To -->
+        <div class="row">
+          <div class="col">
+            <label for="timeFrom">Time From</label>
+            <input type="time" id="timeFrom" required>
+          </div>
+          <div class="col">
+            <label for="timeTo">Time To</label>
+            <input type="time" id="timeTo" required>
+          </div>
+        </div>
+        
+        <!-- 5th row: Age From and Age To -->
+        <div class="row">
+          <div class="col">
+            <label for="ageFrom">Age From</label>
+            <input type="number" id="ageFrom" min="1">
+          </div>
+          <div class="col">
+            <label for="ageTo">Age To</label>
+            <input type="number" id="ageTo" min="1" max="18">
+          </div>
+        </div>
+        
+        <!-- 6th row: DayOfWeek and Max Position -->
+        <div class="row">
+          <div class="col">
+            <label for="dayOfWeek">Day of Week</label>
+            <select id="dayOfWeek" required>
+              <option value="">Select</option>
+              <option value="Mon">Monday</option>
+              <option value="Tue">Tuesday</option>
+              <option value="Wed">Wednesday</option>
+              <option value="Thu">Thursday</option>
+              <option value="Fri">Friday</option>
+              <option value="Sat">Saturday</option>
+              <option value="Sun">Sunday</option>
+            </select>
+          </div>
+          <div class="col">
+            <label for="maxPositions">Maximum Positions</label>
+            <input type="number" id="maxPositions" min="1">
+          </div>
+        </div>
+        
+        <!-- 7th row: Teacher name -->
+        <label for="teacherName">Teacher Name</label>
+        <input type="text" id="teacherName" placeholder="Enter teacher's name" required>
+        
+        <!-- 8th row: Teacher number and email -->
+        <div class="row">
+          <div class="col">
+            <label for="teacherPhone">Teacher Phone Number</label>
+            <input type="tel" id="teacherPhone" placeholder="Enter teacher phone number" required>
+          </div>
+          <div class="col">
+            <label for="teacherEmail">Teacher Email</label>
+            <input type="email" id="teacherEmail" placeholder="Enter teacher email">
+          </div>
+        </div>
+        
+        <button class="btn-primary" id="CourseSubmit" onclick="submitCourse()">Submit</button>
       </div>
       
       <!-- Search class -->
       <div class="form-container">
-        <section class="section">
-          <h2>Course Search</h2>
-          <div class="search-bar">
+        <h2>Course Search</h2>
+
+        <!-- Input box and button -->
+        <div class="row">
+          <div class="col">
             <input type="text" id="searchCourse" placeholder="Enter course name">
+          </div>
+          <div>
             <button class="btn-primary" id="CourseSearchBtn" onclick="searchCourse()">Search</button>
           </div>
-          <div id="classResults" class="accordion-container"></div>
-        </section>
-      </div>
+        </div>
+
+        <!-- Search Results -->
+        <div id="searchResult" style="margin-top:12px;"></div>
+      </div>      
     </main>
       
     <!-- Notification -->
@@ -212,7 +213,67 @@
           const result = await resp.json();
           
           if (result.ok && result.results && result.results.length > 0) {
-            renderClassResults(result.results);            
+            result.results.forEach(s=> {
+              const card = document.createElement("div");
+              card.className="student-card";
+
+              //header: className + dayOfWeek
+              const header = document.createElement("div");
+              header.className="student-header";
+              header.innerHTML = `
+                <div><strong>Class name: </strong>${s.className || ""}</div>
+                <div>${s.dayOfWeek} || ""</div>
+              `;
+
+              //Details: hiding in default
+              const details = document.createElement("div");
+              details.className = "student-details";
+              details.style.display = "none";
+              details.innerHTML = `
+                <div class="row">
+                  <div class="col"><strong>Description: </strong> ${s.classShortDescription}</div>
+                </div>
+                <div class="row">
+                  <div class="col"<strong>Date: </strong> ${s.dateFrom || ""} ~ ${s.dateTo || ""}</div>
+                </div>
+                <div class="row">
+                  <div class="col"><strong>Day: </strong> ${s.dayOfWeek || ""}</div>
+                  <div class="col"><strong>Max Positions: </strong> ${s.maxPositions ||""}</div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <strong>Teacher</strong> ${s.teacherName ||""} / ${s.teacherPhone || ""}
+                    <span class="contact-actions">
+                      <button onclick="callNumber('${s.teacherPhone || ""}')">📞</button>
+                      <button onclick="smsNumber('${s.teacherPhone || ""}')">💬</button>
+                    </span>
+                  </div>
+                </div>
+              `;
+
+              //Click to expand
+              header.addEventListener("click", () => {
+                const expanded = details.style.display === "block";
+
+                //Collaps other cards
+                document.querySelectorAll(".student-details").forEach(d=>d.style.display="none");
+                document.querySelectorAll(".student-header").forEach(h => h.classList.remove("selected"));
+
+                //Expand the current one
+                if (!expanded) {
+                  details.style.display = "block";
+                  header.classList.add("selected");
+                }
+              });
+
+              card.appendChild(header);
+              card.appendChild(details);
+
+              container.appendChild(card);
+            });
+                  
+              
+                          
           } else {
             showNotification("⚠️ No matching class found", "error");
             document.getByElement("classResults").innerHTML = "";
@@ -223,54 +284,7 @@
           btn.disabled = false;
           btn.innerText = originalText;
         }
-      }
-
-      function renderClassResuls(classes) {
-        const container = document.getElementById("classResults");
-        container.innerHTML = "";
-
-        classes.forEach(cls=> {
-          const card = document.createElement("div");
-          card.className = "class-card";
-
-          const header = document.createElement("div");
-          header.className = "class-header";
-          header.innerHTML = `
-            <span>${cls.className} (${cls.dayOfWeek})</span>
-            <span>▶</span>
-          `;
-          header.addEventListener("click", () => toggleAccordion(card, header));
-
-          const details = document.createElement("div");
-          details.className = "class-details";
-          details.innerHTML = `
-            <strong>Teacher: </strong> ${cls.teacherName}<br>
-            <strong>Period: </strong> ${cls.dateFrom} -> ${cls.dateTo}<br>
-            <strong>Time: </strong> ${cls.timeFrom} -> ${cls.timeTo}<br>
-            <strong>Age Range: </strong> ${cls.ageFrom} -> ${cls.ageTo}<br>
-            <strong>Max Positions: </strong> ${cls.maxPositions}<br>
-            <strong>Status: </strong> ${cls.status}
-          `;
-
-          card.appendChild(header);
-          card.appendChild(details);
-          container.appendChild(card);
-        });
-      }
-
-      function toggleAccordion(card, header) {
-        const isActive = card.classList.contains("active");
-        document.querySelectorAll(".class-card").forEach(
-          c=>c.classList.remove("active"));
-        document.querySelectorAll(".class-header span:last-child").forEach(
-          a=>a.textContent = "▶");
-
-        if (!isActive) {
-          card.classList.add("active");
-          header.querySelector("span:last-child").textContent="▼";
-        }
-      }
-        
+      }        
     </script>
   </body>
 </html>
