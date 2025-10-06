@@ -31,7 +31,33 @@ function showNotification(message, type = "success") {
 }
 
 // General function
+/**
+* ✅ 日期格式化：将 ISO 格式 "2025-08-31T14:00:00.000Z" → "2025-08-31"
+*/
 function formatDate(date) {
   const d = new Date(date);
   return d.toISOString().split("T")[0];
+}
+
+/**
+ * ✅ 拨打电话功能（兼容移动端）
+ */
+function callNumber(phone) {
+  if (!phone) {
+    showNotification("⚠️ No phone number provided", "error");
+    return;
+  }
+  window.location.href = `tel:${phone}`;
+}
+
+/**
+ * ✅ 短信功能（兼容移动端）
+ */
+function smsNumber(phone, message = "") {
+  if (!phone) {
+    showNotification("⚠️ No phone number provided", "error");
+    return;
+  }
+  const smsBody = message ? `?body=${encodeURIComponent(message)}` : "";
+  window.location.href = `sms:${phone}${smsBody}`;
 }
