@@ -185,7 +185,7 @@
             showNotification(`❌ Error: ${result.message || "Unknown error"}`, "error");
           }
         } catch (e) {
-          showNotification("❌ Network error: " + err.message, "error");          
+          showNotification("❌ Network error: " + e.message, "error");          
         } finally {
           btn.disabled = false;
           btn.innerText = originalText;
