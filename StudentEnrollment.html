@@ -301,35 +301,6 @@
         btn.innerText = originalText;
       }
     }
-
-    // Move to config.js
-    // function formatDate(isoString) {
-    //  if (!isoString) return "";
-    //  const d = new Date(isoString);
-    //  return d.toISOString().split("T")[0]; // yyyy-MM-dd
-    // }
-
-    function callNumber(number) {
-      if (number) {
-        window.location.href = `tel:${number}`;
-      }
-    }
-
-    function smsNumber(number) {
-      if (number) {
-        window.location.href = `sms:${number}`;
-      }
-    }
-
-    // Move to config.js
-    // function showNotification(message, type = "success") {
-    //  const note = document.getElementById("notification");
-    //  note.textContent = message;
-    //  note.className = `notification show ${type}`;
-    //  setTimeout(() => {
-    //    note.className = "notification hidden";
-    //  }, 3000);
-    // }
   </script>
 </body>
 </html>
