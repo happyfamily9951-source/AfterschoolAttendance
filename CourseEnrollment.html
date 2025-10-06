@@ -208,6 +208,8 @@
         const originalText = btn.innerText;
         btn.innerText="Searching...";
 
+        const container = document.getElementById("searchResult");
+
         try {
           const resp = await fetch(`${API_URL}?action=searchCourseByName&name=${encodeURIComponent(name)}`);
           const result = await resp.json();
