@@ -223,8 +223,8 @@
               const header = document.createElement("div");
               header.className="student-header";
               header.innerHTML = `
-                <div><strong>Class name: </strong>${s.className || ""}</div>
-                <div>${s.dayOfWeek} || ""</div>
+                <div><strong>Class: </strong>${s.className || ""}</div>
+                <div>${s.dayOfWeek || ""}</div>
               `;
 
               //Details: hiding in default
@@ -236,15 +236,15 @@
                   <div class="col"><strong>Description: </strong> ${s.classShortDescription}</div>
                 </div>
                 <div class="row">
-                  <div class="col"<strong>Date: </strong> ${s.dateFrom || ""} ~ ${s.dateTo || ""}</div>
+                  <div class="col"><strong>Date: </strong> ${s.dateFrom || ""} ~ ${s.dateTo || ""}</div>
                 </div>
                 <div class="row">
                   <div class="col"><strong>Day: </strong> ${s.dayOfWeek || ""}</div>
                   <div class="col"><strong>Max Positions: </strong> ${s.maxPositions ||""}</div>
                 </div>
                 <div class="row">
+                  <div class="col"><strong>Teacher: </strong> ${s.teacherName ||""} </div>
                   <div class="col">
-                    <strong>Teacher</strong> ${s.teacherName ||""} / ${s.teacherPhone || ""}
                     <span class="contact-actions">
                       <button onclick="callNumber('${s.teacherPhone || ""}')">📞</button>
                       <button onclick="smsNumber('${s.teacherPhone || ""}')">💬</button>
