@@ -115,18 +115,18 @@
       }
     }
 
-    function onSelectStudent(ck, card) {
+    function onSelectStudent(ck, label) {
       document.querySelectorAll("#searchResult input[name='studentSingle']").forEach(n => {
         if (n !== ck) n.checked = false;
       });
-      document.querySelectorAll(".student-card").forEach(c => c.classList.remove("selected"));
+      document.querySelectorAll(".student-line").forEach(l => l.classList.remove("selected"));
       if (ck.checked) {
-        card.classList.add("selected");
+        label.classList.add("selected");
         selectedStudentId = ck.value;
       } else {
         selectedStudentId = null;
       }
-      updateSubmitState();
+      updateSubmitState();      
     }
 
     // 2️⃣ 加载课程（按 dayOfWeek 折叠）
