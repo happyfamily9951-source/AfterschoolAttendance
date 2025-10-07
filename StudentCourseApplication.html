@@ -320,7 +320,7 @@
 
     function updateSubmitState() {
       const btn = document.getElementById("ApplySubmit");
-      console.log("DEBUG: ", {selectedStudentId, selectedCourses});
+      console.log("🟢 updateSubmitState called:", { selectedStudentId, selectedCourses });
 
       if (!btn) {
         console.warn(" CAN NOT FIND APPLYSUBMIT BUTTON");
@@ -330,6 +330,7 @@
       console.log(" canSubmit = ", canSubmit);
 
       btn.disabled = !canSubmit;      
+      console.log("Button state:", btn.disabled ? "Disabled" : "Enabled");
       // btn.disabled = !(selectedStudentId && Object.keys(selectedCourses).length > 0);
     }
 
