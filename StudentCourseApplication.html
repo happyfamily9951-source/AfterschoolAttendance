@@ -237,8 +237,10 @@
       acc.innerHTML = "<p>Loading courses...</p>";
       try {
         // const body = new URLSearchParams({ action: "listActiveCourses" });
-        const body = new URLSearchParams({ action: "getActiveClasses" });        
-        const res = await fetch(`${API_URL}?action=listActiveCourses`);
+        // const body = new URLSearchParams({ action: "getActiveClasses" });       
+        const name = "";
+        const res = await fetch(`${API_URL}?action=searchCourseByName&name=${encodeURIComponent(name)}`);
+        
         // const res = await fetch(API_URL, { method:"GET", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body });
         
         const list = await res.json();
