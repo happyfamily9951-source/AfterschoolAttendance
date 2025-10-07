@@ -7,28 +7,44 @@
 // Google Apps Scripts Web APP URL
 const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
 
-// Notification function
-function showNotification(message, type = "success") {
+// ======================================================
+// 通用通知函数（支持指定容器 / 默认全局）
+// ======================================================
+function showNotification(message, type = "success", targetId = "notification") {
 
-  // Check notification node exists or not
-  let note = document.getElementById("notification");
-  // const note = document.getElementById("notification");
+  // 1️⃣ 如果页面中存在目标容器，则在该容器中创建或复用 notification
+  let container = document.getElementById(targetId);
+  let note;
 
-  if (!note) {
-    note = document.createElement("div");
-    note.id = "notification";
-    document.body.appendChild(note);
+  if (container) {
+    note = container.querySelector(".notification-inner");
+    if (!note) {
+      note = document.createElement("div");
+      note.className = "notification-inner";
+      container.appendChild(note);
+    }
+  } 
+  // 2️⃣ 如果没有目标容器，则 fallback 到全局（旧逻辑）
+  else {
+    note = document.getElementById("notification");
+    if (!note) {
+      note = document.createElement("div");
+      note.id = "notification";
+      document.body.appendChild(note);
+    }
   }
 
-  // Set contents and style
+  // 3️⃣ 设置内容与样式
   note.textContent = message;
-  note.className = `notication show ${type}`;
-  
+  note.className = `notification-inner show ${type}`;
+
+  // 4️⃣ 自动隐藏
   setTimeout(() => {
     note.classList.remove("show");
-    setTimeout(() => note.remove(),400);    
+    setTimeout(() => note.remove(), 400);
   }, 3000);
 }
+
 
 // General function
 /**
