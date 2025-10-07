@@ -195,8 +195,7 @@
             label.className = "student-line";
             label.innerHTML = `
               <input type="checkbox" name="studentSingle" value="${s.studentId}">
-              <span class="student-name">${s.studentName}</span>
-              <span class="student-gender-icon">${genderIcon(s.gender)}</span>
+              <span class="student-name">${s.studentName} ${genderIcon(s.gender)}</span>
             `;
             const ck = label.querySelector("input");
             ck.addEventListener("change", () => onSelectStudent(ck, label));
@@ -236,7 +235,7 @@
       acc.innerHTML = "<p>Loading courses...</p>";
       try {
         // const body = new URLSearchParams({ action: "listActiveCourses" });
-        const body = new URLSearchParams({ action: "listActiveCourses" });        
+        const body = new URLSearchParams({ action: "getActiveClasses" });        
         //const res = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body });
         const res = await fetch(API_URL, { method:"GET", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body });
         const list = await res.json();
