@@ -8,7 +8,7 @@
   <script src="config.js"></script>
 
   <style>
-    /* ===== 通用卡片样式（学生、课程统一风格） ===== */
+    /* ===== 统一卡片样式（学生 & 课程） ===== */
     .selectable-card {
       border: 1px solid #ddd;
       border-radius: 10px;
@@ -18,9 +18,7 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-    .selectable-card:hover {
-      background: #f9fafb;
-    }
+    .selectable-card:hover { background: #f9fafb; }
     .selectable-card.selected {
       background: #e0f2fe;
       border-color: #3b82f6;
@@ -65,20 +63,12 @@
       justify-content: space-between;
       align-items: center;
     }
-    .accordion-header:hover {
-      background: #f3f4f6;
-    }
-    .accordion-header span {
-      font-size: 13px;
-      color: #6b7280;
-    }
+    .accordion-header:hover { background: #f3f4f6; }
     .accordion-content {
       display: none;
       padding: 8px 12px;
     }
-    .accordion-content.open {
-      display: block;
-    }
+    .accordion-content.open { display: block; }
 
     /* ===== 通知区域 ===== */
     .notification {
@@ -140,21 +130,11 @@
 
   <!-- 底部导航 -->
   <nav class="bottom-nav">
-    <a class="nav-item nav-student" href="StudentEnrollment.html">
-      <img src="icons/student-enroll.svg" alt="">
-    </a>
-    <a class="nav-item nav-course" href="CourseEnrollment.html">
-      <img src="icons/course-enroll.svg" alt="">
-    </a>
-    <a class="nav-item nav-student-course-application active" href="StudentCourseApplication.html">
-      <img src="icons/student-course-application.svg" alt="">
-    </a>
-    <a class="nav-item nav-attend" href="Attendance.html">
-      <img src="icons/attendance.svg" alt="">
-    </a>
-    <a class="nav-item nav-report" href="Report.html">
-      <img src="icons/report.svg" alt="">
-    </a>
+    <a class="nav-item nav-student" href="StudentEnrollment.html"><img src="icons/student-enroll.svg" alt=""></a>
+    <a class="nav-item nav-course" href="CourseEnrollment.html"><img src="icons/course-enroll.svg" alt=""></a>
+    <a class="nav-item nav-student-course-application active" href="StudentCourseApplication.html"><img src="icons/student-course-application.svg" alt=""></a>
+    <a class="nav-item nav-attend" href="Attendance.html"><img src="icons/attendance.svg" alt=""></a>
+    <a class="nav-item nav-report" href="Report.html"><img src="icons/report.svg" alt=""></a>
   </nav>
 
   <script>
@@ -226,9 +206,11 @@
       acc.innerHTML = "<p>Loading courses...</p>";
 
       try {
-        const name = "";
+        const name = ""；
+        // const res = await fetch(`${API_URL}?action=searchCourseByName&name=${encodeURIComponent(name)}`);
+        const res = await fetch(`${API_URL}?action=getActiveClasses`);        
         // const body = new URLSearchParams({ action: "listActiveCourses" });
-        const res = await fetch(`${API_URL}?action=searchCourseByName&name=${encodeURIComponent(name)}`);
+        // const res = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body });
         const data = await res.json();
 
         if (!data.ok || !data.results?.length) {
@@ -237,7 +219,7 @@
         }
 
         acc.innerHTML = "";
-        const order = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+        const order = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
         const map = {};
         data.results.forEach(c => {
           const day = c.dayOfWeek || "Unassigned";
@@ -254,7 +236,10 @@
 
           const header = document.createElement("div");
           header.className = "accordion-header";
-          header.innerHTML = `${day} <span>${list.length} classes</span>`;
+          header.innerHTML = `
+            <span class="day-title">${day}</span>
+            <span class="day-count" data-day="${day}">0 selected / ${list.length} classes</span>`;
+          
           const content = document.createElement("div");
           content.className = "accordion-content";
 
@@ -266,7 +251,7 @@
             card.innerHTML = `
               <div class="card-line">
                 <span class="card-title">${c.className}</span>
-                <span class="card-sub">${c.dateFrom} - ${c.dateTo}</span>
+                <span class="card-sub">${c.startTime} - ${c.endTime}</span>
               </div>
               <div class="card-sub">${c.location}</div>
             `;
@@ -287,16 +272,26 @@
       }
     }
 
-    // 选中课程
+    // 选中课程 + 更新 header 状态
     function onSelectCourseCard(day, card) {
-      document.querySelectorAll(`.selectable-card[data-day='${day}']`).forEach(c => c.classList.remove("selected"));
+      const allCards = document.querySelectorAll(`.selectable-card[data-day='${day}']`);
+      allCards.forEach(c => c.classList.remove("selected"));
       if (selectedCourses[day] === card.dataset.cid) {
         delete selectedCourses[day];
       } else {
         selectedCourses[day] = card.dataset.cid;
         card.classList.add("selected");
       }
+      updateDayHeaderCount(day);
       updateSubmitState();
+    }
+
+    // 更新每个 day 的选中计数
+    function updateDayHeaderCount(day) {
+      const headerCount = document.querySelector(`.day-count[data-day='${day}']`);
+      const total = document.querySelectorAll(`.selectable-card[data-day='${day}']`).length;
+      const selected = selectedCourses[day] ? 1 : 0;
+      if (headerCount) headerCount.textContent = `${selected} selected / ${total} classes`;
     }
 
     function updateSubmitState() {
@@ -327,6 +322,10 @@
         document.getElementById("searchResult").innerHTML = "";
         document.querySelectorAll(".selectable-card").forEach(c => c.classList.remove("selected"));
         for (let k in selectedCourses) delete selectedCourses[k];
+        document.querySelectorAll(".day-count").forEach(span => {
+          const total = span.textContent.match(/\\d+ classes/)[0];
+          span.textContent = `0 selected / ${total}`;
+        });
         selectedStudentId = null;
         updateSubmitState();
       } catch (err) {
