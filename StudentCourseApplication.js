@@ -109,7 +109,8 @@ function escapeHtml(s=''){
 async function loadCourses(){
   try{
     showTip('正在载入课程…');
-    const body = new URLSearchParams({ action:'listActiveCourses' });
+    // const body = new URLSearchParams({ action:'listActiveCourses' });
+    const body = new URLSearchParams({action:'getActiveClasses'});
     const res = await fetch(API, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
     const list = await res.json(); // 期望字段：classId, className, dayOfWeek, startTime, endTime, location
     renderCourseAccordion(Array.isArray(list) ? list : []);
