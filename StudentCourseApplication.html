@@ -334,8 +334,8 @@
           const body = 
           "action=" + encodeURIComponent("applyStudentToClass") +
           "&studentId=" + encodeURIComponent(studentId) +
-          "&className=" + encodeURIComponent(classId);           
-          });
+          "&className=" + encodeURIComponent(classId); 
+          
           await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
