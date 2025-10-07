@@ -439,15 +439,37 @@ select option.today {
    backdrop-filter: blur(6px);
    letter-space: 0.3px;
 }
+
 .notification.show {
   opacity: 1;
   top: 30px;
 }
+
 .notification.success {
    background-color: linear-gradient(135deg, #27ae60, #2ecc71);
 }
+
 .notification.error {
    background-color: linear-gradient(135deg, #c0392b, #e74c3c);
 }
 
 .hidden { display: none; }
+
+.notification-inner {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #f1f1f1;
+  font-size: 14px;
+  transition: all 0.4s ease;
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.notification-inner.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.notification-inner.success { background: #dcfce7; color: #166534; }
+.notification-inner.error { background: #fee2e2; color: #b91c1c; }
+.notification-inner.info { background: #e0f2fe; color: #075985; }
