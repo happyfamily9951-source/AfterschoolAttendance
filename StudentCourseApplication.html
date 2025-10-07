@@ -11,7 +11,8 @@
     /* ===== Search Student 简洁布局 ===== */
     .student-line {
       display: flex;
-      align-items: center;
+      grid-template-columns: 30px 1fr auto;
+      /* align-items: center; */
       gap: 10px;
       padding: 6px 8px;
       border-bottom: 1px solid #eee;
@@ -29,6 +30,7 @@
     }
 
     .student-line input[type="checkbox"] {
+      justify-self: start;
       transform: scale(1.1);
       cursor: pointer;
     }
