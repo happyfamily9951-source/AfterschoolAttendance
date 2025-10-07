@@ -8,8 +8,8 @@
   <script src="config.js"></script>
 
   <style>
-    /* ===== Search Student 简洁布局 ===== */
-    .student-card-selectable {
+    /* ===== 通用卡片样式（学生、课程统一风格） ===== */
+    .selectable-card {
       border: 1px solid #ddd;
       border-radius: 10px;
       padding: 10px 12px;
@@ -18,68 +18,66 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-    
-    .student-card-selectable:hover {
+    .selectable-card:hover {
       background: #f9fafb;
     }
-    
-    .student-card-selectable.selected {
+    .selectable-card.selected {
       background: #e0f2fe;
       border-color: #3b82f6;
       box-shadow: 0 0 0 2px #bfdbfe;
     }
-    
-    .student-card-content {
+    .card-line {
       display: flex;
       align-items: center;
       justify-content: space-between;
       font-size: 15px;
     }
-    
-    .student-name {
+    .card-title {
       font-weight: 500;
+      color: #111827;
     }
-    
-    .student-gender-icon {
-      font-size: 18px;
-      opacity: 0.8;
-    }    
-    
+    .card-sub {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 3px;
+    }
+    .gender-icon {
+      width: 20px;
+      height: 20px;
+      opacity: 0.85;
+    }
+
     /* ===== Accordion 样式 ===== */
     .accordion-section {
       border: 1px solid #ddd;
       border-radius: 10px;
       margin-top: 8px;
       background: #fff;
+      overflow: hidden;
     }
-
     .accordion-header {
       padding: 10px 12px;
       background: #f9fafb;
       cursor: pointer;
       font-weight: 600;
       border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-
+    .accordion-header:hover {
+      background: #f3f4f6;
+    }
+    .accordion-header span {
+      font-size: 13px;
+      color: #6b7280;
+    }
     .accordion-content {
       display: none;
       padding: 8px 12px;
     }
-
     .accordion-content.open {
       display: block;
-    }
-
-    .course-item {
-      margin: 4px 0;
-      padding: 6px 10px;
-      border-radius: 6px;
-      transition: background 0.2s ease;
-    }
-
-    .course-item.selected {
-      background-color: #e0f2fe;
-      border-left: 3px solid #3b82f6;
     }
 
     /* ===== 通知区域 ===== */
@@ -88,7 +86,6 @@
       margin-bottom: 6px;
       position: relative;
     }
-
     .notification-inner {
       padding: 8px 12px;
       border-radius: 8px;
@@ -97,12 +94,10 @@
       transform: translateY(-5px);
       transition: all 0.4s ease;
     }
-
     .notification-inner.show {
       opacity: 1;
       transform: translateY(0);
     }
-
     .notification-inner.success { background: #dcfce7; color: #166534; }
     .notification-inner.error { background: #fee2e2; color: #b91c1c; }
     .notification-inner.info { background: #e0f2fe; color: #075985; }
@@ -110,11 +105,10 @@
 </head>
 
 <body class="page-student-course">
-  <!-- 左上角小 Logo -->
   <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
 
   <main class="page-content">
-    
+
     <!-- Container 1: Search Student -->
     <div class="form-container">
       <h2>Search Student</h2>
@@ -132,19 +126,19 @@
       <div id="searchResult" style="margin-top:12px;"></div>
     </div>
 
-    <!-- Container 2: Select Course by DayOfWeek -->
+    <!-- Container 2: Select Courses -->
     <div class="form-container">
-      <h2>Select Course by Day of Week</h2>
+      <h2>Select Courses by Day of Week</h2>
       <div id="notificationApply" class="notification"></div>
 
-      <div id="courseAccordion" class="accordion"></div>
+      <div id="courseAccordion"></div>
 
       <button class="btn-primary" id="ApplySubmit" disabled onclick="submitApplication()">Submit Application</button>
     </div>
 
   </main>
 
-  <!-- 底部导航栏 -->
+  <!-- 底部导航 -->
   <nav class="bottom-nav">
     <a class="nav-item nav-student" href="StudentEnrollment.html">
       <img src="icons/student-enroll.svg" alt="">
@@ -154,7 +148,7 @@
     </a>
     <a class="nav-item nav-student-course-application active" href="StudentCourseApplication.html">
       <img src="icons/student-course-application.svg" alt="">
-    </a>    
+    </a>
     <a class="nav-item nav-attend" href="Attendance.html">
       <img src="icons/attendance.svg" alt="">
     </a>
@@ -166,23 +160,23 @@
   <script>
     let selectedStudentId = null;
     const selectedCourses = {}; // { Monday: classId, Tuesday: classId, ... }
-    
+
+    // 性别图标
     function genderIcon(g) {
       const t = (g || "").toString().toUpperCase();
       if (t === "M" || t === "MALE") return `<img src="icons/male.svg" alt="male" class="gender-icon">`;
       if (t === "F" || t === "FEMALE") return `<img src="icons/female.svg" alt="female" class="gender-icon">`;
-      return `<img src="icons/neutral.svg" alt="unknown" class="gender-icon">`; // 备用
+      return `<img src="icons/neutral.svg" alt="unknown" class="gender-icon">`;
     }
 
-    // ✅ 搜索学生
+    // 搜索学生
     async function searchStudent() {
       const btn = document.getElementById("SearchBtn");
       const name = document.getElementById("searchName").value.trim();
       const container = document.getElementById("searchResult");
-
-      if (!name) { 
+      if (!name) {
         showNotification("Please enter a student name", "error", "notificationSearch");
-        return; 
+        return;
       }
 
       btn.disabled = true; btn.innerText = "Searching..."; container.innerHTML = "";
@@ -190,24 +184,21 @@
         const response = await fetch(`${API_URL}?action=searchStudentByName&name=${encodeURIComponent(name)}`);
         const result = await response.json();
 
-        if (result.ok && result.results && result.results.length > 0) {
+        if (result.ok && result.results?.length > 0) {
           container.innerHTML = "";
           result.results.forEach(s => {
             const card = document.createElement("div");
-            card.className = "student-card-selectable";
+            card.className = "selectable-card";
             card.dataset.sid = s.studentId;
             card.innerHTML = `
-              <div class="student-card-content">
-              <span class="student-name">${s.studentName}</span>
-              <span class="student-gender-icon">${genderIcon(s.gender)}</span>
-              </div>
-            `;
-            
+              <div class="card-line">
+                <span class="card-title">${s.studentName}</span>
+                ${genderIcon(s.gender)}
+              </div>`;
             card.addEventListener("click", () => onSelectStudentCard(card));
             container.appendChild(card);
-          });          
+          });
           showNotification("✅ Students loaded successfully", "success", "notificationSearch");
-          
         } else {
           container.innerHTML = `<p style="color:red">No student found</p>`;
           showNotification("❌ No matching student", "error", "notificationSearch");
@@ -219,72 +210,68 @@
       }
     }
 
-    // function onSelectStudent(ck, label) {
-    //  document.querySelectorAll("#searchResult input[name='studentSingle']").forEach(n => {
-    //    if (n !== ck) n.checked = false;
-    //  });
-    //  document.querySelectorAll(".student-line").forEach(l => l.classList.remove("selected"));
-    //  if (ck.checked) {
-    //    label.classList.add("selected");
-    //    selectedStudentId = ck.value;
-    //  } else {
-    //    selectedStudentId = null;
-    //  }
-    //  updateSubmitState();
-    //}
-    
+    // 选中学生
     function onSelectStudentCard(card) {
-      document.querySelectorAll(".student-card-selectable").forEach(c => c.classList.remove("selected"));
+      document.querySelectorAll(".selectable-card").forEach(c => c.classList.remove("selected"));
       card.classList.add("selected");
       selectedStudentId = card.dataset.sid;
       updateSubmitState();
-    }    
+    }
 
-    // ✅ 加载课程（按 dayOfWeek 折叠）
+    // 加载课程（Accordion）
     document.addEventListener("DOMContentLoaded", loadCourses);
 
     async function loadCourses() {
       const acc = document.getElementById("courseAccordion");
       acc.innerHTML = "<p>Loading courses...</p>";
+
       try {
-        // const body = new URLSearchParams({ action: "listActiveCourses" });
-        // const body = new URLSearchParams({ action: "getActiveClasses" });       
         const name = "";
-        const res = await fetch(`${API_URL}?action=searchCourseByName&name=${encodeURIComponent(name)}`);
-        
-        // const res = await fetch(API_URL, { method:"GET", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body });
-        
-        const list = await res.json();
+        // const body = new URLSearchParams({ action: "listActiveCourses" });
+        const res = await fetch(`${API_URL}?action=searchCourseByName&name=$(encodeURIComponent(name)}`);
+        const data = await res.json();
+
+        if (!data.ok || !data.results?.length) {
+          acc.innerHTML = "<p style='color:red'>No active courses found</p>";
+          return;
+        }
 
         acc.innerHTML = "";
+        const order = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
         const map = {};
-        list.results.forEach(c => {
+        data.results.forEach(c => {
           const day = c.dayOfWeek || "Unassigned";
           if (!map[day]) map[day] = [];
           map[day].push(c);
         });
 
-        Object.keys(map).forEach(day => {
+        order.forEach(day => {
+          const list = map[day];
+          if (!list) return;
+
           const section = document.createElement("div");
           section.className = "accordion-section";
+
           const header = document.createElement("div");
           header.className = "accordion-header";
-          header.textContent = `${day} (${map[day].length} classes)`;
+          header.innerHTML = `${day} <span>${list.length} classes</span>`;
           const content = document.createElement("div");
           content.className = "accordion-content";
 
-          map[day].forEach(c => {
-            const item = document.createElement("div");
-            item.className = "course-item";
-            item.innerHTML = `
-              <label>
-                <input type="checkbox" name="course-${day}" value="${c.classId}">
-                <strong>${c.className}</strong> ${c.startTime} - ${c.endTime} (${c.location})
-              </label>
+          list.forEach(c => {
+            const card = document.createElement("div");
+            card.className = "selectable-card";
+            card.dataset.cid = c.classId;
+            card.dataset.day = day;
+            card.innerHTML = `
+              <div class="card-line">
+                <span class="card-title">${c.className}</span>
+                <span class="card-sub">${c.dateFrom} - ${c.dateTo}</span>
+              </div>
+              <div class="card-sub">${c.location}</div>
             `;
-            const ck = item.querySelector("input");
-            ck.addEventListener("change", () => onSelectCourse(day, ck, item));
-            content.appendChild(item);
+            card.addEventListener("click", () => onSelectCourseCard(day, card));
+            content.appendChild(card);
           });
 
           header.addEventListener("click", () => content.classList.toggle("open"));
@@ -292,22 +279,22 @@
           section.appendChild(content);
           acc.appendChild(section);
         });
+
         showNotification("✅ Courses loaded successfully", "success", "notificationApply");
       } catch (err) {
+        acc.innerHTML = "<p style='color:red'>Failed to load courses</p>";
         showNotification("⚠️ Failed to load courses: " + err.message, "error", "notificationApply");
       }
     }
 
-    function onSelectCourse(day, ck, item) {
-      document.querySelectorAll(`input[name='course-${day}']`).forEach(n => {
-        if (n !== ck) n.checked = false;
-      });
-      document.querySelectorAll(`.accordion-content .course-item`).forEach(i => i.classList.remove("selected"));
-      if (ck.checked) {
-        item.classList.add("selected");
-        selectedCourses[day] = ck.value;
-      } else {
+    // 选中课程
+    function onSelectCourseCard(day, card) {
+      document.querySelectorAll(`.selectable-card[data-day='${day}']`).forEach(c => c.classList.remove("selected"));
+      if (selectedCourses[day] === card.dataset.cid) {
         delete selectedCourses[day];
+      } else {
+        selectedCourses[day] = card.dataset.cid;
+        card.classList.add("selected");
       }
       updateSubmitState();
     }
@@ -317,7 +304,7 @@
       btn.disabled = !(selectedStudentId && Object.keys(selectedCourses).length > 0);
     }
 
-    // ✅ 提交报名
+    // 提交报名
     async function submitApplication() {
       if (!selectedStudentId || Object.keys(selectedCourses).length === 0) return;
       const btn = document.getElementById("ApplySubmit");
@@ -338,7 +325,7 @@
         }
         showNotification("✅ Application submitted successfully!", "success", "notificationApply");
         document.getElementById("searchResult").innerHTML = "";
-        document.getElementById("courseAccordion").querySelectorAll("input[type='checkbox']").forEach(c => c.checked = false);
+        document.querySelectorAll(".selectable-card").forEach(c => c.classList.remove("selected"));
         for (let k in selectedCourses) delete selectedCourses[k];
         selectedStudentId = null;
         updateSubmitState();
