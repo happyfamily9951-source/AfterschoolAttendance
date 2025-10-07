@@ -1,60 +1,59 @@
-
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>学生报名课程 · StudentCourseApplication</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="icons/logo-monica-linan.svg" />
-  <script defer src="config.js"></script>
-  <script src="StudentCourseApplication.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Course Application</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
 </head>
 
-<body class="student-course-app">
-  <!-- 顶部导航栏（与 CourseEnrollment.html 保持一致风格） -->
-  <header class="appbar">
-    <img class="logo" src="icons/logo-monica-linan.svg" alt="Monica & Linan" />
-    <h1>学生报名课程 · StudentCourseApplication</h1>
-    <div id="notify" class="notify"></div>
-  </header>
+<body class="page-student-course">
+  <!-- 左上角小 Logo -->
+  <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
 
-  <main class="container">
-    <!-- 学生搜索与选择 -->
-    <section class="section-card" aria-labelledby="student-search-title">
-      <div class="row space-between">
-        <h2 id="student-search-title">1）选择学生</h2>
-        <button id="btnClearStudent" class="btn secondary" type="button">清除选择</button>
+  <main class="page-content">
+    
+    <!-- Container 1: Search Student -->
+    <div class="form-container">
+      <h2>Search Student</h2>
+
+      <!-- Notification -->
+      <div id="notification" class="notification hidden"></div>
+
+      <!-- Search input -->
+      <div class="row">
+        <div class="col">
+          <input type="text" id="searchName" placeholder="Enter student's name">
+        </div>
+        <div>
+          <button class="btn-primary" id="SearchBtn" onclick="searchStudent()">Search</button>
+        </div>
       </div>
 
-      <div class="row mt-10">
-        <input id="studentNameInput" type="text" placeholder="输入学生姓名（支持部分匹配）" autocomplete="off" />
-        <button id="btnSearch" class="btn primary" type="button">搜索学生</button>
-      </div>
+      <!-- Search results -->
+      <div id="searchResult" style="margin-top:12px;"></div>
+    </div>
 
-      <ul id="studentResult" class="list" aria-live="polite"></ul>
-    </section>
+    <!-- Container 2: Select Course by DayOfWeek -->
+    <div class="form-container">
+      <h2>Select Course by Day of Week</h2>
+      <div id="courseAccordion" class="accordion"></div>
 
-    <!-- 课程展示与选择（按 dayOfWeek 折叠显示） -->
-    <section class="section-card" aria-labelledby="course-choose-title">
-      <h2 id="course-choose-title">2）选择课程（按上课星期分类）</h2>
-      <div id="courseAccordion" class="accordion" aria-live="polite"></div>
+      <button class="btn-primary" id="ApplySubmit" disabled onclick="submitApplication()">Submit Application</button>
+    </div>
 
-      <div class="submit-row">
-        <button id="btnSubmit" class="btn primary" type="button" disabled>提交报名</button>
-      </div>
-    </section>
   </main>
-  
-  <!-- 底部导航 -->
+
+  <!-- 底部导航栏 -->
   <nav class="bottom-nav">
-    <a class="nav-item nav-student active" href="StudentEnrollment.html" aria-label="Student Enrollment">
+    <a class="nav-item nav-student" href="StudentEnrollment.html" aria-label="Student Enrollment">
       <img src="icons/student-enroll.svg" alt="">
     </a>
     <a class="nav-item nav-course" href="CourseEnrollment.html" aria-label="Course Enrollment">
       <img src="icons/course-enroll.svg" alt="">
     </a>
-    <a class="nav-item nav-student-course-application" href="StudentCourseApplication.html" aria-label="Student Course Application">
+    <a class="nav-item nav-student-course-application active" href="StudentCourseApplication.html" aria-label="Student Course Application">
       <img src="icons/student-course-application.svg" alt="">
     </a>    
     <a class="nav-item nav-attend" href="Attendance.html" aria-label="Attendance">
@@ -63,9 +62,168 @@
     <a class="nav-item nav-report" href="Report.html" aria-label="Reports">
       <img src="icons/report.svg" alt="">
     </a>
-  </nav> 
-  
-  <!-- 页面脚本 -->
-  <script src="StudentCourseApplication.js"></script>
+  </nav>
+
+  <!-- JS 功能 -->
+  <script>
+    let selectedStudentId = null;
+    const selectedCourses = {}; // { Monday: classId, Tuesday: classId, ... }
+
+    // 1️⃣ 搜索学生
+    async function searchStudent() {
+      const btn = document.getElementById("SearchBtn");
+      const name = document.getElementById("searchName").value.trim();
+      const container = document.getElementById("searchResult");
+      if (!name) { alert("Please enter a student name"); return; }
+
+      btn.disabled = true; btn.innerText = "Searching..."; container.innerHTML = "";
+      try {
+        const response = await fetch(`${API_URL}?action=searchStudentByName&name=${encodeURIComponent(name)}`);
+        const result = await response.json();
+
+        if (result.ok && result.results && result.results.length > 0) {
+          container.innerHTML = "";
+          result.results.forEach(s => {
+            const card = document.createElement("div");
+            card.className = "student-card";
+            card.dataset.sid = s.studentId;
+            card.innerHTML = `
+              <div class="student-header">
+                <input type="checkbox" name="studentSingle" value="${s.studentId}">
+                <strong>${s.studentId}</strong> ${s.studentName} (${s.gender})
+              </div>
+            `;
+            const ck = card.querySelector("input");
+            ck.addEventListener("change", () => onSelectStudent(ck, card));
+            container.appendChild(card);
+          });
+        } else {
+          container.innerHTML = `<p style="color:red">No student found</p>`;
+        }
+      } catch (err) {
+        alert("Network error: " + err.message);
+      } finally {
+        btn.disabled = false; btn.innerText = "Search";
+      }
+    }
+
+    function onSelectStudent(ck, card) {
+      document.querySelectorAll("#searchResult input[name='studentSingle']").forEach(n => {
+        if (n !== ck) n.checked = false;
+      });
+      document.querySelectorAll(".student-card").forEach(c => c.classList.remove("selected"));
+      if (ck.checked) {
+        card.classList.add("selected");
+        selectedStudentId = ck.value;
+      } else {
+        selectedStudentId = null;
+      }
+      updateSubmitState();
+    }
+
+    // 2️⃣ 加载课程（按 dayOfWeek 折叠）
+    document.addEventListener("DOMContentLoaded", loadCourses);
+
+    async function loadCourses() {
+      const acc = document.getElementById("courseAccordion");
+      acc.innerHTML = "<p>Loading courses...</p>";
+      try {
+        const body = new URLSearchParams({ action: "listActiveCourses" });
+        const res = await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body });
+        const list = await res.json();
+
+        acc.innerHTML = "";
+        const map = {};
+        list.forEach(c => {
+          const day = c.dayOfWeek || "Unassigned";
+          if (!map[day]) map[day] = [];
+          map[day].push(c);
+        });
+
+        Object.keys(map).forEach(day => {
+          const section = document.createElement("div");
+          section.className = "accordion-section";
+          const header = document.createElement("div");
+          header.className = "accordion-header";
+          header.textContent = `${day} (${map[day].length} classes)`;
+          const content = document.createElement("div");
+          content.className = "accordion-content";
+
+          map[day].forEach(c => {
+            const item = document.createElement("div");
+            item.className = "course-item";
+            item.innerHTML = `
+              <label>
+                <input type="checkbox" name="course-${day}" value="${c.classId}">
+                <strong>${c.className}</strong> ${c.startTime} - ${c.endTime} (${c.location})
+              </label>
+            `;
+            const ck = item.querySelector("input");
+            ck.addEventListener("change", () => onSelectCourse(day, ck, item));
+            content.appendChild(item);
+          });
+
+          header.addEventListener("click", () => content.classList.toggle("open"));
+          section.appendChild(header);
+          section.appendChild(content);
+          acc.appendChild(section);
+        });
+      } catch (err) {
+        acc.innerHTML = `<p style="color:red">Failed to load courses</p>`;
+      }
+    }
+
+    function onSelectCourse(day, ck, item) {
+      // 每个 day 仅能选一个
+      document.querySelectorAll(`input[name='course-${day}']`).forEach(n => {
+        if (n !== ck) n.checked = false;
+      });
+      document.querySelectorAll(`.accordion-content .course-item`).forEach(i => i.classList.remove("selected"));
+      if (ck.checked) {
+        item.classList.add("selected");
+        selectedCourses[day] = ck.value;
+      } else {
+        delete selectedCourses[day];
+      }
+      updateSubmitState();
+    }
+
+    function updateSubmitState() {
+      const btn = document.getElementById("ApplySubmit");
+      btn.disabled = !(selectedStudentId && Object.keys(selectedCourses).length > 0);
+    }
+
+    // 3️⃣ 提交报名
+    async function submitApplication() {
+      if (!selectedStudentId || Object.keys(selectedCourses).length === 0) return;
+      const btn = document.getElementById("ApplySubmit");
+      btn.disabled = true; btn.innerText = "Submitting...";
+
+      try {
+        for (const [day, classId] of Object.entries(selectedCourses)) {
+          const body = new URLSearchParams({
+            action: "applyStudentToClass",
+            studentId: selectedStudentId,
+            classId: classId
+          });
+          await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body
+          });
+        }
+        showNotification("✅ Course application submitted successfully!", "success");
+        document.getElementById("searchResult").innerHTML = "";
+        document.getElementById("courseAccordion").querySelectorAll("input[type='checkbox']").forEach(c => c.checked = false);
+        selectedCourses = {};
+        selectedStudentId = null;
+        updateSubmitState();
+      } catch (err) {
+        alert("Submission failed: " + err.message);
+      } finally {
+        btn.disabled = false; btn.innerText = "Submit Application";
+      }
+    }
+  </script>
 </body>
 </html>
