@@ -192,10 +192,28 @@
 
     // 选中学生
     function onSelectStudentCard(card) {
-      document.querySelectorAll(".selectable-card").forEach(c => c.classList.remove("selected"));
+      
+      // 1️⃣ 取消所有学生高亮
+      document.querySelectorAll("#searchResult .selectable-card").forEach(c => c.classList.remove("selected"));
       card.classList.add("selected");
       selectedStudentId = card.dataset.sid;
+      
+      // 2️⃣ 清空课程选择数据
+      for (let k in selectedCourses) delete selectedCourses[k];
+      
+      // 3️⃣ 移除课程卡片高亮
+      document.querySelectorAll("#courseAccordion .selectable-card").forEach(c => c.classList.remove("selected"));
+      
+      // 4️⃣ 重置每个 dayOfWeek 的计数
+      document.querySelectorAll(".day-count").forEach(span => {
+        const totalMatch = span.textContent.match(/\/\\s*(\\d+)\\s*classes/);
+        const total = totalMatch ? totalMatch[1] : "0";
+        span.textContent = `0 selected / ${total} classes`;
+      });
+      
+      // 5️⃣ 更新提交按钮状态
       updateSubmitState();
+      showNotification("🎯 Student re-selected. Course selections cleared.", "info", "notificationApply"); 
     }
 
     // 加载课程（Accordion）
