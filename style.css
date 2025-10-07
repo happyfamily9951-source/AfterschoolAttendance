@@ -332,7 +332,10 @@ select option.today {
 .btn-primary:hover {
   background: #1669c1;
 }
-
+.btn-primary:not([disabled]) {
+  pointer-events: auto;
+  opacity: 1;
+}
 /* ====================================
    6. 大卡片按钮 (index.html 首页)
    ==================================== */
