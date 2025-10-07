@@ -320,10 +320,17 @@
 
     function updateSubmitState() {
       const btn = document.getElementById("ApplySubmit");
-
       console.log("DEBUG: ", {selectedStudentId, selectedCourses});
-      
-      btn.disabled = !(selectedStudentId && Object.keys(selectedCourses).length > 0);
+
+      if (!btn) {
+        console.warn(" CAN NOT FIND APPLYSUBMIT BUTTON");
+      }
+
+      const canSubmit = !!(selectedStudent && Object.keys(selectedCourses).length > 0);
+      console.log(" canSubmit = ", canSubmit);
+
+      btn.disabled = !canSubmit;      
+      // btn.disabled = !(selectedStudentId && Object.keys(selectedCourses).length > 0);
     }
 
     // 提交报名
