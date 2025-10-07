@@ -326,7 +326,7 @@
         console.warn(" CAN NOT FIND APPLYSUBMIT BUTTON");
       }
 
-      const canSubmit = !!(selectedStudent && Object.keys(selectedCourses).length > 0);
+      const canSubmit = !!(selectedStudentId && Object.keys(selectedCourses).length > 0);
       console.log(" canSubmit = ", canSubmit);
 
       btn.disabled = !canSubmit;      
