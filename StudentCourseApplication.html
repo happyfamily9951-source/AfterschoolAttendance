@@ -203,10 +203,10 @@
             card.innerHTML = `
               <label class="student-header">
                 <input type="checkbox" name="studentSingle" value="${s.studentId}">
-                <span class="student-info">
+                <div class="student-info">
                   <strong>${s.studentId}</strong> - ${s.studentName}
                   <span class="student-gender">(${s.gender || ""})</span>
-                </span>
+                </div>
               </label>
             `;
             const ck = card.querySelector("input");
