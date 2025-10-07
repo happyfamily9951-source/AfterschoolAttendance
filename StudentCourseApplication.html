@@ -6,6 +6,104 @@
   <title>Student Course Application</title>
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
+
+  <style>
+    /* ===== Search Student 简洁布局 ===== */
+    .student-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 8px;
+      border-bottom: 1px solid #eee;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .student-line:hover {
+      background: #f9fafb;
+    }
+
+    .student-line.selected {
+      background: #e0f2fe;
+    }
+
+    .student-line input[type="checkbox"] {
+      transform: scale(1.1);
+      cursor: pointer;
+    }
+
+    .student-name {
+      flex: 1;
+    }
+
+    .student-gender-icon {
+      font-size: 18px;
+      opacity: 0.8;
+    }
+
+    /* ===== Accordion 样式 ===== */
+    .accordion-section {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      margin-top: 8px;
+      background: #fff;
+    }
+
+    .accordion-header {
+      padding: 10px 12px;
+      background: #f9fafb;
+      cursor: pointer;
+      font-weight: 600;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .accordion-content {
+      display: none;
+      padding: 8px 12px;
+    }
+
+    .accordion-content.open {
+      display: block;
+    }
+
+    .course-item {
+      margin: 4px 0;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .course-item.selected {
+      background-color: #e0f2fe;
+      border-left: 3px solid #3b82f6;
+    }
+
+    /* ===== 通知区域 ===== */
+    .notification {
+      min-height: 20px;
+      margin-bottom: 6px;
+      position: relative;
+    }
+
+    .notification-inner {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      opacity: 0;
+      transform: translateY(-5px);
+      transition: all 0.4s ease;
+    }
+
+    .notification-inner.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .notification-inner.success { background: #dcfce7; color: #166534; }
+    .notification-inner.error { background: #fee2e2; color: #b91c1c; }
+    .notification-inner.info { background: #e0f2fe; color: #075985; }
+  </style>
 </head>
 
 <body class="page-student-course">
@@ -17,11 +115,8 @@
     <!-- Container 1: Search Student -->
     <div class="form-container">
       <h2>Search Student</h2>
-
-      <!-- 独立通知栏 -->
       <div id="notificationSearch" class="notification"></div>
 
-      <!-- Search input -->
       <div class="row">
         <div class="col">
           <input type="text" id="searchName" placeholder="Enter student's name">
@@ -31,15 +126,12 @@
         </div>
       </div>
 
-      <!-- Search results -->
       <div id="searchResult" style="margin-top:12px;"></div>
     </div>
 
     <!-- Container 2: Select Course by DayOfWeek -->
     <div class="form-container">
       <h2>Select Course by Day of Week</h2>
-
-      <!-- 独立通知栏 -->
       <div id="notificationApply" class="notification"></div>
 
       <div id="courseAccordion" class="accordion"></div>
@@ -68,16 +160,24 @@
     </a>
   </nav>
 
-  <!-- JS 功能 -->
   <script>
     let selectedStudentId = null;
     const selectedCourses = {}; // { Monday: classId, Tuesday: classId, ... }
 
-    // 1️⃣ 搜索学生
+    // ✅ 性别图标函数
+    function genderIcon(g) {
+      const t = (g || "").toString().toUpperCase();
+      if (t === "M" || t === "MALE") return "👦";
+      if (t === "F" || t === "FEMALE") return "👧";
+      return "⚪";
+    }
+
+    // ✅ 搜索学生
     async function searchStudent() {
       const btn = document.getElementById("SearchBtn");
       const name = document.getElementById("searchName").value.trim();
       const container = document.getElementById("searchResult");
+
       if (!name) { 
         showNotification("Please enter a student name", "error", "notificationSearch");
         return; 
@@ -98,7 +198,6 @@
               <span class="student-name">${s.studentName}</span>
               <span class="student-gender-icon">${genderIcon(s.gender)}</span>
             `;
-            
             const ck = label.querySelector("input");
             ck.addEventListener("change", () => onSelectStudent(ck, label));
             container.appendChild(label);
@@ -126,10 +225,10 @@
       } else {
         selectedStudentId = null;
       }
-      updateSubmitState();      
+      updateSubmitState();
     }
 
-    // 2️⃣ 加载课程（按 dayOfWeek 折叠）
+    // ✅ 加载课程（按 dayOfWeek 折叠）
     document.addEventListener("DOMContentLoaded", loadCourses);
 
     async function loadCourses() {
@@ -142,7 +241,7 @@
 
         acc.innerHTML = "";
         const map = {};
-        list.forEach(c => {
+        list.results.forEach(c => {
           const day = c.dayOfWeek || "Unassigned";
           if (!map[day]) map[day] = [];
           map[day].push(c);
@@ -201,7 +300,7 @@
       btn.disabled = !(selectedStudentId && Object.keys(selectedCourses).length > 0);
     }
 
-    // 3️⃣ 提交报名
+    // ✅ 提交报名
     async function submitApplication() {
       if (!selectedStudentId || Object.keys(selectedCourses).length === 0) return;
       const btn = document.getElementById("ApplySubmit");
