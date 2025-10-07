@@ -228,7 +228,7 @@
       try {
         const name = "";
         // const body = new URLSearchParams({ action: "listActiveCourses" });
-        const res = await fetch(`${API_URL}?action=searchCourseByName&name=$(encodeURIComponent(name)}`);
+        const res = await fetch(`${API_URL}?action=searchCourseByName&name=${encodeURIComponent(name)}`);
         const data = await res.json();
 
         if (!data.ok || !data.results?.length) {
