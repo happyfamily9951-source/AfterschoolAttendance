@@ -264,7 +264,7 @@
           list.forEach(c => {
             const card = document.createElement("div");
             card.className = "selectable-card";
-            card.dataset.cid = c.classId;
+            card.dataset.cid = c.className;
             card.dataset.day = day;
             card.innerHTML = `
               <div class="card-line">
@@ -327,7 +327,7 @@
           const body = new URLSearchParams({
             action: "applyStudentToClass",
             studentId: selectedStudentId,
-            classId: classId
+            className: classId
           });
           await fetch(API_URL, {
             method: "POST",
