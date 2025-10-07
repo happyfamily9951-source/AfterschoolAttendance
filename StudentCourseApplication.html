@@ -335,6 +335,8 @@
           "action=" + encodeURIComponent("applyStudentToClass") +
           "&studentId=" + encodeURIComponent(studentId) +
           "&className=" + encodeURIComponent(classId); 
+
+          alert("BODY: " + body);
           
           await fetch(API_URL, {
             method: "POST",
