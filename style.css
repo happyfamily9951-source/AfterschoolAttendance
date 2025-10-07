@@ -262,6 +262,36 @@ select option.today {
    user-select: none;
 }
 
+.student-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.student-line:hover {
+  background: #f9fafb;
+}
+
+.student-line.selected {
+  background: #e0f2fe;
+}
+
+.student-name {
+  flex: 1;
+}
+
+.student-gender-icon {
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+
+
 .phone-btn:hover {
    background: #27ae6015;
    color: #27ae60;
