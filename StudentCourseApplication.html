@@ -9,41 +9,42 @@
 
   <style>
     /* ===== Search Student 简洁布局 ===== */
-    .student-line {
-      display: flex;
-      grid-template-columns: 30px 1fr auto;
-      /* align-items: center; */
-      gap: 10px;
-      padding: 6px 8px;
-      border-bottom: 1px solid #eee;
-      font-size: 15px;
+    .student-card-selectable {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 6px;
+      background: #fff;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: all 0.2s ease;
     }
-
-    .student-line:hover {
+    
+    .student-card-selectable:hover {
       background: #f9fafb;
     }
-
-    .student-line.selected {
+    
+    .student-card-selectable.selected {
       background: #e0f2fe;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px #bfdbfe;
     }
-
-    .student-line input[type="checkbox"] {
-      justify-self: start;
-      transform: scale(1.1);
-      cursor: pointer;
+    
+    .student-card-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 15px;
     }
-
+    
     .student-name {
-      flex: 1;
+      font-weight: 500;
     }
-
+    
     .student-gender-icon {
       font-size: 18px;
       opacity: 0.8;
-    }
-
+    }    
+    
     /* ===== Accordion 样式 ===== */
     .accordion-section {
       border: 1px solid #ddd;
@@ -165,13 +166,12 @@
   <script>
     let selectedStudentId = null;
     const selectedCourses = {}; // { Monday: classId, Tuesday: classId, ... }
-
-    // ✅ 性别图标函数
+    
     function genderIcon(g) {
       const t = (g || "").toString().toUpperCase();
-      if (t === "M" || t === "MALE") return "👦";
-      if (t === "F" || t === "FEMALE") return "👧";
-      return "⚪";
+      if (t === "M" || t === "MALE") return `<img src="icons/male.svg" alt="male" class="gender-icon">`;
+      if (t === "F" || t === "FEMALE") return `<img src="icons/female.svg" alt="female" class="gender-icon">`;
+      return `<img src="icons/neutral.svg" alt="unknown" class="gender-icon">`; // 备用
     }
 
     // ✅ 搜索学生
@@ -193,17 +193,21 @@
         if (result.ok && result.results && result.results.length > 0) {
           container.innerHTML = "";
           result.results.forEach(s => {
-            const label = document.createElement("label");
-            label.className = "student-line";
-            label.innerHTML = `
-              <input type="checkbox" name="studentSingle" value="${s.studentId}">
-              <div class="student-name">${s.studentName} ${genderIcon(s.gender)}</div>
+            const card = document.createElement("div");
+            card.className = "student-card-selectable";
+            card.dataset.sid = s.studentId;
+            card.innerHTML = `
+              <div class="student-card-content">
+              <span class="student-name">${s.studentName}</span>
+              <span class="student-gender-icon">${genderIcon(s.gender)}</span>
+              </div>
             `;
-            const ck = label.querySelector("input");
-            ck.addEventListener("change", () => onSelectStudent(ck, label));
-            container.appendChild(label);
-          });
+            
+            card.addEventListener("click", () => onSelectStudentCard(card));
+            container.appendChild(card);
+          });          
           showNotification("✅ Students loaded successfully", "success", "notificationSearch");
+          
         } else {
           container.innerHTML = `<p style="color:red">No student found</p>`;
           showNotification("❌ No matching student", "error", "notificationSearch");
@@ -215,19 +219,26 @@
       }
     }
 
-    function onSelectStudent(ck, label) {
-      document.querySelectorAll("#searchResult input[name='studentSingle']").forEach(n => {
-        if (n !== ck) n.checked = false;
-      });
-      document.querySelectorAll(".student-line").forEach(l => l.classList.remove("selected"));
-      if (ck.checked) {
-        label.classList.add("selected");
-        selectedStudentId = ck.value;
-      } else {
-        selectedStudentId = null;
-      }
+    // function onSelectStudent(ck, label) {
+    //  document.querySelectorAll("#searchResult input[name='studentSingle']").forEach(n => {
+    //    if (n !== ck) n.checked = false;
+    //  });
+    //  document.querySelectorAll(".student-line").forEach(l => l.classList.remove("selected"));
+    //  if (ck.checked) {
+    //    label.classList.add("selected");
+    //    selectedStudentId = ck.value;
+    //  } else {
+    //    selectedStudentId = null;
+    //  }
+    //  updateSubmitState();
+    //}
+    
+    function onSelectStudentCard(card) {
+      document.querySelectorAll(".student-card-selectable").forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      selectedStudentId = card.dataset.sid;
       updateSubmitState();
-    }
+    }    
 
     // ✅ 加载课程（按 dayOfWeek 折叠）
     document.addEventListener("DOMContentLoaded", loadCourses);
