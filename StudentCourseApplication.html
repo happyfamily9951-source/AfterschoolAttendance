@@ -320,6 +320,9 @@
 
     function updateSubmitState() {
       const btn = document.getElementById("ApplySubmit");
+
+      console.log("DEBUG: ", {selectedStudentId, selectedCourses});
+      
       btn.disabled = !(selectedStudentId && Object.keys(selectedCourses).length > 0);
     }
 
