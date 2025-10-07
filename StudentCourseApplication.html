@@ -6,112 +6,6 @@
   <title>Student Course Application</title>
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
-  <style>
-    /* ===== Search Student 样式优化 ===== */
-    .student-card {
-      padding: 6px 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-top: 6px;
-      background-color: #fff;
-      transition: background 0.2s ease;
-    }
-
-    .student-card.selected {
-      background-color: #e0f2fe; /* 选中时高亮 */
-      border-color: #3b82f6;
-    }
-
-    .student-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-    }
-
-    .student-header input[type="checkbox"] {
-      transform: scale(1.1);
-      cursor: pointer;
-    }
-
-    .student-info {
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-      font-size: 15px;
-    }
-
-    .student-info strong {
-      color: #111827;
-    }
-
-    .student-gender {
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    /* ===== Accordion 样式 ===== */
-    .accordion-section {
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      margin-top: 8px;
-      background: #fff;
-    }
-
-    .accordion-header {
-      padding: 10px 12px;
-      background: #f9fafb;
-      cursor: pointer;
-      font-weight: 600;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .accordion-content {
-      display: none;
-      padding: 8px 12px;
-    }
-
-    .accordion-content.open {
-      display: block;
-    }
-
-    .course-item {
-      margin: 4px 0;
-      padding: 6px 10px;
-      border-radius: 6px;
-      transition: background 0.2s ease;
-    }
-
-    .course-item.selected {
-      background-color: #e0f2fe;
-      border-left: 3px solid #3b82f6;
-    }
-
-    /* ===== 通知区域 ===== */
-    .notification {
-      min-height: 20px;
-      margin-bottom: 6px;
-      position: relative;
-    }
-
-    .notification-inner {
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      opacity: 0;
-      transform: translateY(-5px);
-      transition: all 0.4s ease;
-    }
-
-    .notification-inner.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .notification-inner.success { background: #dcfce7; color: #166534; }
-    .notification-inner.error { background: #fee2e2; color: #b91c1c; }
-    .notification-inner.info { background: #e0f2fe; color: #075985; }
-  </style>
 </head>
 
 <body class="page-student-course">
@@ -197,21 +91,17 @@
         if (result.ok && result.results && result.results.length > 0) {
           container.innerHTML = "";
           result.results.forEach(s => {
-            const card = document.createElement("div");
-            card.className = "student-card";
-            card.dataset.sid = s.studentId;
-            card.innerHTML = `
-              <label class="student-header">
-                <input type="checkbox" name="studentSingle" value="${s.studentId}">
-                <div class="student-info">
-                  <strong>${s.studentId}</strong> - ${s.studentName}
-                  <span class="student-gender">(${s.gender || ""})</span>
-                </div>
-              </label>
+            const label = document.createElement("label");
+            label.className = "student-line";
+            label.innerHTML = `
+              <input type="checkbox" name="studentSingle" value="${s.studentId}">
+              <span class="student-name">${s.studentName}</span>
+              <span class="student-gender-icon">${genderIcon(s.gender)}</span>
             `;
-            const ck = card.querySelector("input");
-            ck.addEventListener("change", () => onSelectStudent(ck, card));
-            container.appendChild(card);
+            
+            const ck = label.querySelector("input");
+            ck.addEventListener("change", () => onSelectStudent(ck, label));
+            container.appendChild(label);
           });
           showNotification("✅ Students loaded successfully", "success", "notificationSearch");
         } else {
