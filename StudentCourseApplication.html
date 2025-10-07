@@ -330,16 +330,16 @@
       btn.disabled = true; btn.innerText = "Submitting...";
 
       try {
-        for (const [day, classId] of Object.entries(selectedCourses)) {
-          const body = new URLSearchParams({
-            action: "applyStudentToClass",
-            studentId: selectedStudentId,
-            className: classId
+        for (const [day, classId] of Object.entries(selectedCourses)) {          
+          const body = 
+          "action=" + encodeURIComponent("applyStudentToClass") +
+          "&studentId=" + encodeURIComponent(studentId) +
+          "&className=" + encodeURIComponent(classId);           
           });
           await fetch(API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body
+            headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+            body: body
           });
         }
         showNotification("✅ Application submitted successfully!", "success", "notificationApply");
