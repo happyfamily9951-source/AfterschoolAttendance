@@ -237,9 +237,16 @@
         }
 
         acc.innerHTML = "";
+
+        // Filter inactive classes
+        const activeCourses = data.results.filter(c=> {
+          const s = (c.status || "").toString().toLowerCase().trim();
+          return s !== "inactive" && s != "disabled";
+        }
+        
         const order = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
         const map = {};
-        data.results.forEach(c => {
+        activeCourses.forEach(c => {
           const day = c.dayOfWeek || "Unassigned";
           if (!map[day]) map[day] = [];
           map[day].push(c);
