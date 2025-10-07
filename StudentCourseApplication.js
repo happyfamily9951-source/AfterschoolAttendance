@@ -72,7 +72,8 @@ function renderStudentList(list){
     ck.type = 'checkbox'; ck.name = 'studentSingle'; ck.value = item.studentId;
     ck.addEventListener('change', () => onPickSingleStudent(ck, li));
 
-    const id = document.createElement('span'); id.className='badge'; id.textContent = item.studentId || '-';
+    // const id = document.createElement('span'); id.className='badge'; id.textContent = item.studentId || '-';
+    const id = document.createElement('div'); id.className='badge'; id.textContent = item.studentId || '-';
     const name = document.createElement('div'); name.innerHTML = `<strong>${escapeHtml(item.studentName||'-')}</strong>`;
     const gd = document.createElement('div'); gd.className='muted'; gd.style.textAlign='right';
     gd.innerHTML = genderIcon(item.gender);
