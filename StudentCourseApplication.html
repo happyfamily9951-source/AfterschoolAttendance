@@ -413,12 +413,37 @@
 
           alert("BODY: " + body);
           
-          await fetch(API_URL, {
+          const resp = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-            body: body
+            body
           });
+
+          if (!resp.ok) {
+            console.error("❌ HTTP error:", resp.status, resp.statusText);
+            showNotification(`Network error: ${resp.status}`, "error");
+            continue; // 跳过本次循环
+          }
+          
+          // ✅ 解析 Apps Script 返回内容
+          let result;
+          try {
+            result = await resp.json(); // Apps Script 通常返回 JSON
+          } catch {
+            const text = await resp.text();
+            console.warn("⚠️ Response not JSON, raw text:", text);
+            result = { ok: false, message: "Invalid JSON response", raw: text };
+          }
+          console.log("✅ Response for", classId, ":", result);
+          
+          // ✅ 根据返回内容进行反馈
+          if (result.ok) {
+            showNotification(`✅ ${classId} submitted successfully`, "success");
+          } else {
+            showNotification(`⚠️ ${classId} failed: ${result.message}`, "error");
+          }
         }
+          
         showNotification("✅ Application submitted successfully!", "success", "notificationApply");
         document.getElementById("searchResult").innerHTML = "";
         document.querySelectorAll(".selectable-card").forEach(c => c.classList.remove("selected"));
