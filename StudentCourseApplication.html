@@ -125,18 +125,17 @@
 
       <button class="btn-primary" id="ApplySubmit" disabled onclick="submitApplication()">Submit Application</button>
     </div>
-
+    
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+      <a class="nav-item nav-student" href="StudentEnrollment.html"><img src="icons/student-enroll.svg" alt=""></a>
+      <a class="nav-item nav-course" href="CourseEnrollment.html"><img src="icons/course-enroll.svg" alt=""></a>
+      <a class="nav-item nav-student-course-application active" href="StudentCourseApplication.html"><img src="icons/student-course-application.svg" alt=""></a>
+      <a class="nav-item nav-attend" href="Attendance.html"><img src="icons/attendance.svg" alt=""></a>
+      <a class="nav-item nav-report" href="Report.html"><img src="icons/report.svg" alt=""></a>
+    </nav>
   </main>
-
-  <!-- 底部导航 -->
-  <nav class="bottom-nav">
-    <a class="nav-item nav-student" href="StudentEnrollment.html"><img src="icons/student-enroll.svg" alt=""></a>
-    <a class="nav-item nav-course" href="CourseEnrollment.html"><img src="icons/course-enroll.svg" alt=""></a>
-    <a class="nav-item nav-student-course-application active" href="StudentCourseApplication.html"><img src="icons/student-course-application.svg" alt=""></a>
-    <a class="nav-item nav-attend" href="Attendance.html"><img src="icons/attendance.svg" alt=""></a>
-    <a class="nav-item nav-report" href="Report.html"><img src="icons/report.svg" alt=""></a>
-  </nav>
-
+    
   <script>
     let selectedStudentId = null;
     const selectedCourses = {}; // { Monday: classId, Tuesday: classId, ... }
