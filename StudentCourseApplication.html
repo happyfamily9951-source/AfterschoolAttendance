@@ -367,6 +367,10 @@
       console.log("Start submitApplication ===");
       console.log("Selected student:", selectedStudentId);
       console.log("Selected courses:", selectedCourses);
+
+      console.log(" !selectedStudentId: ", !selectedStudentId);
+      console.log(" Object.keys(selectedCourses).length ", Object.keys(selectedCourses).length);
+      console.log(" ---------------------");
       
       if (!selectedStudentId || Object.keys(selectedCourses).length === 0) return;
       const btn = document.getElementById("ApplySubmit");
