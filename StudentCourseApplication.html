@@ -372,7 +372,13 @@
       console.log(" Object.keys(selectedCourses).length ", Object.keys(selectedCourses).length);
       console.log(" ---------------------");
       
-      if (!selectedStudentId || Object.keys(selectedCourses).length === 0) return;
+      if (!selectedStudentId || Object.keys(selectedCourses).length === 0) {
+        console.log("Step 1: Return");
+        return;
+      }
+      
+      console.log("Step 2: ", !selectedStudentId);
+            
       const btn = document.getElementById("ApplySubmit");
       btn.disabled = true; btn.innerText = "Submitting...";
 
