@@ -396,7 +396,10 @@
         for (const [day, classId] of Object.entries(selectedCourses)) {
           
           console.log("selectedCourses in the loop loop:", selectedCourses);
-          console.log("Object.entries:", Object.entries(selectedCourses));          
+          console.log("Object.entries:", Object.entries(selectedCourses));   
+
+          console.log(" ================= ");
+          console.log("day = ", day, " classId = ", classId);
           
           const body = 
           "action=" + encodeURIComponent("applyStudentToClass") +
