@@ -401,11 +401,11 @@
           console.log(" ================= ");
           console.log("day = ", day);
           console.log(" classId = ", classId);
-          console.log(" studentId =", studentId);
+          console.log(" selectedStudentId =", selectedStudentId);
           
           const body = 
           "action=" + encodeURIComponent("applyStudentToClass") +
-          "&studentId=" + encodeURIComponent(studentId) +
+          "&studentId=" + encodeURIComponent(selectedStudentId) +
           "&className=" + encodeURIComponent(classId); 
 
           console.log("Loop, day = ", day, ", classId = ", classId);
