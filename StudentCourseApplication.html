@@ -389,8 +389,15 @@
       console.log("Step 4: ", btn.innerText);
       console.log("Object.entries: ", Object.entries);
       
+      console.log("selectedCourses before loop:", selectedCourses);
+      console.log("Object.entries:", Object.entries(selectedCourses));
+      
       try {
-        for (const [day, classId] of Object.entries(selectedCourses)) {          
+        for (const [day, classId] of Object.entries(selectedCourses)) {
+          
+          console.log("selectedCourses in the loop loop:", selectedCourses);
+          console.log("Object.entries:", Object.entries(selectedCourses));          
+          
           const body = 
           "action=" + encodeURIComponent("applyStudentToClass") +
           "&studentId=" + encodeURIComponent(studentId) +
