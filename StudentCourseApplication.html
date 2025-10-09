@@ -192,6 +192,10 @@
     // 选中学生
     function onSelectStudentCard(card) {
       
+      console.log("Start onSelectedCourseCard ===");
+      console.log("Selected student:", selectedStudentId);
+      console.log("Selected courses:", selectedCourses);
+      
       // 1️⃣ 取消所有学生高亮
       document.querySelectorAll("#searchResult .selectable-card").forEach(c => c.classList.remove("selected"));
       card.classList.add("selected");
@@ -213,6 +217,11 @@
       // 5️⃣ 更新提交按钮状态
       updateSubmitState();
       showNotification("🎯 Student re-selected. Course selections cleared.", "info", "notificationApply"); 
+
+      console.log("End onSelectedCourseCard ===");
+      console.log("Selected student:", selectedStudentId);
+      console.log("Selected courses:", selectedCourses);
+      
     }
 
     // 加载课程（Accordion）
@@ -297,6 +306,11 @@
 
     // 选中课程 + 更新 header 状态
     function onSelectCourseCard(day, card) {
+
+      console.log("Start onSelectedCourseCard ===");
+      console.log("Selected student:", selectedStudentId);
+      console.log("Selected courses:", selectedCourses);
+      
       const allCards = document.querySelectorAll(`.selectable-card[data-day='${day}']`);
       allCards.forEach(c => c.classList.remove("selected"));
       if (selectedCourses[day] === card.dataset.cid) {
@@ -307,6 +321,11 @@
       }
       updateDayHeaderCount(day);
       updateSubmitState();
+
+      console.log("End of onSelectedCourseCard ===");
+      console.log("Selected student:", selectedStudentId);
+      console.log("Selected courses:", selectedCourses);
+      
     }
 
     // 更新每个 day 的选中计数
@@ -321,6 +340,10 @@
       const btn = document.getElementById("ApplySubmit");
       console.log("🟢 updateSubmitState called:", { selectedStudentId, selectedCourses });
 
+      console.log("Start updateSubmitState ===");
+      console.log("Selected student:", selectedStudentId);
+      console.log("Selected courses:", selectedCourses);
+      
       if (!btn) {
         console.warn(" CAN NOT FIND APPLYSUBMIT BUTTON");
       }
@@ -331,10 +354,20 @@
       btn.disabled = !canSubmit;      
       console.log("Button state:", btn.disabled ? "Disabled" : "Enabled");
       // btn.disabled = !(selectedStudentId && Object.keys(selectedCourses).length > 0);
+      
+      console.log("End updateSubmitState ===");
+      console.log("Selected student:", selectedStudentId);
+      console.log("Selected courses:", selectedCourses);
+      
     }
 
     // 提交报名
     async function submitApplication() {
+      
+      console.log("Start submitApplication ===");
+      console.log("Selected student:", selectedStudentId);
+      console.log("Selected courses:", selectedCourses);
+      
       if (!selectedStudentId || Object.keys(selectedCourses).length === 0) return;
       const btn = document.getElementById("ApplySubmit");
       btn.disabled = true; btn.innerText = "Submitting...";
@@ -364,6 +397,9 @@
         });
         selectedStudentId = null;
         updateSubmitState();
+
+
+        
       } catch (err) {
         showNotification("❌ Submission failed: " + err.message, "error", "notificationApply");
       } finally {
