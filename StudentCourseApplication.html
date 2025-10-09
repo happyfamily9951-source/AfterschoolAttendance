@@ -387,14 +387,17 @@
       btn.innerText = "Submitting...";
 
       console.log("Step 4: ", btn.innerText);
+      console.log("Object.entries: ", Object.entries);
       
-
       try {
         for (const [day, classId] of Object.entries(selectedCourses)) {          
           const body = 
           "action=" + encodeURIComponent("applyStudentToClass") +
           "&studentId=" + encodeURIComponent(studentId) +
           "&className=" + encodeURIComponent(classId); 
+
+          console.log("Loop, day = ", day, ", classId = ", classId);
+          console.log("Loop, Body = ", body);
 
           alert("BODY: " + body);
           
