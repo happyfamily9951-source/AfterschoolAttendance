@@ -205,7 +205,7 @@
       
       // 4️⃣ 重置每个 dayOfWeek 的计数
       document.querySelectorAll(".day-count").forEach(span => {
-        const totalMatch = span.textContent.match(/\/\\s*(\\d+)\\s*classes/);
+        const totalMatch = span.textContent.match(/\/\s*(\d+)\s*classes/);
         const total = totalMatch ? totalMatch[1] : "?";
         span.textContent = `0 selected / ${total} classes`;
       });
