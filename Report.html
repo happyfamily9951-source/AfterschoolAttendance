@@ -1,147 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Attendance Report</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report - Under Construction</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
-    body { font-family: Arial, sans-serif; padding: 15px; }
-    h2 { color: #002060; }
-    label { margin-right: 10px; }
-    button { padding: 6px 12px; margin-top: 10px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
-    th { background: #f2f2f2; }
-    #chartContainer {max-width: 400px, margin-top: 20px;}
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      margin: 0;
+      background-color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #334155;
+    }
+
+    .logo {
+      width: 160px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 22px;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #64748b;
+      font-size: 15px;
+    }
+
+    .construction-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 16px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      border-top: 1px solid #ccc;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+    }
+
+    .bottom-nav a {
+      text-decoration: none;
+      color: #334155;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .bottom-nav a.active {
+      color: #3b82f6;
+    }
   </style>
 </head>
+
 <body>
-  <h2>出勤统计 / Attendance Report</h2>
+  <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo" />
 
-  <div>
-    <label>选择班级:</label>
-    <select id="classSelect"></select>
-    <br><br>
-    <label>开始日期:</label>
-    <input type="date" id="fromDate">
-    <label>结束日期:</label>
-    <input type="date" id="toDate">
-    <br><br>
-    <button onclick="getReport()">生成报表 / Generate Report</button>
+  <img src="icons/construction.svg" alt="Under Construction" class="construction-icon" />
+
+  <h1>Report Page</h1>
+  <p>🚧 This section is under construction. Please check back soon.</p>
+
+  <div class="bottom-nav">
+    <a href="index.html">Home</a>
+    <a href="StudentEnrollment.html">Enrollment</a>
+    <a href="Attendance.html">Attendance</a>
+    <a href="Report.html" class="active">Report</a>
   </div>
-
-  <div id="chartContainer" style="max-width:300px; margin-top:20px;">
-    <canvas id="attendanceChart" width="300" height="200"></canvas>
-  </div>
-
-  <div id="reportArea"></div>
-  <div id="recordsArea"></div>
-
-  <!-- === Public configuration file === -->
-  <script src="config.js"></script>
-
-  <script>
-    // const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
-    let chartInstance = null;
-    let lastRecords = [];
-
-    async function loadClasses() {
-      const res = await fetch(`${API_URL}?action=getClasses`);
-      const json = await res.json();
-      const sel = document.getElementById("classSelect");
-      json.classes.forEach(cls => {
-        let opt = document.createElement("option");
-        opt.value = cls;
-        opt.textContent = cls;
-        sel.appendChild(opt);
-      });
-    }
-
-    async function getReport() {
-      const cls = document.getElementById("classSelect").value;
-      const from = document.getElementById("fromDate").value;
-      const to = document.getElementById("toDate").value;
-
-      const res = await fetch(`${API_URL}?action=getReport&className=${encodeURIComponent(cls)}&from=${from}&to=${to}`);
-      const json = await res.json();
-
-      if (!json.ok) {
-        document.getElementById("reportArea").textContent = "生成失败: " + json.error;
-        return;
-      }
-
-      const s = json.stats;
-      lastRecords = json.records;
-      
-      document.getElementById("reportArea").innerHTML = `
-        <table>
-          <tr><th>班级 / Class Name </th><th>总记录 / Total Count </th><th>出勤 / Present</th><th>请假 / Leave</th><th>缺勤 / Absent</th></tr>
-          <tr>
-            <td>${cls}</td>
-            <td>${s.total}</td>
-            <td>${s.present}</td>
-            <td>${s.leave}</td>
-            <td>${s.absent}</td>
-          </tr>
-        </table>
-        <p>出勤率 / Attendace Rete : ${(s.present / (s.total || 1) * 100).toFixed(1)}%</p>
-        <p><i> 点击图标查看详细记录（最多20条） / Click the table to check details (up to 20 records)</i></p>
-      `;
-
-      renderChart(s);
-    }
-
-    function renderChart(stats) {
-      const ctx = document.getElementById("attendanceChart").getContext("2d");
-
-      if (chartInstance) {
-        chartInstance.destroy();
-      }
-
-      chartInstance = new Chart(ctx, {
-        //type: 'pie',
-        type: 'bar',
-        data: {
-          labels: ["Present", "Leave", "Absent"],
-          datasets: [{
-            data: [stats.present, stats.leave, stats.absent],
-            backgroundColor: ["#28a745", "#ff9800", "#dc3545"]
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {display: false},
-            title: {display: false}
-          },
-          scale: {
-            y:{ beginAtZero: true}
-          },
-          onClick: showRecords
-        }
-      });
-    }
-
-    function showRecords() {
-      let html = `<h3> 详细记录（最多20条）/ Details of Records (Up to 20) </h3>
-        <table>
-          <tr><th>日期 / Date</th><th>学生 / Student Name</th><th>状态 / Status</th><th>备注 / Notes</th></tr>`;
-
-      lastRecords.forEach(r=> {
-        html += `<tr>
-          <td>${r.date}</td>
-          <td>${r.studentName}</td>
-          <td>${r.status}</td>
-          <td>${r.notes}</td>
-        </tr>`;
-      });
-      html += `</table>`;
-      document.getElementById("recordsArea").innerHTML = html;
-    }
-
-    window.onload = loadClasses;
-  </script>
 </body>
 </html>
