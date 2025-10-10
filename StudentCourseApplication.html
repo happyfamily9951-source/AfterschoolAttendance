@@ -191,11 +191,7 @@
 
     // 选中学生
     function onSelectStudentCard(card) {
-      
-      console.log("Start onSelectedCourseCard ===");
-      console.log("Selected student:", selectedStudentId);
-      console.log("Selected courses:", selectedCourses);
-      
+     
       // 1️⃣ 取消所有学生高亮
       document.querySelectorAll("#searchResult .selectable-card").forEach(c => c.classList.remove("selected"));
       card.classList.add("selected");
@@ -217,10 +213,6 @@
       // 5️⃣ 更新提交按钮状态
       updateSubmitState();
       showNotification("🎯 Student re-selected. Course selections cleared.", "info", "notificationApply"); 
-
-      console.log("End onSelectedCourseCard ===");
-      console.log("Selected student:", selectedStudentId);
-      console.log("Selected courses:", selectedCourses);
       
     }
 
@@ -307,10 +299,6 @@
     // 选中课程 + 更新 header 状态
     function onSelectCourseCard(day, card) {
 
-      console.log("Start onSelectedCourseCard ===");
-      console.log("Selected student:", selectedStudentId);
-      console.log("Selected courses:", selectedCourses);
-      
       const allCards = document.querySelectorAll(`.selectable-card[data-day='${day}']`);
       allCards.forEach(c => c.classList.remove("selected"));
       if (selectedCourses[day] === card.dataset.cid) {
@@ -321,10 +309,6 @@
       }
       updateDayHeaderCount(day);
       updateSubmitState();
-
-      console.log("End of onSelectedCourseCard ===");
-      console.log("Selected student:", selectedStudentId);
-      console.log("Selected courses:", selectedCourses);
       
     }
 
@@ -337,81 +321,31 @@
     }
 
     function updateSubmitState() {
+      
       const btn = document.getElementById("ApplySubmit");
-      console.log("🟢 updateSubmitState called:", { selectedStudentId, selectedCourses });
-
-      console.log("Start updateSubmitState ===");
-      console.log("Selected student:", selectedStudentId);
-      console.log("Selected courses:", selectedCourses);
-      
-      if (!btn) {
-        console.warn(" CAN NOT FIND APPLYSUBMIT BUTTON");
-      }
-
       const canSubmit = !!(selectedStudentId && Object.keys(selectedCourses).length > 0);
-      console.log(" canSubmit = ", canSubmit);
+      btn.disabled = !canSubmit;          
 
-      btn.disabled = !canSubmit;      
-      console.log("Button state:", btn.disabled ? "Disabled" : "Enabled");
-      // btn.disabled = !(selectedStudentId && Object.keys(selectedCourses).length > 0);
-      
-      console.log("End updateSubmitState ===");
-      console.log("Selected student:", selectedStudentId);
-      console.log("Selected courses:", selectedCourses);
-      
     }
 
     // 提交报名
-    async function submitApplication() {
-      
-      console.log("Start submitApplication ===");
-      console.log("Selected student:", selectedStudentId);
-      console.log("Selected courses:", selectedCourses);
+    async function submitApplication() {      
 
-      console.log(" !selectedStudentId: ", !selectedStudentId);
-      console.log(" Object.keys(selectedCourses).length ", Object.keys(selectedCourses).length);
-      console.log(" ---------------------");
-      
-      if (!selectedStudentId || Object.keys(selectedCourses).length === 0) {
-        console.log("Step 1: Return");
+      if (!selectedStudentId || Object.keys(selectedCourses).length === 0) {      
         return;
       }
-      
-      console.log("Step 2: ", !selectedStudentId);
-            
-      const btn = document.getElementById("ApplySubmit");
 
-      console.log("Step 3: ", btn);
-      
+      const btn = document.getElementById("ApplySubmit");      
       btn.disabled = true; 
       btn.innerText = "Submitting...";
-
-      console.log("Step 4: ", btn.innerText);
-      console.log("Object.entries: ", Object.entries);
-      
-      console.log("selectedCourses before loop:", selectedCourses);
-      console.log("Object.entries:", Object.entries(selectedCourses));
       
       try {
         for (const [day, classId] of Object.entries(selectedCourses)) {
-          
-          console.log("selectedCourses in the loop loop:", selectedCourses);
-          console.log("Object.entries:", Object.entries(selectedCourses));   
-
-          console.log(" ================= ");
-          console.log("day = ", day);
-          console.log(" classId = ", classId);
-          console.log(" selectedStudentId =", selectedStudentId);
           
           const body = 
           "action=" + encodeURIComponent("applyStudentToClass") +
           "&studentId=" + encodeURIComponent(selectedStudentId) +
           "&className=" + encodeURIComponent(classId); 
-
-          console.log("Loop, day = ", day, ", classId = ", classId);
-          console.log("Loop, Body = ", body);
-
-          alert("BODY: " + body);
           
           const resp = await fetch(API_URL, {
             method: "POST",
@@ -420,7 +354,6 @@
           });
 
           if (!resp.ok) {
-            console.error("❌ HTTP error:", resp.status, resp.statusText);
             showNotification(`Network error: ${resp.status}`, "error");
             continue; // 跳过本次循环
           }
@@ -430,12 +363,8 @@
           try {
             result = await resp.json(); // Apps Script 通常返回 JSON
           } catch {
-            const text = await resp.text();
-            console.warn("⚠️ Response not JSON, raw text:", text);
-            result = { ok: false, message: "Invalid JSON response", raw: text };
+            const text = await resp.text();            
           }
-          console.log("✅ Response for", classId, ":", result);
-          
           // ✅ 根据返回内容进行反馈
           if (result.ok) {
             showNotification(`✅ ${classId} submitted successfully`, "success");
@@ -454,9 +383,6 @@
         });
         selectedStudentId = null;
         updateSubmitState();
-
-
-        
       } catch (err) {
         showNotification("❌ Submission failed: " + err.message, "error", "notificationApply");
       } finally {
