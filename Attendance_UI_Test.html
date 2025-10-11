@@ -64,44 +64,26 @@
     cursor: pointer;
     overflow: hidden;
     transition: all 0.25s ease;
-    padding: 12px;
     border: 1px solid #e5e7eb;
   }
   
+  /* 顶部彩条 */
   .status-bar {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 22px;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    background: transparent;
-  }
-  
-  /* === 颜色定义 === */
-  .student-card.present {
-    background: linear-gradient(to bottom, #f1faf3 0%, #ffffff 100%);
-  }
-  .student-card.absent {
-    background: linear-gradient(to bottom, #fde9e9 0%, #ffffff 100%);
-  }
-  .student-card.leave {
-    background: linear-gradient(to bottom, #fff8d3 0%, #ffffff 100%);
-  }
-
-  .status-bar {
+    height: 20px;
     border-top-left-radius: 14px;
     border-top-right-radius: 14px;
-    overflow: hidden;
   }
   
-  /* hover 动画（可选）*/
-  .student-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
+  /* 三种状态颜色 */
+  .student-card.present .status-bar { background: #28a745; }   /* 绿色 */
+  .student-card.absent  .status-bar { background: #dc3545; }   /* 红色 */
+  .student-card.leave   .status-bar { background: #ffc107; }   /* 黄色 */
   
-  /* 姓名与备注 */
+  /* 内容排版 */
   .student-name {
     font-weight: 600;
     font-size: 16px;
@@ -109,8 +91,8 @@
     justify-content: center;
     align-items: center;
     gap: 6px;
-    margin: 12px 0 4px 0;
-    margin-top: 28px;
+    margin-top: 26px; /* 给彩条留空间 */
+    color: #111827;
   }
   
   .student-note {
@@ -118,6 +100,11 @@
     color: #6b7280;
   }
   
+  /* Hover 动画 (可选) */
+  .student-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }  
   /* ========= End of Accent Bar =========== */
 
 </style>
@@ -168,6 +155,11 @@
       attendanceMap.set(stu.studentId, defaultState);
       card.classList.add(defaultState);
 
+      // Status Bar
+      const bar = document.createElement("div");
+      bar.className = "status-bar";
+      card.appendChild(bar);
+      
       const nameDiv = document.createElement("div");
       nameDiv.className = "student-name";
       nameDiv.textContent = stu.studentName + " ";
@@ -178,8 +170,8 @@
       genderIcon.style.width = "18px";
       genderIcon.style.height = "18px";
       nameDiv.appendChild(genderIcon);
-
       card.appendChild(nameDiv);
+      
 
       if (stu.leaveNote) {
         const noteDiv = document.createElement("div");
