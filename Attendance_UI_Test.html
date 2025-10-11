@@ -73,14 +73,27 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 6px;
+    height: 22px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
     background: transparent;
   }
   
   /* === 颜色定义 === */
-  .student-card.present .status-bar { background: #28a745; }
-  .student-card.absent .status-bar { background: #dc3545; }
-  .student-card.leave .status-bar { background: #ffc107; }
+  .student-card.present {
+    background: linear-gradient(to bottom, #f1faf3 0%, #ffffff 100%);
+  }
+  .student-card.absent {
+    background: linear-gradient(to bottom, #fde9e9 0%, #ffffff 100%);
+  }
+  .student-card.leave {
+    background: linear-gradient(to bottom, #fff8d3 0%, #ffffff 100%);
+  }
+
+  .status-bar {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    overflow: hidden;
+  }
   
   /* hover 动画（可选）*/
   .student-card:hover {
@@ -97,6 +110,7 @@
     align-items: center;
     gap: 6px;
     margin: 12px 0 4px 0;
+    margin-top: 28px;
   }
   
   .student-note {
@@ -104,13 +118,8 @@
     color: #6b7280;
   }
   
-  /* ========= End of Accent Bar =========== */  
-  
-  @media (max-width: 600px) {
-    .student-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
+  /* ========= End of Accent Bar =========== */
+
 </style>
 </head>
 <body>
