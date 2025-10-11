@@ -53,26 +53,50 @@
   .attendance-btn.absent { background: #dc3545; }
   .attendance-btn.leave { background: #ffc107; color: #333; }
   .attendance-btn.active { transform: scale(1.05); }
-
+  
+  .student-card {
+    position: relative;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-align: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.25s ease;
+    padding: 12px;
+  }
+  
+  .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: transparent;
+  }
+  
+  /* === 状态渐变风格 === */
+  .student-card.present {
+    background: linear-gradient(to bottom, #e6f4ea 0%, #ffffff 100%);
+  }
+  
+  .student-card.present .status-bar { background: #28a745; }
+  
+  .student-card.absent {
+    background: linear-gradient(to bottom, #fdecec 0%, #ffffff 100%);
+  }
+  .student-card.absent .status-bar { background: #dc3545; }
+  
+  .student-card.leave {
+    background: linear-gradient(to bottom, #fff8d3 0%, #ffffff 100%);
+  }  
+  .student-card.leave .status-bar { background: #ffc107; }    
+  
   .student-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 16px;
   }
-
-  .student-card {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    padding: 12px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.25s ease;
-  }
-
-  .student-card.present { background: #e6f4ea; border: 2px solid #28a745; }
-  .student-card.absent { background: #fbeaea; border: 2px solid #dc3545; }
-  .student-card.leave { background: #fff8e5; border: 2px solid #ffc107; }
 
   .student-name {
     font-weight: 600;
