@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Email OTP</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      margin: 0;
+      background-color: #f8fafc;
+      color: #333;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 80px auto;
+      background: #fff;
+      padding: 24px 28px;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+
+    .logo {
+      width: 160px;
+      display: block;
+      margin: 0 auto 20px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 15px;
+      margin: 10px 0;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    input[type="email"]:focus {
+      border-color: #3b82f6;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      color: #fff;
+      background-color: #3b82f6;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      margin-top: 6px;
+    }
+
+    button:hover {
+      background-color: #2563eb;
+    }
+
+    button:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .otp-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 15px 0;
+    }
+
+    .otp-input {
+      width: 42px;
+      height: 48px;
+      font-size: 22px;
+      text-align: center;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .otp-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+    }
+
+    .note {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 10px;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #3b82f6;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 200;
+    }
+
+    .notification.show { opacity: 1; }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo" />
+    <h2>Login with Email OTP</h2>
+
+    <input type="email" id="email" placeholder="Enter your registered email" />
+    <button id="sendBtn" onclick="requestOtp()">Send OTP</button>
+
+    <!-- OTP 输入区 -->
+    <div id="otpSection" style="display:none;">
+      <div class="otp-container" id="otpInputs">
+        <input class="otp-input" type="text" maxlength="1">
+        <input class="otp-input" type="text" maxlength="1">
+        <input class="otp-input" type="text" maxlength="1">
+        <input class="otp-input" type="text" maxlength="1">
+        <input class="otp-input" type="text" maxlength="1">
+        <input class="otp-input" type="text" maxlength="1">
+      </div>
+      <button id="verifyBtn" onclick="verifyOtp()" disabled>Verify & Login</button>
+    </div>
+
+    <p class="note">Only registered emails can receive the verification code.</p>
+  </div>
+
+  <div id="notification" class="notification"></div>
+
+  <script>
+    const API_URL = "YOUR_APPS_SCRIPT_URL"; // 替换为你的 Apps Script 部署地址
+
+    /* ===== Notification ===== */
+    function showNotification(message, type = "info") {
+      const note = document.getElementById("notification");
+      note.textContent = message;
+      note.style.background = type === "error" ? "#dc2626" : "#3b82f6";
+      note.classList.add("show");
+      setTimeout(() => note.classList.remove("show"), 2500);
+    }
+
+    /* ===== Request OTP ===== */
+    async function requestOtp() {
+      const email = document.getElementById("email").value.trim();
+      if (!email) {
+        showNotification("Please enter your email", "error");
+        return;
+      }
+
+      document.getElementById("sendBtn").disabled = true;
+      showNotification("Sending OTP...");
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `action=requestOtp&email=${encodeURIComponent(email)}`
+        });
+        const data = await res.json();
+
+        if (data.ok) {
+          showNotification("✅ OTP sent! Check your email.");
+          document.getElementById("otpSection").style.display = "block";
+          setupOtpInputs();
+        } else {
+          showNotification(data.message || "Failed to send OTP", "error");
+        }
+      } catch (err) {
+        console.error(err);
+        showNotification("Network error", "error");
+      } finally {
+        document.getElementById("sendBtn").disabled = false;
+      }
+    }
+
+    /* ===== Setup OTP Input Behavior ===== */
+    function setupOtpInputs() {
+      const inputs = document.querySelectorAll(".otp-input");
+      const verifyBtn = document.getElementById("verifyBtn");
+
+      inputs.forEach((input, index) => {
+        input.addEventListener("input", (e) => {
+          const val = e.target.value.replace(/\D/g, ""); // only digits
+          e.target.value = val;
+
+          if (val && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+
+          const otpValue = Array.from(inputs).map(i => i.value).join("");
+          verifyBtn.disabled = otpValue.length < 6;
+        });
+
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" && !e.target.value && index > 0) {
+            inputs[index - 1].focus();
+          }
+        });
+      });
+
+      inputs[0].focus();
+    }
+
+    /* ===== Verify OTP ===== */
+    async function verifyOtp() {
+      const email = document.getElementById("email").value.trim();
+      const otp = Array.from(document.querySelectorAll(".otp-input")).map(i => i.value).join("");
+
+      if (otp.length < 6) {
+        showNotification("Please enter 6-digit OTP", "error");
+        return;
+      }
+
+      showNotification("Verifying...");
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `action=verifyOtp&email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`
+        });
+        const data = await res.json();
+
+        if (data.ok) {
+          showNotification("✅ Login successful!");
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1200);
+        } else {
+          showNotification(data.message || "Invalid OTP", "error");
+        }
+      } catch (err) {
+        console.error(err);
+        showNotification("Network error", "error");
+      }
+    }
+  </script>
+</body>
+</html>
