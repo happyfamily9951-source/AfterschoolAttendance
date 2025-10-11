@@ -106,20 +106,30 @@
 
     .notification {
       position: fixed;
-      top: 20px;
+      top: 50%;
       left: 50%;
       transform: translateX(-50%);
       background: #3b82f6;
       color: white;
-      padding: 10px 16px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 12px 18px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease， transform 0.3s ease;
       z-index: 200;
+      text-align: center;
+      font-size: 15px;
     }
 
     .notification.show { opacity: 1; }
+
+    .otp-message {
+      color: #3b82f6;
+      font-size: 14px;
+      margin-top: 10px;
+      transition: opacity 0.3s;
+    }
+    
   </style>
 </head>
 
@@ -134,13 +144,14 @@
     <!-- OTP 输入区 -->
     <div id="otpSection" style="display:none;">
       <div class="otp-container" id="otpInputs">
-        <input class="otp-input" type="text" maxlength="1">
-        <input class="otp-input" type="text" maxlength="1">
-        <input class="otp-input" type="text" maxlength="1">
-        <input class="otp-input" type="text" maxlength="1">
-        <input class="otp-input" type="text" maxlength="1">
-        <input class="otp-input" type="text" maxlength="1">
+        <input class="otp-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
+        <input class="otp-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
+        <input class="otp-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
+        <input class="otp-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
+        <input class="otp-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
+        <input class="otp-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">        
       </div>
+      <div id="otpMessage" class="otp-message"></div>  <!-- Notification for verifying OTP code--> 
       <button id="verifyBtn" onclick="verifyOtp()" disabled>Verify & Login</button>
     </div>
 
@@ -154,6 +165,13 @@
     
     /* ===== Notification ===== */
     function showNotification(message, type = "info") {
+
+      const otpMsg = document.getElementById("otpMessage");
+      if (document.getElementById("otpSection").style.display != "none") {
+        otpMsg.textContent = message;
+        otpMsg.style.color = type === "error" ? "#dc2626" : "#3b82f6";
+      }
+      
       const note = document.getElementById("notification");
       note.textContent = message;
       note.style.background = type === "error" ? "#dc2626" : "#3b82f6";
