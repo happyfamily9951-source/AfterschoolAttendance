@@ -6,6 +6,7 @@
 
 // Google Apps Scripts Web APP URL
 const API_URL = "https://script.google.com/macros/s/AKfycbywt8Y5aqs-NwVU1L-FT_zB4BZXal7Kq3OfwHFkeAp5HyLS8XFit1DIj7F1oifusdBJ/exec";
+const API_LOGIN_URL = "https://script.google.com/macros/s/AKfycbzshvw-C7aKo8NB4-xlt6itPz4PFOr9ECwp_aS4ueCGwFJ8mNCb6N1iOHtgJrXtuIjL/exec"
 
 // ======================================================
 // 通用通知函数（支持指定容器 / 默认全局）
