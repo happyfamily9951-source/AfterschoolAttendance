@@ -53,17 +53,19 @@
   .attendance-btn.absent { background: #dc3545; }
   .attendance-btn.leave { background: #ffc107; color: #333; }
   .attendance-btn.active { transform: scale(1.05); }
-  
+
+  /* ========== Accent Bar ============= */
   .student-card {
     position: relative;
-    background: white;
-    border-radius: 16px;
+    background: #fff;
+    border-radius: 14px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     text-align: center;
     cursor: pointer;
     overflow: hidden;
     transition: all 0.25s ease;
     padding: 12px;
+    border: 1px solid #e5e7eb;
   }
   
   .status-bar {
@@ -75,29 +77,18 @@
     background: transparent;
   }
   
-  /* === 状态渐变风格 === */
-  .student-card.present {
-    background: linear-gradient(to bottom, #e6f4ea 0%, #ffffff 100%);
-  }
-  
+  /* === 颜色定义 === */
   .student-card.present .status-bar { background: #28a745; }
-  
-  .student-card.absent {
-    background: linear-gradient(to bottom, #fdecec 0%, #ffffff 100%);
-  }
   .student-card.absent .status-bar { background: #dc3545; }
+  .student-card.leave .status-bar { background: #ffc107; }
   
-  .student-card.leave {
-    background: linear-gradient(to bottom, #fff8d3 0%, #ffffff 100%);
-  }  
-  .student-card.leave .status-bar { background: #ffc107; }    
-  
-  .student-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 16px;
+  /* hover 动画（可选）*/
+  .student-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
-
+  
+  /* 姓名与备注 */
   .student-name {
     font-weight: 600;
     font-size: 16px;
@@ -105,14 +96,16 @@
     justify-content: center;
     align-items: center;
     gap: 6px;
-    margin-bottom: 4px;
+    margin: 12px 0 4px 0;
   }
-
+  
   .student-note {
     font-size: 13px;
     color: #6b7280;
   }
-
+  
+  /* ========= End of Accent Bar =========== */  
+  
   @media (max-width: 600px) {
     .student-grid {
       grid-template-columns: repeat(2, 1fr);
