@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Attendance UI Test</title>
+<style>
+  body {
+    font-family: "Inter", system-ui, sans-serif;
+    background: #f8fafc;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  .class-info {
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 18px;
+  }
+
+  .stats {
+    text-align: center;
+    margin-bottom: 16px;
+    font-size: 15px;
+  }
+
+  .btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .attendance-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: white;
+    transition: transform 0.1s ease;
+  }
+
+  .attendance-btn.present { background: #28a745; }
+  .attendance-btn.absent { background: #dc3545; }
+  .attendance-btn.leave { background: #ffc107; color: #333; }
+  .attendance-btn.active { transform: scale(1.05); }
+
+  .student-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+  }
+
+  .student-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .student-card.present { background: #e6f4ea; border: 2px solid #28a745; }
+  .student-card.absent { background: #fbeaea; border: 2px solid #dc3545; }
+  .student-card.leave { background: #fff8e5; border: 2px solid #ffc107; }
+
+  .student-name {
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .student-note {
+    font-size: 13px;
+    color: #6b7280;
+  }
+
+  @media (max-width: 600px) {
+    .student-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="class-info" id="classTitle">2025Q3-SatFun (Sat)</div>
+  <div class="stats" id="statsBar">Total: 0 | 🟢 P: 0 | 🔴 A: 0 | 🟡 L: 0</div>
+
+  <div class="btn-group">
+    <button class="attendance-btn present active" id="presentBtn">Present</button>
+    <button class="attendance-btn absent" id="absentBtn">Absent</button>
+    <button class="attendance-btn leave" id="leaveBtn">Leave</button>
+  </div>
+
+  <div class="student-grid" id="studentGrid"></div>
+</div>
+
+<script>
+  // 模拟后端返回数据
+  const mockResponse = {
+    ok: true,
+    data: [
+      { studentId: "S202509210001", studentName: "张三", gender: "male", leaveNote: "Sick leave" },
+      { studentId: "S202509210002", studentName: "李四", gender: "female", leaveNote: "" },
+      { studentId: "S202509210003", studentName: "王五", gender: "male", leaveNote: "" },
+      { studentId: "S202509210004", studentName: "赵六", gender: "female", leaveNote: "Family event" },
+      { studentId: "S202509210005", studentName: "钱七", gender: "male", leaveNote: "" },
+      { studentId: "S202509210006", studentName: "孙八", gender: "female", leaveNote: "" }
+    ]
+  };
+
+  const grid = document.getElementById("studentGrid");
+  const statsBar = document.getElementById("statsBar");
+
+  let currentMode = "present";
+  const attendanceMap = new Map();
+
+  function renderStudents() {
+    grid.innerHTML = "";
+    mockResponse.data.forEach(stu => {
+      const card = document.createElement("div");
+      card.className = "student-card";
+      card.dataset.id = stu.studentId;
+      card.dataset.gender = stu.gender;
+
+      const defaultState = stu.leaveNote ? "leave" : "present";
+      attendanceMap.set(stu.studentId, defaultState);
+      card.classList.add(defaultState);
+
+      const nameDiv = document.createElement("div");
+      nameDiv.className = "student-name";
+      nameDiv.textContent = stu.studentName + " ";
+
+      const genderIcon = document.createElement("img");
+      genderIcon.src = stu.gender === "male" ? "icons/male.svg" : "icons/female.svg";
+      genderIcon.alt = stu.gender;
+      genderIcon.style.width = "18px";
+      genderIcon.style.height = "18px";
+      nameDiv.appendChild(genderIcon);
+
+      card.appendChild(nameDiv);
+
+      if (stu.leaveNote) {
+        const noteDiv = document.createElement("div");
+        noteDiv.className = "student-note";
+        noteDiv.textContent = "📝 " + stu.leaveNote;
+        card.appendChild(noteDiv);
+      }
+
+      card.addEventListener("click", () => onStudentClick(card, stu.studentId));
+      grid.appendChild(card);
+    });
+    updateStats();
+  }
+
+  function onStudentClick(card, id) {
+    // 切换学生状态
+    attendanceMap.set(id, currentMode);
+    card.classList.remove("present", "absent", "leave");
+    card.classList.add(currentMode);
+
+    // Leave 状态下输入备注
+    const existingNote = card.querySelector(".student-note");
+    if (currentMode === "leave") {
+      let note = existingNote ? existingNote.textContent.replace("📝 ", "") : "";
+      note = prompt("Enter leave note:", note) || note;
+      if (note) {
+        if (existingNote) {
+          existingNote.textContent = "📝 " + note;
+        } else {
+          const noteDiv = document.createElement("div");
+          noteDiv.className = "student-note";
+          noteDiv.textContent = "📝 " + note;
+          card.appendChild(noteDiv);
+        }
+      }
+    } else {
+      // 非 leave 状态清除备注
+      if (existingNote && !mockResponse.data.find(s => s.studentId === id).leaveNote) {
+        existingNote.remove();
+      }
+    }
+
+    updateStats();
+  }
+
+  function updateStats() {
+    const total = attendanceMap.size;
+    let p = 0, a = 0, l = 0;
+    attendanceMap.forEach(v => {
+      if (v === "present") p++;
+      if (v === "absent") a++;
+      if (v === "leave") l++;
+    });
+    statsBar.textContent = `Total: ${total} | 🟢 P: ${p} | 🔴 A: ${a} | 🟡 L: ${l}`;
+  }
+
+  // 顶部按钮逻辑
+  document.getElementById("presentBtn").addEventListener("click", () => setMode("present"));
+  document.getElementById("absentBtn").addEventListener("click", () => setMode("absent"));
+  document.getElementById("leaveBtn").addEventListener("click", () => setMode("leave"));
+
+  function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll(".attendance-btn").forEach(btn => btn.classList.remove("active"));
+    document.querySelector(`.attendance-btn.${mode}`).classList.add("active");
+  }
+
+  renderStudents();
+</script>
+</body>
+</html>
