@@ -128,8 +128,8 @@
             document.getElementById("attendanceContainer").style.display = "block";
             document.getElementById("classInfo").textContent = selectedClass; 
 
-            console.log("selectedClass = " + selectedClass);
-            console.log("result.results = " + result.results.length());
+            Console.log("selectedClass = " + selectedClass);
+            Console.log("result.results = " + result.results.length());
             
             renderStudents(result.results);
             showNotification("✅ Students loaded for " + selectedClass);
@@ -144,7 +144,7 @@
         
         const grid = document.getElementById("studentGrid");        
 
-        console.log ("Grid = " + grid);
+        Console.log ("Grid = " + grid);
         grid.innerHTML = "";
         attendanceMap.clear();
         
