@@ -96,8 +96,8 @@
   text-align: center;
   margin-top: 18px;
   white-space: nowrap;
-  /* overflow: hidden; */
   text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 /* Notes 区始终显示 */
