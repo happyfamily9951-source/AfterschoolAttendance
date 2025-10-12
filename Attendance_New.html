@@ -33,6 +33,7 @@
         <div id="classInfo"><strong></strong></div>
         <br>
         <div class="stats" id="summaryBar">Total: 0 | 🟢 P: 0 | 🔴 A: 0 | 🟡 L: 0</div> 
+        <br>
         
         <div class="btn-group">
           <button class="attendance-btn present active" id="presentBtn">Present</button>
@@ -126,19 +127,13 @@
         try {
           const response = await fetch(`${API_URL}?action=getStudentsByClass&className=${encodeURIComponent(currentClassName)}`);
           const result = await response.json();
-
-          console.log("Result =", result.ok);
           
-
           if (result.ok) {
             // document.getElementById("selectClassContainer").style.display = "none";
             document.getElementById("attendanceContainer").style.display = "block";
             // document.getElementById("classInfo").textContent = selectedClass; 
             document.getElementById("classInfo").textContent = currentClassName;
 
-            console.log("selectedClass = ", currentClassName);
-            // console.log("result.results = ", result.results.length());
-            
             renderStudents(result.results);
             showNotification("✅ Students loaded for " + currentClassName);
           }
@@ -151,16 +146,19 @@
       function renderStudents(students) {
         
         const grid = document.getElementById("studentGrid");        
-
-        console.log ("Grid = ", grid);
         grid.innerHTML = "";
         attendanceMap.clear();
         
         students.forEach(s => {
           const card = document.createElement("div");
           card.className = "student-card";
-          card.dataset.id = s.studentId;
           const state = s.leaveNote ?"leave":"present";
+          attendanceMap.set(s.studentId, {
+            studentName: s.studentName,
+            gender: s.gender,
+            status: state,
+            notes: s.leaveNote || ""
+          });
           card.classList.add(state);
 
           // Top bar
@@ -187,7 +185,9 @@
           // Click Button
           card.addEventListener("click", () => onStudentClick(card, s.studentId, noteDiv));
           grid.appendChild(card);
-        });        
+        });
+
+        console.log("Update summary");
         updateSummary();
       }
       
