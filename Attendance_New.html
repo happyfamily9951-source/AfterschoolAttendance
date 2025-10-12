@@ -78,7 +78,7 @@
             Loading class 
       ==========================================*/
 
-      document.addEventListener("DOMContentLoaded", loadActiveClasses);
+      // document.addEventListener("DOMContentLoaded", loadActiveClasses);
 
       // 1. Load active classes list      
       async function loadActiveClasses() {
@@ -128,8 +128,8 @@
             document.getElementById("attendanceContainer").style.display = "block";
             document.getElementById("classInfo").textContent = selectedClass; 
 
-            Console.log("selectedClass = " + selectedClass);
-            Console.log("result.results = " + result.results.length());
+            Console.log("selectedClass = ", selectedClass);
+            Console.log("result.results = ", result.results.length());
             
             renderStudents(result.results);
             showNotification("✅ Students loaded for " + selectedClass);
@@ -144,7 +144,7 @@
         
         const grid = document.getElementById("studentGrid");        
 
-        Console.log ("Grid = " + grid);
+        console.log ("Grid = ", grid);
         grid.innerHTML = "";
         attendanceMap.clear();
         
