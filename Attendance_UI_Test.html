@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Attendance UI Test (Accent Bar - Optimized)</title>
+<title>Attendance UI Test (Accent Bar - Golden Ratio Optimized)</title>
 <style>
+  :root {
+    --gap: 16px;
+    --present: #28a745;
+    --absent: #dc3545;
+    --leave: #ffc107;
+  }
+
   body {
     font-family: "Inter", system-ui, sans-serif;
     background: #f8fafc;
@@ -16,7 +23,7 @@
   .container {
     max-width: 960px;
     margin: 0 auto;
-    padding: 16px;
+    padding: var(--gap);
   }
 
   .class-info {
@@ -28,41 +35,39 @@
 
   .stats {
     text-align: center;
-    margin-bottom: 16px;
-    font-size: 16px; /* 与学生名同级 */
+    margin-bottom: var(--gap);
+    font-size: 16px;
     font-weight: 500;
   }
 
-  /* ===== 按钮区域 ===== */
+  /* === 按钮区域 === */
   .btn-group {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--gap);
+    margin-bottom: var(--gap);
   }
 
   .attendance-btn {
-    flex: 1;
-    padding: 12px 0;
+    padding: 14px 0;
     border-radius: 10px;
     border: none;
     cursor: pointer;
     font-weight: 600;
-    font-size: 16px; /* 与学生姓名、统计一致 */
+    font-size: 16px;
     color: white;
     transition: transform 0.1s ease;
   }
+  .attendance-btn.present { background: var(--present); }
+  .attendance-btn.absent  { background: var(--absent); }
+  .attendance-btn.leave   { background: var(--leave); color: #333; }
+  .attendance-btn.active  { transform: scale(1.05); }
 
-  .attendance-btn.present { background: #28a745; }
-  .attendance-btn.absent { background: #dc3545; }
-  .attendance-btn.leave { background: #ffc107; color: #333; }
-  .attendance-btn.active { transform: scale(1.05); }
-
-  /* ===== 学生卡区域 ===== */
+  /* === 学生卡片网格 === */
   .student-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 16px;
+    gap: var(--gap);
   }
 
   .student-card {
@@ -75,10 +80,10 @@
     overflow: hidden;
     transition: all 0.25s ease;
     border: 1px solid #e5e7eb;
-    min-height: 130px; /* 高度统一 */
+    aspect-ratio: 1.618 / 1; /* 黄金比例 */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .status-bar {
@@ -86,15 +91,15 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 10px; /* 调整为一半高度 */
+    height: 10px;
     border-top-left-radius: 14px;
     border-top-right-radius: 14px;
   }
 
-  /* 三种状态颜色 */
-  .student-card.present .status-bar { background: #28a745; }
-  .student-card.absent  .status-bar { background: #dc3545; }
-  .student-card.leave   .status-bar { background: #ffc107; }
+  /* 状态颜色 */
+  .student-card.present .status-bar { background: var(--present); }
+  .student-card.absent  .status-bar { background: var(--absent); }
+  .student-card.leave   .status-bar { background: var(--leave); }
 
   .student-name {
     font-weight: 600;
@@ -107,10 +112,17 @@
     color: #111827;
   }
 
+  /* Notes 区始终显示 */
   .student-note {
     font-size: 13px;
     color: #6b7280;
-    min-height: 18px; /* 预留空间保证高度一致 */
+    min-height: 36px; /* 固定高度 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: 8px;
   }
 
   .student-card:hover {
@@ -118,9 +130,12 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
 
-  /* 手机端布局：1 行 3 个卡片 */
+  /* 手机端：1行3个卡片 */
   @media (max-width: 600px) {
     .student-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .btn-group {
       grid-template-columns: repeat(3, 1fr);
     }
   }
@@ -141,7 +156,6 @@
 </div>
 
 <script>
-  // 模拟后端返回数据
   const mockResponse = {
     ok: true,
     data: [
@@ -156,7 +170,6 @@
 
   const grid = document.getElementById("studentGrid");
   const statsBar = document.getElementById("statsBar");
-
   let currentMode = "present";
   const attendanceMap = new Map();
 
@@ -166,11 +179,10 @@
       const card = document.createElement("div");
       card.className = "student-card";
       card.dataset.id = stu.studentId;
-      card.dataset.gender = stu.gender;
 
-      const defaultState = stu.leaveNote ? "leave" : "present";
-      attendanceMap.set(stu.studentId, defaultState);
-      card.classList.add(defaultState);
+      const state = stu.leaveNote ? "leave" : "present";
+      attendanceMap.set(stu.studentId, state);
+      card.classList.add(state);
 
       const bar = document.createElement("div");
       bar.className = "status-bar";
@@ -179,18 +191,17 @@
       const nameDiv = document.createElement("div");
       nameDiv.className = "student-name";
       nameDiv.textContent = stu.studentName + " ";
-
       const genderIcon = document.createElement("img");
       genderIcon.src = stu.gender === "male" ? "icons/male.svg" : "icons/female.svg";
       genderIcon.alt = stu.gender;
-      genderIcon.style.width = "18px";
-      genderIcon.style.height = "18px";
+      genderIcon.width = 18;
+      genderIcon.height = 18;
       nameDiv.appendChild(genderIcon);
       card.appendChild(nameDiv);
 
       const noteDiv = document.createElement("div");
       noteDiv.className = "student-note";
-      if (stu.leaveNote) noteDiv.textContent = "📝 " + stu.leaveNote;
+      noteDiv.textContent = stu.leaveNote ? "📝 " + stu.leaveNote : "";
       card.appendChild(noteDiv);
 
       card.addEventListener("click", () => onStudentClick(card, stu.studentId, noteDiv));
@@ -211,6 +222,7 @@
     } else {
       noteDiv.textContent = "";
     }
+
     updateStats();
   }
 
