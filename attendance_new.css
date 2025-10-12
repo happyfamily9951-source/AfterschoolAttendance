@@ -45,8 +45,8 @@
 /* ===== 学生卡片网格 ===== */
 .student-grid {
   display: grid;
-  /* grid-template-columns: repeat(2, 1fr);*/
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
+  /* grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); */
   gap: var(--gap);
 }
 
@@ -120,7 +120,7 @@
 }
 
 /* 手机端：1行3个卡片 */
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .student-grid {
     grid-template-columns: repeat(3, 1fr);
   }
