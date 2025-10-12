@@ -109,7 +109,7 @@
             div.value = c.className;
             console.log("Class name: ", div.value, c.className);
             div.textContent = `${c.className} (${c.dayOfWeek})${c.highlight?" 🟢 Today" : ""}`;
-            console.log("Text content: ", div.textContent;
+            console.log("Text content: ", div.textContent);
             div.addEventListener("click", () => onSelectClass(div, c.className));
             console.log("Click event added");
             if (c.highlight) div.classList.add("today"); // highlight
