@@ -17,6 +17,9 @@
       <!-- Select class -->
       <div class="form-container">
         <h2>Select Class</h2>
+        <!-- Notification bar -->
+        <div id="notification" class="notification hidden"></div>
+        
         <select id="classSelect"></select>
         <button class="btn-primary" onclick="getStudents()">Get Student List</button>
       </div>
@@ -28,7 +31,7 @@
         <div id="notification" class="notification hidden"></div>   
 
         <div id="classInfo"></div>
-        <div id="statusBar"></div>
+        <div class="stats" id="summaryBar">Total: 0 | 🟢 P: 0 | 🔴 A: 0 | 🟡 L: 0</div> 
         
         <div class="btn-group">
           <button class="attendance-btn present active" id="presentBtn">Present</button>
@@ -39,6 +42,10 @@
         <!-- 分隔线 -->
         <div class="divider"></div>
         <div class="student-grid" id="studentGrid"></div>
+
+        <div style="text-align:center;margin-top:24px;">
+          <button id="submitBtn" class="btn-primary">Submit Attendance</button>
+        </div>
         
       </div>
     </main>
@@ -63,26 +70,35 @@
     </nav>
     
     <script>
-      let attendanceSummary = { total: 0, present: 0, absent: 0, leave: 0 };
-      let currentClassId = null;
+      let selectedClass = null;
+      let currentStatus = "present";
+      const attendanceMap = new Map();  // studentId -> {studentNam, gender, status, notes}
 
-      // 1. Load classes list      
-      async function loadClasses() {
+      /* ========================================
+            Loading class 
+      ==========================================*/
+
+      document.addEventListener("DOMContentLoaded", loadActiveClasses);
+
+      // 1. Load active classes list      
+      async function loadActiveClasses() {
         try {
           const response = await fetch(`${API_URL}?action=getActiveClasses`);
           const result = await response.json();
+          
           const select = document.getElementById("classSelect");
           select.innerHTML = "<option value=''>Please select class</option>";
-          
+
           result.results.forEach(c => {
             const option = document.createElement("option");
             option.value = c.className;
             option.textContent = `${c.className} (${c.dayOfWeek})${c.highlight?" 🟢 Today" : ""}`;
             if (c.highlight) option.classList.add("today"); // highlight
             select.appendChild(option);
+  
           });
         } catch (err) {
-          alert("Loading class failure: " + err.message);
+          showNotification("Loading class failure: " + err.message);
         }
       }
 
@@ -108,24 +124,29 @@
           const result = await response.json();
 
           if (result.ok) {
-            // Update class name
-            document.getElementById("currentClassName").innerText = `${currentClassName} (${dayOfWeek})`;
+            document.getElementById("selectClassContainer").style.display = "none";
+            document.getElementById("attendanceContainer").style.display = "block";
+            document.getElementById("classInfo").textContent = selectedClass; 
+            
             renderStudents(result.results);
-            document.getElementById("attendanceContainer").style.display="block";
+            showNotification("✅ Students loaded for " + selectedClass);
           }
         } catch (err) {
-          alert("Load student list failure: " + err.message);
+          showNotification("⚠️ " + err.message, "error");
         }
       }
 
       // render student cards
       function renderStudents(students) {
         
-        const grid = document.getElementById("studentGrid");
+        const grid = document.getElementById("studentGrid");        
         grid.innerHTML = "";
+        attendanceMap.clear();
+        
         students.forEach(s => {
           const card = document.createElement("div");
           card.className = "student-card";
+          card.dataset.id = s.studentId;
           const state = s.leaveNote ?"leave":"present";
           card.classList.add(state);
 
@@ -156,37 +177,51 @@
         });        
         updateSummary();
       }
-
-      // Set status
-      function setStatus(card, status) {
-        const buttons = card.querySelectorAll(".attendance-btn");
-        buttons.forEach( b=> b.classList.remove("active"));
-        const targetBtn = card.querySelector(`.attendance-btn.${status.toLowerCase()}`);        
-        if (targetBtn) targetBtn.classList.add("active");
+      
+      /* ===============================
+      切换状态按钮
+      =================================*/
+      document.getElementById("presentBtn").addEventListener("click", () => setStatus("present"));
+      document.getElementById("absentBtn").addEventListener("click", () => setStatus("absent"));
+      document.getElementById("leaveBtn").addEventListener("click", () => setStatus("leave"));
+      
+      function setStatus(mode) {
+        currentStatus = mode;
+        document.querySelectorAll(".attendance-btn").forEach(btn => btn.classList.remove("active"));
+        document.querySelector(`.attendance-btn.${mode}`).classList.add("active");
+      }
+      
+      /* ===============================
+      学生点击打卡
+      =================================*/
+      function onStudentClick(card, studentId, noteDiv) {
+        attendanceMap.set(studentId, currentStatus);
+        card.classList.remove("present", "absent", "leave");
+        card.classList.add(currentStatus);
+        
+        if (currentStatus === "leave") {
+          let note = noteDiv.textContent.replace("📝 ", "") || "";
+          note = prompt("Enter leave note:", note) || note;
+          noteDiv.textContent = note ? "📝 " + note : "";
+        } else {
+          noteDiv.textContent = "";
+        }
         updateSummary();
       }
-
-      // Update summary
+      
+      /* ===============================
+      更新统计栏
+      =================================*/
       function updateSummary() {
-        const allCards = document.querySelectorAll(".attendance-card");
-        attendanceSummary.present = 0;
-        attendanceSummary.absent = 0;
-        attendanceSummary.leave = 0;
-
-        allCards.forEach(card => {
-          const activeBtn = card.querySelector(".attendance-btn.active");
-
-          if (activeBtn) {
-            const status = activeBtn.dataset.status.toLowerCase();
-            if (status === "present") attendanceSummary.present++;
-            if (status === "absent") attendanceSummary.absent++;
-            if (status === "leave") attendanceSummary.leave++;
-          }
+        const total = attendanceMap.size;
+        let p = 0, a = 0, l = 0;
+        attendanceMap.forEach(v => {
+          if (v === "present") p++;
+          if (v === "absent") a++;
+          if (v === "leave") l++;
         });
-
-        document.getElementById("attendanceSummary").innerText =
-          `Total: ${attendanceSummary.total} | 🟢 P: ${attendanceSummary.present} | 🔴 A: ${attendanceSummary.absent} | 🟡 L: ${attendanceSummary.leave}`;
-      }
+        document.getElementById("summaryBar").textContent = `Total: ${total} | 🟢 P: ${p} | 🔴 A: ${a} | 🟡 L: ${l}`;
+      }      
 
       // Submit attendace
       async function submitAttendance() {
