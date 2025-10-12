@@ -99,35 +99,34 @@
         try {
           const response = await fetch(`${API_URL}?action=getActiveClasses`);
           const result = await response.json();
-          
-          const select = document.getElementById("classSelect");
-          select.innerHTML = "<option value=''>Please select class</option>";
 
-          result.results.forEach(c => {
-            const div = document.createElement("div");
-            div.className = "class-item";
-            div.value = c.className;
-            console.log("Class name: ", div.value, c.className);
-            div.textContent = `${c.className} (${c.dayOfWeek})${c.highlight?" 🟢 Today" : ""}`;
-            console.log("Text content: ", div.textContent, ", Highlight: ", c.highlight);
-            div.addEventListener("click", () => onSelectClass(div, c.className));
-            console.log("Click event added");
-            if (c.highlight) div.classList.add("today"); // highlight
-            console.log("class List: ", div.classList);
-            select.appendChild(div);
-  
-          });
+          if(!result.ok) throw new Error(response.message || "Failed to load classes");
+          renderClassList(result);
         } catch (err) {
-          showNotification("Loading class failure: " + err.message);
+          showNotification("⚠️ Loading class failure: " + err.message, "error");
         }
       }
 
+      function renderClassList(classes) {
+        const container = document.getElementById("classSelect");
+        container.innerHTML = "";
+        // container.innerHTML = "<option value=''>Please select class</option>";
+
+        classes.forEach(cls => {
+          const div = document.createElement("div");
+          div.className = "class-item";
+          div.textContent = `${cls.className} (${cls.dayOfWeek})${cls.highlight?" 🟢 Today" : ""}`;
+          div.addEventListener("click", ()=> onSelectClass(div, cls.className));
+          container.appendChild(div);
+        });
+      }
+
       function onSelectClass(div, className) {
-        document.querySelectorAll(".class-item").forEach( el => el.classList.remove("active"));
+        document.querySelectorAll(".class-item").forEach(el=>el.classList.remove("active"));
         div.classList.add("active");
         selectedClass = className;
-        document.getElementById("loadAttendanceBtn").disabled=false;
-      }      
+        document.getElementById("loadAttendanceBtn").disabled = false;
+      }
 
       // 2. Choose a class and get student list
       async function getStudents() {
