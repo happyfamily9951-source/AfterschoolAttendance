@@ -86,7 +86,7 @@
         loadActiveClasses();
 
         // Event
-        document.getElementById("loadAttendanceBtn").addEventListener("click", loadStudents); 
+        document.getElementById("loadAttendanceBtn").addEventListener("click", getStudents); 
         document.getElementById("submitBtn").addEventListener("click", submitAttendance);
         document.getElementById("presentBtn").addEventListener("click", () => setStatus("present"));
         document.getElementById("absentBtn").addEventListener("click", () => setStatus("absent"));
