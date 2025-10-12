@@ -1,0 +1,120 @@
+:root {
+  --gap: 16px;
+  --present: #28a745;
+  --absent: #dc3545;
+  --leave: #ffc107;
+}
+
+/* ===== 通用容器布局 ===== */
+#attendanceContainer {
+  padding: var(--gap);
+}
+
+/* ===== 打卡按钮区 ===== */
+#attendanceContainer .btn-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+#attendanceContainer .attendance-btn {
+  padding: 14px 0;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  color: white;
+  transition: transform 0.1s ease;
+}
+
+#attendanceContainer .attendance-btn.present { background: var(--present); }
+#attendanceContainer .attendance-btn.absent  { background: var(--absent); }
+#attendanceContainer .attendance-btn.leave   { background: var(--leave); color: #333; }
+#attendanceContainer .attendance-btn.active  { transform: scale(1.05); }
+
+/* ===== 按钮和卡片之间的分隔线 ===== */
+#attendanceContainer .divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #d1d5db, transparent);
+  margin: 18px 0;
+}
+
+/* ===== 学生卡片网格 ===== */
+.student-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--gap);
+}
+
+.student-card {
+  position: relative;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  border: 1px solid #e5e7eb;
+  aspect-ratio: 1.618 / 1; /* 黄金比例 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+/* 状态颜色 */
+.student-card.present .status-bar { background: var(--present); }
+.student-card.absent  .status-bar { background: var(--absent); }
+.student-card.leave   .status-bar { background: var(--leave); }
+
+.student-name {
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+  color: #111827;
+}
+
+/* Notes 区始终显示 */
+.student-note {
+  font-size: 13px;
+  color: #6b7280;
+  min-height: 36px; /* 保持高度一致 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: 8px;
+}
+
+.student-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* 手机端：1行3个卡片 */
+@media (max-width: 600px) {
+  .student-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  #attendanceContainer .btn-group {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
