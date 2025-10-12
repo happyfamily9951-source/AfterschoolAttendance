@@ -108,7 +108,7 @@
             div.className = "class-item";
             div.value = c.className;
             div.textContent = `${c.className} (${c.dayOfWeek})${c.highlight?" 🟢 Today" : ""}`;
-            div.addEventListener("click", () => onSelectClass(div, c.className);
+            div.addEventListener("click", () => onSelectClass(div, c.className)）;
             if (c.highlight) div.classList.add("today"); // highlight
             select.appendChild(option);
   
