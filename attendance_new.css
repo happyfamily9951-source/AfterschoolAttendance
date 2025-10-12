@@ -75,14 +75,14 @@
   border-top-right-radius: 14px;
 }
 
-/* 状态颜色 */
+/* Status color */
 .student-card.present .status-bar { background: var(--present); }
 .student-card.absent  .status-bar { background: var(--absent); }
 .student-card.leave   .status-bar { background: var(--leave); }
 
 .student-name {
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   display: flex;
   justify-content: center;
   align-items: center;
