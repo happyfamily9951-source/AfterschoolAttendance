@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Attendance</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="attendance_new.css">
+    <link rel="stylesheet" href="attendance_new.css">    <!-- API_URL and showNotification() -->
     <script src="config.js"></script>    
   </head>
   
@@ -21,7 +21,7 @@
         <div id="notification" class="notification hidden"></div>
         
         <select id="classSelect"></select>
-        <button class="btn-primary" onclick="getStudents()">Get Student List</button>
+        <button class="btn-primary" id="loadAttendanceBtn" disabled>Get Student List</button>
       </div>
 
       <!-- Student attendance -->
@@ -29,8 +29,7 @@
         <h2>Mark Attendance</h2>
         <!-- Notification bar -->
         <div id="notification" class="notification hidden"></div>   
-
-        <div id="classInfo"><strong></strong></div>
+        <div id="classInfo"></div>
         <br>
         <div class="stats" id="summaryBar">Total: 0 | 🟢 P: 0 | 🔴 A: 0 | 🟡 L: 0</div> 
         <br>
@@ -78,10 +77,22 @@
       const attendanceMap = new Map();  // studentId -> {studentNam, gender, status, notes}
 
       /* ========================================
-            Loading class 
+          Initialization after loading HTML page
       ==========================================*/
+      
+      document.addEventListener("DOMContentLoaded", () => {
 
-      // document.addEventListener("DOMContentLoaded", loadActiveClasses);
+        // Initialization
+        loadActiveClasses();
+
+        // Event
+        document.getElementById("loadAttendanceBtn").addEventListener("click", loadStudents); 
+        document.getElementById("submitBtn").addEventListener("click", submitAttendance);
+        document.getElementById("presentBtn").addEventListener("click", () => setStatus("present"));
+        document.getElementById("absentBtn").addEventListener("click", () => setStatus("absent"));
+        document.getElementById("leaveBtn").addEventListener("click", () => setStatus("leave"));
+      });
+        
 
       // 1. Load active classes list      
       async function loadActiveClasses() {
@@ -93,10 +104,12 @@
           select.innerHTML = "<option value=''>Please select class</option>";
 
           result.results.forEach(c => {
-            const option = document.createElement("option");
-            option.value = c.className;
-            option.textContent = `${c.className} (${c.dayOfWeek})${c.highlight?" 🟢 Today" : ""}`;
-            if (c.highlight) option.classList.add("today"); // highlight
+            const div = document.createElement("div");
+            div.className = "class-item";
+            div.value = c.className;
+            div.textContent = `${c.className} (${c.dayOfWeek})${c.highlight?" 🟢 Today" : ""}`;
+            div.addEventListener("click", () => onSelectClass(div, c.className);
+            if (c.highlight) div.classList.add("today"); // highlight
             select.appendChild(option);
   
           });
@@ -105,24 +118,37 @@
         }
       }
 
+      function onSelectClass(div, className) {
+        document.querySelectorAll(".class-item").forEach( el => el.classList.remove("active"));
+        div.classList.add("active");
+        selectedClass = className;
+        document.getElementById("loadAttendanceBtn").disabled=false;
+      }      
+
       // 2. Choose a class and get student list
       async function getStudents() {
-        currentClassName = document.getElementById("classSelect").value;
-        if (!currentClassName) return;
-
-        const todayName = new Date().toLocaleString("en-us", {weekday: "short"});  // weekday: "long" ==> Monday
-        const selectedOption = document.querySelector(`#classSelect option[value="${currentClassName}"]`);
-
-        // Extract dayOfWeek from selectedOption
-        const optionText = selectedOption ? selectedOption.textContent : "";
-        const match = optionText.match(/\((.*?)\)/);
-        const dayOfWeek = match ? match[1] : "";
-        
-        if (selectedOption && !selectedOption.textContent.includes(todayName)) {
-          if (!confirm("The selected class is not today. Continue?")) return;
+        if (!currentClassName) {
+          showNotification("⚠️ Please select a class first", "error");
+          return;
         }
 
-        console.log("Start get students by class");
+        // Retrieve the selected class title
+        const cls = Array.from(document.querySelectorAll(".class-item"))
+          .find(el => el.classList.contains("active"));
+        
+        // Extract dayOfWeek: className format is "class name (Tue)"）        
+        const match = cls?.textContent.match(/\((\w+)\)$/);
+        const dayOfWeek = match ? match[1] : "";
+        const todayName = new Date().toLocaleString("en-us", {weekday: "short"});  // weekday: "long" ==> Monday        
+
+        if (dayOfWeek && dayOfWeek !== todayName) {
+          const proceed = confirm(`The selected class is not today (${todayName}). Continue?`);
+
+          if (!proceed) {
+            showNotification("❌ Cancelled loading attendance.", "error");
+          }
+        }
+         console.log("Start get students by class: ",currentClassName, ", dayOfWeek: ", dayOfWeek);
 
         try {
           const response = await fetch(`${API_URL}?action=getStudentsByClass&className=${encodeURIComponent(currentClassName)}`);
@@ -131,7 +157,6 @@
           if (result.ok) {
             // document.getElementById("selectClassContainer").style.display = "none";
             document.getElementById("attendanceContainer").style.display = "block";
-            // document.getElementById("classInfo").textContent = selectedClass; 
             document.getElementById("classInfo").textContent = currentClassName;
 
             renderStudents(result.results);
@@ -254,22 +279,26 @@
 
       // Submit attendace
       async function submitAttendance() {
-        const btn = document.getElementById("AttendanceSubmit");
+        const btn = document.getElementById("submitBtn");
         btn.disabled = true;
         const originalText = btn.innerText;
         btn.innerText = "Submitting...";
 
         const records = [];
-        document.querySelectorAll(".attendance-card").forEach(card => {
-          const studentId = card.dataset.studentId;
-          const studentName = card.dataset.studentName;
-          const gender = card.dataset.gender;
-          const activeBtn = card.querySelector(".attendance-btn.active");
-          const status = activeBtn ? activeBtn.dataset.status : "Absent";   // Default value is absent
-          const notes = card.querySelector(".attendance-note")?.innerText || "";
-
-          records.push({studentId, studentName, gender, status, notes});
+        attendanceMap.forEach((rec, studentId) => {
+          records.push({
+            studentId, 
+            studentName: rec.studentName,
+            gender: rec.gender,
+            status: rec.status,
+            notes: rec.notes
+          });
         });
+
+        if (records.length == 0) {
+          showNotification("⚠️ No records to submit.", "error");
+          return;
+        }
 
         // Version A: Convert to x-www-form-urlencoded format
         const body = 
