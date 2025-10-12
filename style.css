@@ -421,9 +421,9 @@ select option.today {
 @media (max-width: 400px) {
   .header img { width: 80% !important; }
   .card { font-size: 16px; }
-  .card-grid {
-     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  }
+  /*.card-grid { */
+   /* grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); */
+  /* } */
   .bottom-nav .nav-item img { width: 30px; height: 30px; }
 }
 
