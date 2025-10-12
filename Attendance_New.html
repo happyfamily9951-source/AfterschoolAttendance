@@ -119,17 +119,22 @@
           if (!confirm("The selected class is not today. Continue?")) return;
         }
 
+        console.log("Start get students by class");
+
         try {
           const response = await fetch(`${API_URL}?action=getStudentsByClass&className=${encodeURIComponent(currentClassName)}`);
           const result = await response.json();
+
+          console.log("Result =", result.ok);
+          
 
           if (result.ok) {
             document.getElementById("selectClassContainer").style.display = "none";
             document.getElementById("attendanceContainer").style.display = "block";
             document.getElementById("classInfo").textContent = selectedClass; 
 
-            Console.log("selectedClass = ", selectedClass);
-            Console.log("result.results = ", result.results.length());
+            console.log("selectedClass = ", selectedClass);
+            console.log("result.results = ", result.results.length());
             
             renderStudents(result.results);
             showNotification("✅ Students loaded for " + selectedClass);
