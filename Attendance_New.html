@@ -107,6 +107,7 @@
             const div = document.createElement("div");
             div.className = "class-item";
             div.value = c.className;
+            console.log("Class name: ", div.value, c.className);
             div.textContent = `${c.className} (${c.dayOfWeek})${c.highlight?" 🟢 Today" : ""}`;
             div.addEventListener("click", () => onSelectClass(div, c.className));
             if (c.highlight) div.classList.add("today"); // highlight
@@ -342,7 +343,6 @@
           btn.innerText = originalText;
         }
       }
-      window.onload = loadActiveClasses;
     </script>
   </body>
 </html>
