@@ -71,6 +71,7 @@
     
     <script>
       let selectedClass = null;
+      let currentClassName = null;
       let currentStatus = "present";
       const attendanceMap = new Map();  // studentId -> {studentNam, gender, status, notes}
 
@@ -131,13 +132,14 @@
           if (result.ok) {
             document.getElementById("selectClassContainer").style.display = "none";
             document.getElementById("attendanceContainer").style.display = "block";
-            document.getElementById("classInfo").textContent = selectedClass; 
+            // document.getElementById("classInfo").textContent = selectedClass; 
+            document.getElementById("classInfo").textContent = currentClassName;
 
             console.log("selectedClass = ", selectedClass);
             console.log("result.results = ", result.results.length());
             
             renderStudents(result.results);
-            showNotification("✅ Students loaded for " + selectedClass);
+            showNotification("✅ Students loaded for " + currentClassName);
           }
         } catch (err) {
           showNotification("⚠️ " + err.message, "error");
