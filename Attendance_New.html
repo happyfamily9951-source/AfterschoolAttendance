@@ -229,9 +229,9 @@
         const total = attendanceMap.size;
         let p = 0, a = 0, l = 0;
         attendanceMap.forEach(v => {
-          if (v === "present") p++;
-          if (v === "absent") a++;
-          if (v === "leave") l++;
+          if (v.status === "present") p++;
+          if (v.status === "absent") a++;
+          if (v.status === "leave") l++;
         });
         document.getElementById("summaryBar").textContent = `Total: ${total} | 🟢 P: ${p} | 🔴 A: ${a} | 🟡 L: ${l}`;
       }      
