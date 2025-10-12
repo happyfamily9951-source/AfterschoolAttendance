@@ -166,14 +166,16 @@
           bar.className = "status-bar";
           card.appendChild(bar);
 
-          // Student Name + Gender
+          // Gender
+          const genderIcon = document.createElement("img");
+          genderIcon.className = "gender-icon";
+          genderIcon.src = s.gender === "M"?"icons/male.svg" : "icons/female.svg";
+          card.appendChild(genderIcon);
+
+          // Student Name
           const nameDiv = document.createElement("div");
           nameDiv.className = "student-name";
-          nameDiv.textContent = s.studentName + " ";
-          const genderIcon = document.createElement("img");
-          genderIcon.src = s.gender === "M"?"icons/male.svg" : "icons/female.svg";
-          genderIcon.width = 18; genderIcon.height = 18;
-          nameDiv.appendChild(genderIcon);
+          nameDiv.textContent = s.studentName;          
           card.appendChild(nameDiv);
 
           // Notes
