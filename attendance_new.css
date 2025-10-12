@@ -13,7 +13,7 @@
 /* ===== 打卡按钮区 ===== */
 #attendanceContainer .btn-group {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(2, 1fr);  /* 2 columns in 1 row */
   gap: var(--gap);
   margin-bottom: var(--gap);
 }
