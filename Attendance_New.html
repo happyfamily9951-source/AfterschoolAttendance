@@ -30,7 +30,8 @@
         <!-- Notification bar -->
         <div id="notification" class="notification hidden"></div>   
 
-        <div id="classInfo"></div>
+        <div id="classInfo"><strong></strong></div>
+        <br>
         <div class="stats" id="summaryBar">Total: 0 | 🟢 P: 0 | 🔴 A: 0 | 🟡 L: 0</div> 
         
         <div class="btn-group">
@@ -136,7 +137,7 @@
             document.getElementById("classInfo").textContent = currentClassName;
 
             console.log("selectedClass = ", currentClassName);
-            console.log("result.results = ", result.results.length());
+            // console.log("result.results = ", result.results.length());
             
             renderStudents(result.results);
             showNotification("✅ Students loaded for " + currentClassName);
