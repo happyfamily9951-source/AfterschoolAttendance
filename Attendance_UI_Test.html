@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Attendance UI Test</title>
+<title>Attendance UI Test (Accent Bar - Optimized)</title>
 <style>
   body {
     font-family: "Inter", system-ui, sans-serif;
@@ -29,22 +29,26 @@
   .stats {
     text-align: center;
     margin-bottom: 16px;
-    font-size: 15px;
+    font-size: 16px; /* 与学生名同级 */
+    font-weight: 500;
   }
 
+  /* ===== 按钮区域 ===== */
   .btn-group {
     display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 20px;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 24px;
   }
 
   .attendance-btn {
-    padding: 8px 16px;
-    border-radius: 8px;
+    flex: 1;
+    padding: 12px 0;
+    border-radius: 10px;
     border: none;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 16px; /* 与学生姓名、统计一致 */
     color: white;
     transition: transform 0.1s ease;
   }
@@ -54,7 +58,13 @@
   .attendance-btn.leave { background: #ffc107; color: #333; }
   .attendance-btn.active { transform: scale(1.05); }
 
-  /* ========== Accent Bar ============= */
+  /* ===== 学生卡区域 ===== */
+  .student-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+  }
+
   .student-card {
     position: relative;
     background: #fff;
@@ -65,25 +75,27 @@
     overflow: hidden;
     transition: all 0.25s ease;
     border: 1px solid #e5e7eb;
+    min-height: 130px; /* 高度统一 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
-  
-  /* 顶部彩条 */
+
   .status-bar {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 20px;
+    height: 10px; /* 调整为一半高度 */
     border-top-left-radius: 14px;
     border-top-right-radius: 14px;
   }
-  
+
   /* 三种状态颜色 */
-  .student-card.present .status-bar { background: #28a745; }   /* 绿色 */
-  .student-card.absent  .status-bar { background: #dc3545; }   /* 红色 */
-  .student-card.leave   .status-bar { background: #ffc107; }   /* 黄色 */
-  
-  /* 内容排版 */
+  .student-card.present .status-bar { background: #28a745; }
+  .student-card.absent  .status-bar { background: #dc3545; }
+  .student-card.leave   .status-bar { background: #ffc107; }
+
   .student-name {
     font-weight: 600;
     font-size: 16px;
@@ -91,22 +103,27 @@
     justify-content: center;
     align-items: center;
     gap: 6px;
-    margin-top: 26px; /* 给彩条留空间 */
+    margin-top: 20px;
     color: #111827;
   }
-  
+
   .student-note {
     font-size: 13px;
     color: #6b7280;
+    min-height: 18px; /* 预留空间保证高度一致 */
   }
-  
-  /* Hover 动画 (可选) */
+
   .student-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }  
-  /* ========= End of Accent Bar =========== */
+  }
 
+  /* 手机端布局：1 行 3 个卡片 */
+  @media (max-width: 600px) {
+    .student-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
 </style>
 </head>
 <body>
@@ -155,11 +172,10 @@
       attendanceMap.set(stu.studentId, defaultState);
       card.classList.add(defaultState);
 
-      // Status Bar
       const bar = document.createElement("div");
       bar.className = "status-bar";
       card.appendChild(bar);
-      
+
       const nameDiv = document.createElement("div");
       nameDiv.className = "student-name";
       nameDiv.textContent = stu.studentName + " ";
@@ -171,49 +187,30 @@
       genderIcon.style.height = "18px";
       nameDiv.appendChild(genderIcon);
       card.appendChild(nameDiv);
-      
 
-      if (stu.leaveNote) {
-        const noteDiv = document.createElement("div");
-        noteDiv.className = "student-note";
-        noteDiv.textContent = "📝 " + stu.leaveNote;
-        card.appendChild(noteDiv);
-      }
+      const noteDiv = document.createElement("div");
+      noteDiv.className = "student-note";
+      if (stu.leaveNote) noteDiv.textContent = "📝 " + stu.leaveNote;
+      card.appendChild(noteDiv);
 
-      card.addEventListener("click", () => onStudentClick(card, stu.studentId));
+      card.addEventListener("click", () => onStudentClick(card, stu.studentId, noteDiv));
       grid.appendChild(card);
     });
     updateStats();
   }
 
-  function onStudentClick(card, id) {
-    // 切换学生状态
+  function onStudentClick(card, id, noteDiv) {
     attendanceMap.set(id, currentMode);
     card.classList.remove("present", "absent", "leave");
     card.classList.add(currentMode);
 
-    // Leave 状态下输入备注
-    const existingNote = card.querySelector(".student-note");
     if (currentMode === "leave") {
-      let note = existingNote ? existingNote.textContent.replace("📝 ", "") : "";
+      let note = noteDiv.textContent.replace("📝 ", "") || "";
       note = prompt("Enter leave note:", note) || note;
-      if (note) {
-        if (existingNote) {
-          existingNote.textContent = "📝 " + note;
-        } else {
-          const noteDiv = document.createElement("div");
-          noteDiv.className = "student-note";
-          noteDiv.textContent = "📝 " + note;
-          card.appendChild(noteDiv);
-        }
-      }
+      noteDiv.textContent = note ? "📝 " + note : "";
     } else {
-      // 非 leave 状态清除备注
-      if (existingNote && !mockResponse.data.find(s => s.studentId === id).leaveNote) {
-        existingNote.remove();
-      }
+      noteDiv.textContent = "";
     }
-
     updateStats();
   }
 
@@ -228,7 +225,6 @@
     statsBar.textContent = `Total: ${total} | 🟢 P: ${p} | 🔴 A: ${a} | 🟡 L: ${l}`;
   }
 
-  // 顶部按钮逻辑
   document.getElementById("presentBtn").addEventListener("click", () => setMode("present"));
   document.getElementById("absentBtn").addEventListener("click", () => setMode("absent"));
   document.getElementById("leaveBtn").addEventListener("click", () => setMode("leave"));
