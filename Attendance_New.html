@@ -212,7 +212,16 @@
       学生点击打卡
       =================================*/
       function onStudentClick(card, studentId, noteDiv) {
-        attendanceMap.set(studentId, currentStatus);
+
+        const record = attendanceMap.get(studentId);
+
+        // update summary even if status unchanged
+        if (record.status === currentStatus) {
+          udpateSummary();
+          return;
+        }
+
+        record.status = currentStatus;
         card.classList.remove("present", "absent", "leave");
         card.classList.add(currentStatus);
         
@@ -221,8 +230,11 @@
           note = prompt("Enter leave note:", note) || note;
           noteDiv.textContent = note ? "📝 " + note : "";
         } else {
+          record.notes = "";
           noteDiv.textContent = "";
         }
+
+        attendanceMap.set(studentId, record);
         updateSummary();
       }
       
