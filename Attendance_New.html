@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="attendance_new.css">
+    <script src="config.js"></script>    
+  </head>
+  
+  <body class="page-attendance">
+    <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
+   
+    <main class="page-content">
+
+      <!-- Select class -->
+      <div class="form-container">
+        <h2>Select Class</h2>
+        <select id="classSelect"></select>
+        <button class="btn-primary" onclick="getStudents()">Get Student List</button>
+      </div>
+
+      <!-- Student attendance -->
+      <div class="form-container" id="attendanceContainer" style="display:none;">
+        <h2>Mark Attendance</h2>
+        <!-- Notification bar -->
+        <div id="notification" class="notification hidden"></div>   
+
+        <div id="classInfo"></div>
+        <div id="statusBar"></div>
+        
+        <div class="btn-group">
+          <button class="attendance-btn present active" id="presentBtn">Present</button>
+          <button class="attendance-btn absent" id="absentBtn">Absent</button>
+          <button class="attendance-btn leave" id="leaveBtn">Leave</button>
+        </div>
+        
+        <!-- 分隔线 -->
+        <div class="divider"></div>
+        <div class="student-grid" id="studentGrid"></div>
+        
+      </div>
+    </main>
+    
+    <!-- Nagivator button on the bottom -->
+    <nav class="bottom-nav">
+      <a class="nav-item nav-student active" href="StudentEnrollment.html" aria-label="Student Enrollment">
+        <img src="icons/student-enroll.svg" alt="">
+      </a>
+      <a class="nav-item nav-course" href="CourseEnrollment.html" aria-label="Course Enrollment">
+        <img src="icons/course-enroll.svg" alt="">
+      </a>
+      <a class="nav-item nav-student-course-application" href="StudentCourseApplication.html" aria-label="Student Course Application">
+        <img src="icons/student-course-application.svg" alt="">
+      </a>    
+      <a class="nav-item nav-attend" href="Attendance.html" aria-label="Attendance">
+        <img src="icons/attendance.svg" alt="">
+      </a>
+      <a class="nav-item nav-report" href="Report.html" aria-label="Reports">
+        <img src="icons/report.svg" alt="">
+      </a>
+    </nav>
+    
+    <script>
+      let attendanceSummary = { total: 0, present: 0, absent: 0, leave: 0 };
+      let currentClassId = null;
+
+      // 1. Load classes list      
+      async function loadClasses() {
+        try {
+          const response = await fetch(`${API_URL}?action=getActiveClasses`);
+          const result = await response.json();
+          const select = document.getElementById("classSelect");
+          select.innerHTML = "<option value=''>Please select class</option>";
+          
+          result.results.forEach(c => {
+            const option = document.createElement("option");
+            option.value = c.className;
+            option.textContent = `${c.className} (${c.dayOfWeek})${c.highlight?" 🟢 Today" : ""}`;
+            if (c.highlight) option.classList.add("today"); // highlight
+            select.appendChild(option);
+          });
+        } catch (err) {
+          alert("Loading class failure: " + err.message);
+        }
+      }
+
+      // 2. Choose a class and get student list
+      async function getStudents() {
+        currentClassName = document.getElementById("classSelect").value;
+        if (!currentClassName) return;
+
+        const todayName = new Date().toLocaleString("en-us", {weekday: "short"});  // weekday: "long" ==> Monday
+        const selectedOption = document.querySelector(`#classSelect option[value="${currentClassName}"]`);
+
+        // Extract dayOfWeek from selectedOption
+        const optionText = selectedOption ? selectedOption.textContent : "";
+        const match = optionText.match(/\((.*?)\)/);
+        const dayOfWeek = match ? match[1] : "";
+        
+        if (selectedOption && !selectedOption.textContent.includes(todayName)) {
+          if (!confirm("The selected class is not today. Continue?")) return;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}?action=getStudentsByClass&className=${encodeURIComponent(currentClassName)}`);
+          const result = await response.json();
+
+          if (result.ok) {
+            // Update class name
+            document.getElementById("currentClassName").innerText = `${currentClassName} (${dayOfWeek})`;
+            renderStudents(result.results);
+            document.getElementById("attendanceContainer").style.display="block";
+          }
+        } catch (err) {
+          alert("Load student list failure: " + err.message);
+        }
+      }
+
+      // render student cards
+      function renderStudents(students) {
+        
+        const grid = document.getElementById("studentGrid");
+        grid.innerHTML = "";
+        students.forEach(s => {
+          const card = document.createElement("div");
+          card.className = "student-card";
+          const state = s.leaveNote ?"leave":"present";
+          card.classList.add(state);
+
+          // Top bar
+          const bar = document.createElement("div")
+          bar.className = "status-bar";
+          card.appendChild(bar);
+
+          // Student Name + Gender
+          const nameDiv = document.createElement("div");
+          nameDiv.className = "student-name";
+          nameDiv.textContent = s.studentName + " ";
+          const genderIcon = document.createElement("img");
+          genderIcon.src = s.gender === "M"?"icons/male.svg" : "icon/female.svg";
+          genderIcon.width = 18; genderIcon.height = 18;
+          nameDiv.appendChild(genderIcon);
+          card.appendChild(nameDiv);
+
+          // Notes
+          const noteDiv = document.createElement("div");
+          noteDiv.className = "student-note";
+          noteDiv.textContent = s.leaveNote ?"📝 " + s.leaveNote : "";
+          card.appendChild(noteDiv);
+
+          // Click Button
+          card.addEventListener("click", () => onStudentClick(card, s.studentId, noteDiv));
+          grid.appendChild(card);
+        });        
+        updateSummary();
+      }
+
+      // Set status
+      function setStatus(card, status) {
+        const buttons = card.querySelectorAll(".attendance-btn");
+        buttons.forEach( b=> b.classList.remove("active"));
+        const targetBtn = card.querySelector(`.attendance-btn.${status.toLowerCase()}`);        
+        if (targetBtn) targetBtn.classList.add("active");
+        updateSummary();
+      }
+
+      // Update summary
+      function updateSummary() {
+        const allCards = document.querySelectorAll(".attendance-card");
+        attendanceSummary.present = 0;
+        attendanceSummary.absent = 0;
+        attendanceSummary.leave = 0;
+
+        allCards.forEach(card => {
+          const activeBtn = card.querySelector(".attendance-btn.active");
+
+          if (activeBtn) {
+            const status = activeBtn.dataset.status.toLowerCase();
+            if (status === "present") attendanceSummary.present++;
+            if (status === "absent") attendanceSummary.absent++;
+            if (status === "leave") attendanceSummary.leave++;
+          }
+        });
+
+        document.getElementById("attendanceSummary").innerText =
+          `Total: ${attendanceSummary.total} | 🟢 P: ${attendanceSummary.present} | 🔴 A: ${attendanceSummary.absent} | 🟡 L: ${attendanceSummary.leave}`;
+      }
+
+      // Submit attendace
+      async function submitAttendance() {
+        const btn = document.getElementById("AttendanceSubmit");
+        btn.disabled = true;
+        const originalText = btn.innerText;
+        btn.innerText = "Submitting...";
+
+        const records = [];
+        document.querySelectorAll(".attendance-card").forEach(card => {
+          const studentId = card.dataset.studentId;
+          const studentName = card.dataset.studentName;
+          const gender = card.dataset.gender;
+          const activeBtn = card.querySelector(".attendance-btn.active");
+          const status = activeBtn ? activeBtn.dataset.status : "Absent";   // Default value is absent
+          const notes = card.querySelector(".attendance-note")?.innerText || "";
+
+          records.push({studentId, studentName, gender, status, notes});
+        });
+
+        // Version A: Convert to x-www-form-urlencoded format
+        const body = 
+          "action=" + encodeURIComponent("markAttendance") +
+          "&className=" + encodeURIComponent(currentClassName) +
+          "&records=" + encodeURIComponent(JSON.stringify(records)); 
+
+        // Version B: JSON
+        // const payload = {
+        // action: "markAttendance",
+        // className: currentClassName,
+        // records: records
+        // };
+
+        try {          
+
+          // Version A: x-www-form-urlencoded format
+          const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},            
+            body: body
+          });
+
+          // Version B: JSON
+          // const response = await fetch(API_URL, {
+          //  method: "POST",
+          //  headers: {"Content-Type": "application/json"},
+          //  body: JSON.stringify(payload)
+          //});
+
+          const result = await response.json();
+          if (result.ok) {
+            showNotification(`✅ Attendance submitted! (${result.count} records)`, "success");                        
+          } else {
+            showNotification(`❌ Error: ${result.message || "Unknown error"}`, "error");            
+          }
+        } catch (err) {
+          showNotification("❌ Network error: " + err.message, "error");          
+        } finally {
+          btn.disabled = false;
+          btn.innerText = originalText;
+        }
+      }
+      window.onload = loadClasses;
+    </script>
+  </body>
+</html>
