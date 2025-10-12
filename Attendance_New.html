@@ -1,261 +1,290 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Attendance</title>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="attendance_new.css">
+    <script src="config.js"></script>    
+  </head>
+  
+  <body class="page-attendance">
+    <img src="icons/logo-monica-linan.svg" alt="Logo" class="logo-top-left">
+   
+    <main class="page-content">
 
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="attendance_new.css">
-<script src="config.js"></script> <!-- 含 API_URL 和 showNotification() -->
-</head>
-<body class="v2">
+      <!-- Select class -->
+      <div class="form-container">
+        <h2>Select Class</h2>
+        <!-- Notification bar -->
+        <div id="notification" class="notification hidden"></div>
+        
+        <select id="classSelect"></select>
+        <button class="btn-primary" onclick="getStudents()">Get Student List</button>
+      </div>
 
-<!-- ========== Container 1: 选择课程 ========== -->
-<div class="container" id="selectClassContainer">
-  <h2>Select Class</h2>
-  <div id="classList" class="class-list"></div>
-  <button id="loadAttendanceBtn" class="btn-primary" disabled>Load Attendance</button>
-</div>
+      <!-- Student attendance -->
+      <div class="form-container" id="attendanceContainer" style="display:none;">
+        <h2>Mark Attendance</h2>
+        <!-- Notification bar -->
+        <div id="notification" class="notification hidden"></div>   
 
-<!-- ========== Container 2: 学生考勤区 ========== -->
-<div class="container" id="attendanceContainer" style="display:none;">
-  <div class="class-info" id="classInfo"></div>
-  <div class="stats" id="summaryBar">Total: 0 | 🟢 P: 0 | 🔴 A: 0 | 🟡 L: 0</div>
+        <div id="classInfo"></div>
+        <div class="stats" id="summaryBar">Total: 0 | 🟢 P: 0 | 🔴 A: 0 | 🟡 L: 0</div> 
+        
+        <div class="btn-group">
+          <button class="attendance-btn present active" id="presentBtn">Present</button>
+          <button class="attendance-btn absent" id="absentBtn">Absent</button>
+          <button class="attendance-btn leave" id="leaveBtn">Leave</button>
+        </div>
+        
+        <!-- 分隔线 -->
+        <div class="divider"></div>
+        <div class="student-grid" id="studentGrid"></div>
 
-  <div class="btn-group">
-    <button class="attendance-btn present active" id="presentBtn">Present</button>
-    <button class="attendance-btn absent" id="absentBtn">Absent</button>
-    <button class="attendance-btn leave" id="leaveBtn">Leave</button>
-  </div>
+        <div style="text-align:center;margin-top:24px;">
+          <button id="submitBtn" class="btn-primary">Submit Attendance</button>
+        </div>
+        
+      </div>
+    </main>
+    
+    <!-- Nagivator button on the bottom -->
+    <nav class="bottom-nav">
+      <a class="nav-item nav-student active" href="StudentEnrollment.html" aria-label="Student Enrollment">
+        <img src="icons/student-enroll.svg" alt="">
+      </a>
+      <a class="nav-item nav-course" href="CourseEnrollment.html" aria-label="Course Enrollment">
+        <img src="icons/course-enroll.svg" alt="">
+      </a>
+      <a class="nav-item nav-student-course-application" href="StudentCourseApplication.html" aria-label="Student Course Application">
+        <img src="icons/student-course-application.svg" alt="">
+      </a>    
+      <a class="nav-item nav-attend" href="Attendance.html" aria-label="Attendance">
+        <img src="icons/attendance.svg" alt="">
+      </a>
+      <a class="nav-item nav-report" href="Report.html" aria-label="Reports">
+        <img src="icons/report.svg" alt="">
+      </a>
+    </nav>
+    
+    <script>
+      let selectedClass = null;
+      let currentStatus = "present";
+      const attendanceMap = new Map();  // studentId -> {studentNam, gender, status, notes}
 
-  <div class="divider"></div>
+      /* ========================================
+            Loading class 
+      ==========================================*/
 
-  <div class="student-grid" id="studentGrid"></div>
+      document.addEventListener("DOMContentLoaded", loadActiveClasses);
 
-  <div style="text-align:center;margin-top:24px;">
-    <button id="submitBtn" class="btn-primary">Submit Attendance</button>
-  </div>
-</div>
+      // 1. Load active classes list      
+      async function loadActiveClasses() {
+        try {
+          const response = await fetch(`${API_URL}?action=getActiveClasses`);
+          const result = await response.json();
+          
+          const select = document.getElementById("classSelect");
+          select.innerHTML = "<option value=''>Please select class</option>";
 
-<script>
-/* =====================================================
-   全局变量
-===================================================== */
-let selectedClass = null;
-let currentStatus = "present";
-const attendanceMap = new Map();  // studentId → { studentName, gender, status, notes }
+          result.results.forEach(c => {
+            const option = document.createElement("option");
+            option.value = c.className;
+            option.textContent = `${c.className} (${c.dayOfWeek})${c.highlight?" 🟢 Today" : ""}`;
+            if (c.highlight) option.classList.add("today"); // highlight
+            select.appendChild(option);
+  
+          });
+        } catch (err) {
+          showNotification("Loading class failure: " + err.message);
+        }
+      }
 
-/* =====================================================
-   页面加载后拉取课程
-===================================================== */
-document.addEventListener("DOMContentLoaded", loadActiveClasses);
+      // 2. Choose a class and get student list
+      async function getStudents() {
+        currentClassName = document.getElementById("classSelect").value;
+        if (!currentClassName) return;
 
-async function loadActiveClasses() {
-  try {
-    const res = await fetch(API_URL + "?action=getActiveClasses");
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.message || "Failed to load classes");
+        const todayName = new Date().toLocaleString("en-us", {weekday: "short"});  // weekday: "long" ==> Monday
+        const selectedOption = document.querySelector(`#classSelect option[value="${currentClassName}"]`);
 
-    renderClassList(json.data);
-  } catch (err) {
-    showNotification("⚠️ " + err.message, "error");
-  }
-}
+        // Extract dayOfWeek from selectedOption
+        const optionText = selectedOption ? selectedOption.textContent : "";
+        const match = optionText.match(/\((.*?)\)/);
+        const dayOfWeek = match ? match[1] : "";
+        
+        if (selectedOption && !selectedOption.textContent.includes(todayName)) {
+          if (!confirm("The selected class is not today. Continue?")) return;
+        }
 
-/* =====================================================
-   渲染课程列表
-===================================================== */
-function renderClassList(classes) {
-  const container = document.getElementById("classList");
-  container.innerHTML = "";
+        try {
+          const response = await fetch(`${API_URL}?action=getStudentsByClass&className=${encodeURIComponent(currentClassName)}`);
+          const result = await response.json();
 
-  classes.forEach(cls => {
-    const div = document.createElement("div");
-    div.className = "class-item";
-    div.textContent = `${cls.className} (${cls.dayOfWeek})`;
-    div.addEventListener("click", () => onSelectClass(div, cls.className));
-    container.appendChild(div);
-  });
-}
+          if (result.ok) {
+            document.getElementById("selectClassContainer").style.display = "none";
+            document.getElementById("attendanceContainer").style.display = "block";
+            document.getElementById("classInfo").textContent = selectedClass; 
+            
+            renderStudents(result.results);
+            showNotification("✅ Students loaded for " + selectedClass);
+          }
+        } catch (err) {
+          showNotification("⚠️ " + err.message, "error");
+        }
+      }
 
-/* =====================================================
-   选中课程
-===================================================== */
-function onSelectClass(div, className) {
-  document.querySelectorAll(".class-item").forEach(el => el.classList.remove("active"));
-  div.classList.add("active");
-  selectedClass = className;
-  document.getElementById("loadAttendanceBtn").disabled = false;
-}
+      // render student cards
+      function renderStudents(students) {
+        
+        const grid = document.getElementById("studentGrid");        
+        grid.innerHTML = "";
+        attendanceMap.clear();
+        
+        students.forEach(s => {
+          const card = document.createElement("div");
+          card.className = "student-card";
+          card.dataset.id = s.studentId;
+          const state = s.leaveNote ?"leave":"present";
+          card.classList.add(state);
 
-/* =====================================================
-   加载学生列表
-===================================================== */
-document.getElementById("loadAttendanceBtn").addEventListener("click", async () => {
-  if (!selectedClass) return;
+          // Top bar
+          const bar = document.createElement("div")
+          bar.className = "status-bar";
+          card.appendChild(bar);
 
-  try {
-    const res = await fetch(API_URL + "?action=getStudentsByClass&className=" + encodeURIComponent(selectedClass));
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.message || "Failed to load students");
+          // Student Name + Gender
+          const nameDiv = document.createElement("div");
+          nameDiv.className = "student-name";
+          nameDiv.textContent = s.studentName + " ";
+          const genderIcon = document.createElement("img");
+          genderIcon.src = s.gender === "M"?"icons/male.svg" : "icon/female.svg";
+          genderIcon.width = 18; genderIcon.height = 18;
+          nameDiv.appendChild(genderIcon);
+          card.appendChild(nameDiv);
 
-    document.getElementById("selectClassContainer").style.display = "none";
-    document.getElementById("attendanceContainer").style.display = "block";
-    document.getElementById("classInfo").textContent = selectedClass;
+          // Notes
+          const noteDiv = document.createElement("div");
+          noteDiv.className = "student-note";
+          noteDiv.textContent = s.leaveNote ?"📝 " + s.leaveNote : "";
+          card.appendChild(noteDiv);
 
-    renderStudents(json.data);
-    showNotification("✅ Students loaded for " + selectedClass);
-  } catch (err) {
-    showNotification("⚠️ " + err.message, "error");
-  }
-});
+          // Click Button
+          card.addEventListener("click", () => onStudentClick(card, s.studentId, noteDiv));
+          grid.appendChild(card);
+        });        
+        updateSummary();
+      }
+      
+      /* ===============================
+      切换状态按钮
+      =================================*/
+      document.getElementById("presentBtn").addEventListener("click", () => setStatus("present"));
+      document.getElementById("absentBtn").addEventListener("click", () => setStatus("absent"));
+      document.getElementById("leaveBtn").addEventListener("click", () => setStatus("leave"));
+      
+      function setStatus(mode) {
+        currentStatus = mode;
+        document.querySelectorAll(".attendance-btn").forEach(btn => btn.classList.remove("active"));
+        document.querySelector(`.attendance-btn.${mode}`).classList.add("active");
+      }
+      
+      /* ===============================
+      学生点击打卡
+      =================================*/
+      function onStudentClick(card, studentId, noteDiv) {
+        attendanceMap.set(studentId, currentStatus);
+        card.classList.remove("present", "absent", "leave");
+        card.classList.add(currentStatus);
+        
+        if (currentStatus === "leave") {
+          let note = noteDiv.textContent.replace("📝 ", "") || "";
+          note = prompt("Enter leave note:", note) || note;
+          noteDiv.textContent = note ? "📝 " + note : "";
+        } else {
+          noteDiv.textContent = "";
+        }
+        updateSummary();
+      }
+      
+      /* ===============================
+      更新统计栏
+      =================================*/
+      function updateSummary() {
+        const total = attendanceMap.size;
+        let p = 0, a = 0, l = 0;
+        attendanceMap.forEach(v => {
+          if (v === "present") p++;
+          if (v === "absent") a++;
+          if (v === "leave") l++;
+        });
+        document.getElementById("summaryBar").textContent = `Total: ${total} | 🟢 P: ${p} | 🔴 A: ${a} | 🟡 L: ${l}`;
+      }      
 
-/* =====================================================
-   渲染学生卡片
-===================================================== */
-function renderStudents(students) {
-  const grid = document.getElementById("studentGrid");
-  grid.innerHTML = "";
-  attendanceMap.clear();
+      // Submit attendace
+      async function submitAttendance() {
+        const btn = document.getElementById("AttendanceSubmit");
+        btn.disabled = true;
+        const originalText = btn.innerText;
+        btn.innerText = "Submitting...";
 
-  students.forEach(stu => {
-    const card = document.createElement("div");
-    card.className = "student-card";
-    card.dataset.id = stu.studentId;
+        const records = [];
+        document.querySelectorAll(".attendance-card").forEach(card => {
+          const studentId = card.dataset.studentId;
+          const studentName = card.dataset.studentName;
+          const gender = card.dataset.gender;
+          const activeBtn = card.querySelector(".attendance-btn.active");
+          const status = activeBtn ? activeBtn.dataset.status : "Absent";   // Default value is absent
+          const notes = card.querySelector(".attendance-note")?.innerText || "";
 
-    const defaultState = stu.leaveNote ? "leave" : "present";
-    attendanceMap.set(stu.studentId, {
-      studentName: stu.studentName,
-      gender: stu.gender,
-      status: defaultState,
-      notes: stu.leaveNote || ""
-    });
-    card.classList.add(defaultState);
+          records.push({studentId, studentName, gender, status, notes});
+        });
 
-    // 彩条
-    const bar = document.createElement("div");
-    bar.className = "status-bar";
-    card.appendChild(bar);
+        // Version A: Convert to x-www-form-urlencoded format
+        const body = 
+          "action=" + encodeURIComponent("markAttendance") +
+          "&className=" + encodeURIComponent(currentClassName) +
+          "&records=" + encodeURIComponent(JSON.stringify(records)); 
 
-    // 姓名 + 性别
-    const nameDiv = document.createElement("div");
-    nameDiv.className = "student-name";
-    nameDiv.textContent = stu.studentName + " ";
-    const genderIcon = document.createElement("img");
-    genderIcon.src = stu.gender === "male" ? "icons/male.svg" : "icons/female.svg";
-    genderIcon.width = 18;
-    genderIcon.height = 18;
-    nameDiv.appendChild(genderIcon);
-    card.appendChild(nameDiv);
+        // Version B: JSON
+        // const payload = {
+        // action: "markAttendance",
+        // className: currentClassName,
+        // records: records
+        // };
 
-    // Notes
-    const noteDiv = document.createElement("div");
-    noteDiv.className = "student-note";
-    noteDiv.textContent = stu.leaveNote ? "📝 " + stu.leaveNote : "";
-    card.appendChild(noteDiv);
+        try {          
 
-    card.addEventListener("click", () => onStudentClick(card, stu.studentId, noteDiv));
-    grid.appendChild(card);
-  });
+          // Version A: x-www-form-urlencoded format
+          const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},            
+            body: body
+          });
 
-  updateSummary();
-}
+          // Version B: JSON
+          // const response = await fetch(API_URL, {
+          //  method: "POST",
+          //  headers: {"Content-Type": "application/json"},
+          //  body: JSON.stringify(payload)
+          //});
 
-/* =====================================================
-   切换状态按钮
-===================================================== */
-document.getElementById("presentBtn").addEventListener("click", () => setStatus("present"));
-document.getElementById("absentBtn").addEventListener("click", () => setStatus("absent"));
-document.getElementById("leaveBtn").addEventListener("click", () => setStatus("leave"));
-
-function setStatus(mode) {
-  currentStatus = mode;
-  document.querySelectorAll(".attendance-btn").forEach(btn => btn.classList.remove("active"));
-  document.querySelector(`.attendance-btn.${mode}`).classList.add("active");
-}
-
-/* =====================================================
-   学生点击卡片
-===================================================== */
-function onStudentClick(card, studentId, noteDiv) {
-  const record = attendanceMap.get(studentId);
-  record.status = currentStatus;
-  card.classList.remove("present", "absent", "leave");
-  card.classList.add(currentStatus);
-
-  if (currentStatus === "leave") {
-    let note = record.notes || "";
-    note = prompt("Enter leave note:", note) || note;
-    record.notes = note;
-    noteDiv.textContent = note ? "📝 " + note : "";
-  } else {
-    record.notes = "";
-    noteDiv.textContent = "";
-  }
-
-  attendanceMap.set(studentId, record);
-  updateSummary();
-}
-
-/* =====================================================
-   更新统计栏
-===================================================== */
-function updateSummary() {
-  const total = attendanceMap.size;
-  let p = 0, a = 0, l = 0;
-  attendanceMap.forEach(rec => {
-    if (rec.status === "present") p++;
-    if (rec.status === "absent") a++;
-    if (rec.status === "leave") l++;
-  });
-  document.getElementById("summaryBar").textContent =
-    `Total: ${total} | 🟢 P: ${p} | 🔴 A: ${a} | 🟡 L: ${l}`;
-}
-
-/* =====================================================
-   提交打卡 (records.push结构)
-===================================================== */
-document.getElementById("submitBtn").addEventListener("click", submitAttendance);
-
-async function submitAttendance() {
-  if (!selectedClass) {
-    showNotification("⚠️ Please select a class first", "error");
-    return;
-  }
-
-  const records = [];
-  attendanceMap.forEach((rec, studentId) => {
-    records.push({
-      studentId,
-      studentName: rec.studentName,
-      gender: rec.gender,
-      status: rec.status,
-      notes: rec.notes
-    });
-  });
-
-  try {
-    const body = new URLSearchParams({
-      action: "submitAttendance",
-      className: selectedClass,
-      date: new Date().toISOString().split("T")[0],
-      records: JSON.stringify(records)
-    });
-
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-      body
-    });
-
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.message || "Submit failed");
-    showNotification("✅ " + json.message);
-  } catch (err) {
-    showNotification("⚠️ " + err.message, "error");
-  }
-}
-</script>
-</body>
+          const result = await response.json();
+          if (result.ok) {
+            showNotification(`✅ Attendance submitted! (${result.count} records)`, "success");                        
+          } else {
+            showNotification(`❌ Error: ${result.message || "Unknown error"}`, "error");            
+          }
+        } catch (err) {
+          showNotification("❌ Network error: " + err.message, "error");          
+        } finally {
+          btn.disabled = false;
+          btn.innerText = originalText;
+        }
+      }
+      window.onload = loadActiveClasses;
+    </script>
+  </body>
 </html>
