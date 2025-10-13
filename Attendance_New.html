@@ -20,7 +20,7 @@
         <!-- Notification bar -->
         <div id="notification" class="notification hidden"></div>
         
-        <div id="classSelect" class="class-list"></div>
+        <select id="classSelect" class="class-list"></select>
         <button class="btn-primary" id="loadAttendanceBtn" disabled>Get Student List</button>
       </div>
 
@@ -113,21 +113,25 @@
 
       function renderClassList(classes) {
         console.log("📗 renderClassList() received:", classes);
-        const container = document.getElementById("classSelect");
-        console.log("📗 classList container:", container);
-        container.innerHTML = "";
-        // container.innerHTML = "<option value=''>Please select class</option>";
-
+        const select = document.getElementById("classSelect");
+        console.log("📗 classList container:", select);
+        select.innerHTML = "";
+        
         classes.forEach(cls => {
-          const div = document.createElement("div");
-          div.className = "class-item";
-          div.textContent = `${cls.className} (${cls.dayOfWeek})${cls.highlight?" 🟢 Today" : ""}`;
-
+          const option = document.createElement("option");
+          option.value = cls.className;
+          option.textContent = `${cls.className} (${cls.dayOfWeek})${cls.highlight?" 🟢 Today" : ""}`;
           console.log("Classname: ", cls.className, ", dayOfWeek: ", cls.dayOfWeek, ", highlight: ", cls.highlight);
-          
-          div.addEventListener("click", ()=> onSelectClass(div, cls.className));
-          container.appendChild(div);
+
+          select.appendChild(option);          
         });
+
+        select.disabled = false;
+
+        // 
+        select.addEventListener("change", e=> {
+          selectedClass = e.target.value;
+          document.getElementById("loadAttendanceBtn").disabled = false;
       }
 
       function onSelectClass(div, className) {
