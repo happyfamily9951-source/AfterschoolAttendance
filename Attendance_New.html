@@ -101,7 +101,7 @@
         try {                    
           const response = await fetch(`${API_URL}?action=getActiveClasses`);
           const result = await response.json();
-          console.log("📘 API response:", result);
+          console.log("📘 API response:", result.results);
 
           if(!result.ok) throw new Error(response.message || "Failed to load classes");
           renderClassList(result);
