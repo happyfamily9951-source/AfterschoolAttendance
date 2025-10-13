@@ -96,18 +96,23 @@
 
       // 1. Load active classes list      
       async function loadActiveClasses() {
-        try {
+
+        console.log("📘 loadActiveClasses() triggered");
+        try {                    
           const response = await fetch(`${API_URL}?action=getActiveClasses`);
           const result = await response.json();
+          console.log("📘 API response:", json);
 
           if(!result.ok) throw new Error(response.message || "Failed to load classes");
           renderClassList(result);
         } catch (err) {
+          console.error("❌ loadActiveClasses error:", err);
           showNotification("⚠️ Loading class failure: " + err.message, "error");
         }
       }
 
       function renderClassList(classes) {
+        console.log("📗 renderClassList() received:", classes);
         const container = document.getElementById("classSelect");
         container.innerHTML = "";
         // container.innerHTML = "<option value=''>Please select class</option>";
@@ -116,6 +121,9 @@
           const div = document.createElement("div");
           div.className = "class-item";
           div.textContent = `${cls.className} (${cls.dayOfWeek})${cls.highlight?" 🟢 Today" : ""}`;
+
+          console.lgo("Classname: ", cls.className, ", dayOfWeek: ", cls.dayOfWeek, ", highlight: ", cls.highlight);
+          
           div.addEventListener("click", ()=> onSelectClass(div, cls.className));
           container.appendChild(div);
         });
