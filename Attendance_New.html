@@ -122,7 +122,7 @@
           div.className = "class-item";
           div.textContent = `${cls.className} (${cls.dayOfWeek})${cls.highlight?" 🟢 Today" : ""}`;
 
-          console.lgo("Classname: ", cls.className, ", dayOfWeek: ", cls.dayOfWeek, ", highlight: ", cls.highlight);
+          console.log("Classname: ", cls.className, ", dayOfWeek: ", cls.dayOfWeek, ", highlight: ", cls.highlight);
           
           div.addEventListener("click", ()=> onSelectClass(div, cls.className));
           container.appendChild(div);
