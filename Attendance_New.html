@@ -116,13 +116,18 @@
         const select = document.getElementById("classSelect");
         console.log("📗 classList container:", select);
         select.innerHTML = "";
+
+        // Default option
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "-- Select a class --";
+        select.appendChild(defaultOption);
         
         classes.forEach(cls => {
           const option = document.createElement("option");
           option.value = cls.className;
           option.textContent = `${cls.className} (${cls.dayOfWeek})${cls.highlight?" 🟢 Today" : ""}`;
           console.log("Classname: ", cls.className, ", dayOfWeek: ", cls.dayOfWeek, ", highlight: ", cls.highlight);
-
           select.appendChild(option);          
         });
 
@@ -130,15 +135,30 @@
 
         // 
         select.addEventListener("change", e=> {
-          selectedClass = e.target.value;
-          document.getElementById("loadAttendanceBtn").disabled = false;
-      }
+          const selectedValue = e.target.value;
+          if (!selectedValue) {
+            selectedClass = null;
+            document.getElementById("loadAttendanceBtn").disabled = true;
+            return;
+          }
 
-      function onSelectClass(div, className) {
-        document.querySelectorAll(".class-item").forEach(el=>el.classList.remove("active"));
-        div.classList.add("active");
-        selectedClass = className;
-        document.getElementById("loadAttendanceBtn").disabled = false;
+          selectedClass = selectedValue;
+          const selectedObj = classes.find(c=> c.className === selectedValue);
+          const today = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] [new Date().getDay()];
+
+          if (selectedObj && selectedObj.dayOfWeek !== today) {
+            const proceed = confirm(`This selected class is not today (${today}). Continue?`);
+            if (!process) {
+              showNotification("❌ Cancelled loading attendance.", "error");
+              selectedClass = null;
+              e.target.value = "";
+              document.getElementById("loadAttendanceBtn").disabled = true;
+              return;
+            }
+          }
+
+          document.getElementById("loadAttendanceBtn").disabled = false;
+        });
       }
 
       // 2. Choose a class and get student list
