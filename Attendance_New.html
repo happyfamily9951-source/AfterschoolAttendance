@@ -170,9 +170,13 @@
           return;
         }
 
+        console.log("2nd Step");
+
         // Retrieve the selected class title
         const cls = Array.from(document.querySelectorAll(".class-item"))
           .find(el => el.classList.contains("active"));
+
+        console.log("3rd step: cls = ", cls);
         
         // Extract dayOfWeek: className format is "class name (Tue)"）        
         const match = cls?.textContent.match(/\((\w+)\)$/);
@@ -182,14 +186,19 @@
         if (dayOfWeek && dayOfWeek !== todayName) {
           const proceed = confirm(`The selected class is not today (${todayName}). Continue?`);
 
+          console.log("4th step: proceed = ", proceed);
+
           if (!proceed) {
             showNotification("❌ Cancelled loading attendance.", "error");
+            console.log("5th step: proceed = ", proceed);
           }
         }
          console.log("Start get students by class: ",currentClassName, ", dayOfWeek: ", dayOfWeek);
 
         try {
           const response = await fetch(`${API_URL}?action=getStudentsByClass&className=${encodeURIComponent(currentClassName)}`);
+
+          console.log("6th step: getStudents");
           const result = await response.json();
           
           if (result.ok) {
