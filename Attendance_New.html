@@ -82,10 +82,10 @@
       
       document.addEventListener("DOMContentLoaded", () => {
 
+        console.log("✅ DOM fully loaded.");
+        
         // Initialization
         loadActiveClasses();
-
-        // Event
         document.getElementById("loadAttendanceBtn").addEventListener("click", getStudents); 
         document.getElementById("submitBtn").addEventListener("click", submitAttendance);
         document.getElementById("presentBtn").addEventListener("click", () => setStatus("present"));
@@ -163,6 +163,8 @@
 
       // 2. Choose a class and get student list
       async function getStudents() {
+
+        console.log("Get students...");
         if (!currentClassName) {
           showNotification("⚠️ Please select a class first", "error");
           return;
