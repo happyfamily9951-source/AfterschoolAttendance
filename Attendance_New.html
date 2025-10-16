@@ -72,7 +72,7 @@
     
     <script>
       let selectedClass = null;
-      let currentClassName = null;
+      // let currentClassName = null;
       let currentStatus = "present";
       const attendanceMap = new Map();  // studentId -> {studentNam, gender, status, notes}
 
@@ -164,8 +164,8 @@
       // 2. Choose a class and get student list
       async function getStudents() {
 
-        console.log("Get students...", currentClassName);
-        if (!currentClassName) {
+        console.log("Get students...", selectedClass);
+        if (!selectedClass) {
           showNotification("⚠️ Please select a class first", "error");
           return;
         }
@@ -193,10 +193,10 @@
             console.log("5th step: proceed = ", proceed);
           }
         }
-         console.log("Start get students by class: ",currentClassName, ", dayOfWeek: ", dayOfWeek);
+         console.log("Start get students by class: ",selectedClass, ", dayOfWeek: ", dayOfWeek);
 
         try {
-          const response = await fetch(`${API_URL}?action=getStudentsByClass&className=${encodeURIComponent(currentClassName)}`);
+          const response = await fetch(`${API_URL}?action=getStudentsByClass&className=${encodeURIComponent(selectedClass)}`);
 
           console.log("6th step: getStudents");
           const result = await response.json();
@@ -204,10 +204,10 @@
           if (result.ok) {
             // document.getElementById("selectClassContainer").style.display = "none";
             document.getElementById("attendanceContainer").style.display = "block";
-            document.getElementById("classInfo").textContent = currentClassName;
+            document.getElementById("classInfo").textContent = selectedClass;
 
             renderStudents(result.results);
-            showNotification("✅ Students loaded for " + currentClassName);
+            showNotification("✅ Students loaded for " + selectedClass);
           }
         } catch (err) {
           showNotification("⚠️ " + err.message, "error");
@@ -350,7 +350,7 @@
         // Version A: Convert to x-www-form-urlencoded format
         const body = 
           "action=" + encodeURIComponent("markAttendance") +
-          "&className=" + encodeURIComponent(currentClassName) +
+          "&className=" + encodeURIComponent(selectedClass) +
           "&records=" + encodeURIComponent(JSON.stringify(records)); 
 
         // Version B: JSON
