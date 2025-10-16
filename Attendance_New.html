@@ -164,37 +164,12 @@
       // 2. Choose a class and get student list
       async function getStudents() {
 
-        console.log("Get students...", selectedClass);
+        console.log("📘 loadStudents() triggered, selectedClass =", selectedClass);
         if (!selectedClass) {
           showNotification("⚠️ Please select a class first", "error");
           return;
         }
-
-        console.log("2nd Step");
-
-        // Retrieve the selected class title
-        const cls = Array.from(document.querySelectorAll(".class-item"))
-          .find(el => el.classList.contains("active"));
-
-        console.log("3rd step: cls = ", cls);
         
-        // Extract dayOfWeek: className format is "class name (Tue)"）        
-        const match = cls?.textContent.match(/\((\w+)\)$/);
-        const dayOfWeek = match ? match[1] : "";
-        const todayName = new Date().toLocaleString("en-us", {weekday: "short"});  // weekday: "long" ==> Monday        
-
-        if (dayOfWeek && dayOfWeek !== todayName) {
-          const proceed = confirm(`The selected class is not today (${todayName}). Continue?`);
-
-          console.log("4th step: proceed = ", proceed);
-
-          if (!proceed) {
-            showNotification("❌ Cancelled loading attendance.", "error");
-            console.log("5th step: proceed = ", proceed);
-          }
-        }
-         console.log("Start get students by class: ",selectedClass, ", dayOfWeek: ", dayOfWeek);
-
         try {
           const response = await fetch(`${API_URL}?action=getStudentsByClass&className=${encodeURIComponent(selectedClass)}`);
 
@@ -289,7 +264,7 @@
 
         // update summary even if status unchanged
         if (record.status === currentStatus) {
-          udpateSummary();
+          updateSummary();
           return;
         }
 
