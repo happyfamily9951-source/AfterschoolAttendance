@@ -62,7 +62,7 @@
   /* overflow: hidden; */
   transition: all 0.25s ease;
   border: 1px solid #e5e7eb;
-  aspect-ratio: 1.2 / 1; /* 黄金比例 */
+  aspect-ratio: 1.618 / 1; /* 黄金比例 */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
