@@ -148,7 +148,7 @@
 
           if (selectedObj && selectedObj.dayOfWeek !== today) {
             const proceed = confirm(`This selected class is not today (${today}). Continue?`);
-            if (!process) {
+            if (!proceed) {
               showNotification("❌ Cancelled loading attendance.", "error");
               selectedClass = null;
               e.target.value = "";
