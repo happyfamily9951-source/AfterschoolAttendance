@@ -164,7 +164,7 @@
       // 2. Choose a class and get student list
       async function getStudents() {
 
-        console.log("Get students...");
+        console.log("Get students...", currentClassName);
         if (!currentClassName) {
           showNotification("⚠️ Please select a class first", "error");
           return;
