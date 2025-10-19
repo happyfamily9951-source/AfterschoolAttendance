@@ -356,12 +356,15 @@
 
           const result = await response.json();
           if (result.ok) {
-            showNotification(`✅ Attendance submitted! (${result.count} records)`, "success","attendance");                        
+            showNotification(`✅ Attendance submitted! (${result.count} records)`, "success","attendance");      
+            alert("✅ Attendance submitted successfully!");
           } else {
-            showNotification(`❌ Error: ${result.message || "Unknown error"}`, "error");            
+            showNotification(`❌ Error: ${result.message || "Unknown error"}`, "error");   
+            alert("❌ Error: attendance submission failure: ", result.message);
           }
         } catch (err) {
-          showNotification("❌ Network error: " + err.message, "error");          
+          showNotification("❌ Network error: " + err.message, "error"); 
+          alert("❌ Error: ", err.message);
         } finally {
           btn.disabled = false;
           btn.innerText = originalText;
