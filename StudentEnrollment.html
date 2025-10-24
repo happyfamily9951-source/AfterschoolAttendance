@@ -129,12 +129,19 @@
       const emergencyPhone = document.getElementById("emergencyNumber").value.trim();
 
       // Step A2: validate data
-      if (!studentName || !gender || !dob) {
-        alert("Please fill in name, gender and date of birth");
+      // if (!studentName || !gender || !dob) {
+      //  alert("Please fill in name, gender and date of birth");
+      //  btn.disabled = false;
+      //  btn.innerText = originalText;
+      //  return;
+      // }      
+
+      if (!studentName) {
+        alert("Please fill in student name");
         btn.disabled = false;
         btn.innerText = originalText;
         return;
-      }       
+      }
 
       // Step A3: Generate body
       const body =
