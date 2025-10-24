@@ -182,10 +182,12 @@
           
           const result = await resp.json();
           if (result.ok) {
-            showNotification(`✅ Course added successful`, "success");            
+            showNotification(`✅ Course added successful`, "success"); 
+            alert("✅ Course added successful");
             document.getElementById("classForm").reset();
           } else {
             showNotification(`❌ Error: ${result.message || "Unknown error"}`, "error");
+            alert("❌ Course added failure");            
           }
         } catch (e) {
           showNotification("❌ Network error: " + e.message, "error");          
