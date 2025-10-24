@@ -81,6 +81,10 @@
   border-top-right-radius: 14px;
 }
 
+.status-bar.none {
+  background-color: #bdbdbd; /* 灰色，表示未打卡 */
+}
+
 /* Status color */
 .student-card.present .status-bar { background: var(--present); }
 .student-card.absent  .status-bar { background: var(--absent); }
