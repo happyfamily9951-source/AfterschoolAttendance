@@ -137,3 +137,40 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+.collapsible-container {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 10px 0;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* 折叠标题区域 */
+.collapsible-header {
+  background: #f5f5f5;
+  padding: 10px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 内容区 */
+.collapsible-content {
+  padding: 15px;
+  display: none; /* 默认折叠 */
+}
+
+/* 展开状态 */
+.collapsible-container.active .collapsible-content {
+  display: block;
+}
+
+/* 展开时箭头方向调整 */
+.collapsible-container.active .collapsible-header span::before {
+  content: "▲ ";
+}
+.collapsible-header span::before {
+  content: "▼ ";
+}
