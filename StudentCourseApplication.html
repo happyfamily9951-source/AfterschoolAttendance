@@ -377,8 +377,10 @@
           // ✅ 根据返回内容进行反馈
           if (result.ok) {
             showNotification(`✅ ${classId} submitted successfully`, "success");
+            alert("✅ class enrollment submitted successfully");
           } else {
             showNotification(`⚠️ ${classId} failed: ${result.message}`, "error");
+            alert("⚠️ class enrollment failed");
           }
         }
           
