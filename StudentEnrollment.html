@@ -194,9 +194,11 @@
 
         const result = await response.json();
         if (result.ok) {
-          showNotification("✅ Student added successfully!", "success");          
+          showNotification("✅ Student added successfully!", "success");
+          alert("✅ Student added successfully!";
         } else {
           showNotification("❌ " + (result.message || "Unknown error"), "error");   
+          alert("❌ Student added failure!";
         }
       } catch (err) {
         alert("Network error: " + err.message);
