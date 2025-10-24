@@ -202,7 +202,7 @@
         students.forEach(s => {
           const card = document.createElement("div");
           card.className = "student-card";
-          const state = s.leaveNote ?"leave":"present";
+          const state = s.leaveNote ?"leave":"none";
           attendanceMap.set(s.studentId, {
             studentName: s.studentName,
             gender: s.gender,
