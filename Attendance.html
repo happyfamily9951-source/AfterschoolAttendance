@@ -272,7 +272,7 @@
         }
 
         record.status = currentStatus;
-        card.classList.remove("present", "absent", "leave");
+        card.classList.remove("none", "present", "absent", "leave");
         card.classList.add(currentStatus);
         
         if (currentStatus === "leave") {
